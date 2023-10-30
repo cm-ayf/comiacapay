@@ -67,13 +67,9 @@ model Event {
   guild   Guild  @relation(fields: [guildId], references: [id])
   guildId String @map("guild_id") @db.Char(20)
 
-  name String
-  date DateTime
-
-  // passed to new Function()
-  // must be a JavaScript pure function
-  // (state: { [K in ItemCode]: { count: number, dedication?: boolean } }) => number
-  calculator String @default("return 0") @db.Text
+  name      String
+  date      DateTime
+  discounts Json     @default("[]")
 
   displays Display[]
   receipts Receipt[]
@@ -84,6 +80,8 @@ model Display {
   eventId String @map("event_id") @db.Char(20)
   item    Item   @relation(fields: [itemId], references: [id])
   itemId  String @map("item_id") @db.Char(20)
+
+  price Int
 
   records Record[]
 
@@ -113,6 +111,7 @@ model Record {
 
   index      Int
   count      Int
+  internal   Boolean
   dedication Boolean
 
   @@id([receiptId, index])
