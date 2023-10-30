@@ -1,0 +1,7 @@
+type Member {
+  guild: Guild!
+
+  read: Boolean! @model
+  register: Boolean! @model
+  write: Boolean! @model
+}

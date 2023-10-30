@@ -1,0 +1,25 @@
+type Query {
+  user: User!
+  guild(id: ID!): Guild!
+  event(id: ID!): Event!
+}
+
+type Mutation {
+  updateGuild(id: ID!, input: UpdateGuild): Guild!
+
+  createItem(guildId: ID!, input: CreateItem!): Item!
+  updateItem(id: ID!, input: UpdateItem): Item!
+  deleteItem(id: ID!): ID!
+
+  createEvent(guildId: ID!, input: CreateEvent!): Event!
+  updateEvent(id: ID!, input: UpdateEvent): Event!
+  deleteEvent(id: ID!): ID!
+  createSetDiscount(eventId: ID!, input: CreateSetDiscount!): Discount!
+  deleteDiscount(eventId: ID!, id: ID!): ID!
+  createDisplay(eventId: ID!, input: CreateDisplay!): Display!
+  updateDisplay(eventId: ID!, itemId: ID!, input: UpdateDisplay): Display!
+  deleteDisplay(eventId: ID!, itemId: ID!): ID!
+
+  createReceipts(eventId: ID!, input: [CreateReceipt!]!): [Receipt!]!
+  deleteReceipts(eventId: ID!, ids: [ID!]!): [ID!]!
+}

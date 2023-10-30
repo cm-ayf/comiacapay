@@ -1,0 +1,37 @@
+type Event {
+  id: ID! @model
+
+  guild: Guild!
+
+  name: String! @model
+  date: DateTime! @model
+  discounts: [Discount!]! @model
+
+  displays: [Display!]!
+  receipts: [Receipt!]!
+}
+
+type Display {
+  item: Item! @model
+
+  price: Int! @model
+}
+
+input CreateEvent {
+  name: String!
+  date: DateTime!
+}
+
+input UpdateEvent {
+  name: String
+  date: DateTime
+}
+
+input CreateDisplay {
+  itemId: ID!
+  price: Int!
+}
+
+input UpdateDisplay {
+  price: Int
+}

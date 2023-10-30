@@ -1,0 +1,34 @@
+type Receipt {
+  id: ID! @model
+
+  event: Event!
+  user: User!
+
+  createdAt: String! @model
+  total: Int! @model
+
+  records: [Record!]! @model
+}
+
+type Record {
+  item: Item!
+
+  index: Int! @model
+  count: Int! @model
+  internal: Boolean! @model
+  dedication: Boolean! @model
+}
+
+input CreateReceipt {
+  createdAt: DateTime!
+  total: Int!
+
+  records: [CreateRecord!]!
+}
+
+input CreateRecord {
+  itemId: ID!
+  count: Int!
+  internal: Boolean
+  dedication: Boolean
+}

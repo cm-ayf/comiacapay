@@ -1,0 +1,21 @@
+type Item {
+  id: ID! @model
+
+  guild: Guild!
+
+  name: String! @model
+  picture: String! @model
+  issuedAt: DateTime! @model
+}
+
+input CreateItem {
+  name: String!
+  picture: String!
+  issuedAt: DateTime!
+}
+
+input UpdateItem {
+  name: String
+  picture: String
+  issuedAt: DateTime
+}

@@ -1,0 +1,12 @@
+union Discount = SetDiscount
+
+type SetDiscount {
+  id: ID! @model
+  itemIds: [String!]! @model
+  discount: Int! @model
+}
+
+input CreateSetDiscount {
+  itemIds: [String!]!
+  discount: Int!
+}
