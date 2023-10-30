@@ -1,6 +1,6 @@
 {
-  "name": "kiradopay2",
-  "version": "0.8.0",
+  "name": "comiacapay",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

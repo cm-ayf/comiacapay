@@ -5,9 +5,9 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Kiradopay",
-  "short_name": "kiradopay",
-  "description": "東京大学きらら同好会で利用するレジアプリです",
+  "name": "Comiacapay",
+  "short_name": "comiacapay",
+  "description": "同人即売会用のレジアプリ",
   "icons": [
     {
       "src": "/icon-48x48.png",

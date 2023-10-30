@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     icon: "/icon-192x192.png",
     apple: "/apple-touch-icon-180x180.png",
   },
-  title: "Kiradopay",
+  title: "Comiacapay",
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {

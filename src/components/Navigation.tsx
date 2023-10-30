@@ -33,7 +33,7 @@ export default function Navigation({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (title) document.title = title + " | Kiradopay";
+    if (title) document.title = title + " | Comiacapay";
   }, [title]);
 
   return (
@@ -44,7 +44,7 @@ export default function Navigation({
             <ArrowBack />
           </IconButton>
         )}
-        <Typography component="h1">{title ?? "Kiradopay"}</Typography>
+        <Typography component="h1">{title ?? "Comiacapay"}</Typography>
         <Box sx={{ flex: 1 }} />
         <MenuButton onClick={() => setOpen(true)} />
         <Menu

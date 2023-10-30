@@ -6,7 +6,9 @@
 
 ## URL
 
-レジ画面の URL は，`https://kiradopay2.vercel.app/[eventcode]/register`です．`[eventcode]`にはイベント作成時に指定した文字列が入ります．
+TODO: URLが決定したら書き換える
+
+レジ画面の URL は，`https://placeholder.example.com/[eventcode]/register`です．`[eventcode]`にはイベント作成時に指定した文字列が入ります．
 
 ## 画面構成
 

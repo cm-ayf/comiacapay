@@ -1,24 +1,6 @@
-# [Kiradopay 2](https://kiradopay2.vercel.app/)
+# Comiacapay
 
-同人誌即売会用のレジアプリです．[Kiradopay](https://github.com/takemar/kiradopay)を原型としています．
-
-## 更新点
-
-- カスタムサーバーを排除
-  - Kiradopay では，WebSocket を利用するためにカスタムサーバーが必要でした．
-  - Vercel でのデプロイを想定し，Next.js の API Route を利用することで，カスタムサーバーを排除しました．
-- 認証機能を導入
-  - Kiradopay では，認証は行われていませんでした．
-  - Discord の OAuth2 機能を利用し，認証機能を導入しました．
-  - Discord を選定した理由は以下の通りです：
-    - 招待制である
-    - OAuth2 に対応している
-    - 東京大学きらら同好会は基幹コミュニティとして Discord を利用している
-    - 同好会内での権限管理をロールで行うことができる
-- イベント情報・商品情報を管理する UI を実装
-  - Kiradopay では，イベント情報・商品情報を管理する UI は存在しませんでした．
-    - そのため，データベースに直接アクセスする必要がありました．
-  - 適切な UI と API を実装し，イベント情報・商品情報を簡単に管理することができるようになりました．
+同人誌即売会用のレジアプリです．[Kiradopay](https://github.com/takemar/kiradopay) および [Kiradopay2](https://github.com/cm-ayf/kiradopay2) を原型としています．
 
 ## 技術スタック
 
@@ -96,5 +78,3 @@ Vercel 上で設定し，[Vercel CLI](https://vercel.com/docs/cli)でダウン�
 ## ライセンス
 
 [MIT License](LICENSE)
-
-- icons: [UTKiraraCircle](https://github.com/UTKiraraCircle)
