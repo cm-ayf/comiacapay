@@ -18,4 +18,15 @@ module.exports = nextPWA({
   ],
 })({
   reactStrictMode: true,
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.graphql$/,
+      loader: "@nitrogql/graphql-loader",
+      options: {
+        configFile: "./graphql.config.yaml",
+      },
+    });
+
+    return config;
+  },
 });

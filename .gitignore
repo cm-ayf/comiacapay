@@ -39,3 +39,6 @@ next-env.d.ts
 # pwa web worker
 public/sw.js*
 public/workbox-*.js*
+
+# nitrogql
+src/generated
