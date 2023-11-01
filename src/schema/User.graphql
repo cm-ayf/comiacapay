@@ -2,7 +2,7 @@ type User {
   id: ID! @model
 
   name: String! @model
-  picture: String! @model
+  picture: String @model
 
   members: [Member!]!
 }

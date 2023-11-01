@@ -4,7 +4,7 @@ type Item {
   guild: Guild!
 
   name: String! @model
-  picture: String! @model
+  picture: String @model
   issuedAt: DateTime! @model
 }
 

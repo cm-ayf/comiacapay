@@ -1,5 +1,6 @@
 type Member {
   guild: Guild!
+  guildId: String! @model
 
   read: Boolean! @model
   register: Boolean! @model

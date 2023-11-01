@@ -1,4 +1,4 @@
-import { Static, Type } from "@sinclair/typebox";
+import { type Static, Type } from "@sinclair/typebox";
 import { typeCheck } from "./utils";
 
 const OAuth2ErrorCode = Type.Enum({
@@ -6,7 +6,7 @@ const OAuth2ErrorCode = Type.Enum({
   invalid_credentials: "invalid_credentials",
   invalid_request: "invalid_request",
   server_error: "server_error",
-} as const);
+});
 
 type OAuth2ErrorCode = Static<typeof OAuth2ErrorCode>;
 
@@ -19,11 +19,14 @@ const OAuth2ErrorJson = Type.Object({
 type OAuth2ErrorJson = Static<typeof OAuth2ErrorJson>;
 
 export class OAuth2Error extends Error {
-  static fromError(e: unknown) {
+  static fromError(e: unknown, defaultMessage?: string) {
     if (e instanceof this) {
       return e;
     } else {
-      return new this("server_error", undefined, { cause: e });
+      const errorMessage = e instanceof Error ? e.message : undefined;
+      return new this("server_error", errorMessage || defaultMessage, {
+        cause: e,
+      });
     }
   }
 
