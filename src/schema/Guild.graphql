@@ -4,23 +4,11 @@ type Guild {
   me: Member!
 
   name: String! @model
-  picture: String! @model
+  picture: String @model
   readRoleId: String @model
   registerRoleId: String @model
   writeRoleId: String @model
 
   items: [Item!]!
   events: [Event!]!
-  roles: [Role!]!
-}
-
-type Role {
-  id: ID! @model
-  name: String! @model
-}
-
-input UpdateGuild {
-  readRoleId: String
-  registerRoleId: String
-  writeRoleId: String
 }

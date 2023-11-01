@@ -1,0 +1,26 @@
+type Mutation {
+  createItem(guildId: ID!, input: CreateItem!): Item!
+  updateItem(guildId: ID!, id: ID!, input: UpdateItem): Item!
+  deleteItem(guildId: ID!, id: ID!): ID!
+
+  createEvent(guildId: ID!, input: CreateEvent!): Event!
+  updateEvent(guildId: ID!, id: ID!, input: UpdateEvent): Event!
+  deleteEvent(guildId: ID!, id: ID!): ID!
+  createSetDiscount(
+    guildId: ID!
+    eventId: ID!
+    input: CreateSetDiscount!
+  ): Discount!
+  deleteDiscount(guildId: ID!, eventId: ID!, id: ID!): ID!
+  createDisplay(guildId: ID!, eventId: ID!, input: CreateDisplay!): Display!
+  updateDisplay(
+    guildId: ID!
+    eventId: ID!
+    itemId: ID!
+    input: UpdateDisplay
+  ): Display!
+  deleteDisplay(guildId: ID!, eventId: ID!, itemId: ID!): ID!
+
+  createReceipts(guildId: ID!, eventId: ID!, input: [CreateReceipt!]!): Int!
+  deleteReceipts(guildId: ID!, eventId: ID!, ids: [ID!]!): Int!
+}

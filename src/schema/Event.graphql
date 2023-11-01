@@ -5,14 +5,15 @@ type Event {
 
   name: String! @model
   date: DateTime! @model
-  discounts: [Discount!]! @model
 
+  discounts: [Discount!]! @model
   displays: [Display!]!
   receipts: [Receipt!]!
 }
 
 type Display {
-  item: Item! @model
+  item: Item!
+  itemId: String! @model
 
   price: Int! @model
 }
