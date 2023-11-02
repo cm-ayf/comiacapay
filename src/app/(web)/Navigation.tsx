@@ -13,9 +13,9 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
 import { type PropsWithChildren, useEffect, useRef, useState } from "react";
+import { useUserState } from "./UserState";
 import { DOCS } from "@/constant";
-import { useUserState } from "@/hooks/UserState";
-import type { PartialUser } from "@/hooks/UserStateController";
+import type { User } from "@/generated/resolvers";
 
 export interface NavigationProps {
   title?: string;
@@ -79,13 +79,7 @@ function MenuButton({ onClick }: { onClick: () => void }) {
   }
 }
 
-function UserButton({
-  user,
-  onClick,
-}: {
-  user: PartialUser;
-  onClick: () => void;
-}) {
+function UserButton({ user, onClick }: { user: User; onClick: () => void }) {
   const { name, username, picture } = user;
   return (
     <Button

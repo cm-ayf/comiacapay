@@ -1,36 +1,22 @@
-import Card from "@mui/material/Card";
-import CardActionArea from "@mui/material/CardActionArea";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import type { MouseEventHandler } from "react";
-import type { Item } from "@/types/item";
+import BaseCard from "./BaseCard";
+import { DEFAULT_ITEM_PICTURE } from "@/constant";
+import type { Item } from "@/generated/resolvers";
 
 export default function ItemCard({
   item,
   onClick,
 }: {
   item: Item;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
+  onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
 }) {
   return (
-    <Card>
-      {onClick ? (
-        <CardActionArea onClick={onClick}>
-          <Inner item={item} />
-        </CardActionArea>
-      ) : (
-        <Inner item={item} />
-      )}
-    </Card>
-  );
-}
-
-function Inner({ item }: { item: Item }) {
-  return (
-    <>
+    <BaseCard onClick={onClick}>
       <CardMedia
         component="img"
-        image={item.picture}
+        image={item.picture ?? DEFAULT_ITEM_PICTURE}
         alt={item.name}
         sx={{ width: 200, m: 2 }}
       />
@@ -46,6 +32,6 @@ function Inner({ item }: { item: Item }) {
       >
         {item.name}
       </CardContent>
-    </>
+    </BaseCard>
   );
 }

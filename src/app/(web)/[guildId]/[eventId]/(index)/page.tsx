@@ -3,7 +3,7 @@
 import About from "./About";
 import Display from "./Display";
 import UpdateCalculator from "./UpdateCalculator";
-import Layout from "@/components/Layout";
+import Layout from "@/app/(web)/Layout";
 import { useTitle } from "@/hooks/swr";
 
 export const dynamic = "force-static";

@@ -1,22 +1,22 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import { type PropsWithChildren } from "react";
-import Navigation, { type NavigationProps } from "./Navigation";
+import type { PropsWithChildren, ReactNode } from "react";
 
-export interface LayoutProps extends NavigationProps {
-  top?: React.ReactNode;
-  bottom?: React.ReactNode;
+export interface LayoutProps {
+  navigation: ReactNode;
+  top?: ReactNode;
+  bottom?: ReactNode;
 }
 
 export default function Layout({
   children,
+  navigation,
   top,
   bottom,
-  ...navigation
 }: PropsWithChildren<LayoutProps>) {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <Navigation {...navigation} />
+      {navigation}
       {top && <Box flex={0}>{top}</Box>}
       <Container
         sx={{

@@ -7,7 +7,7 @@ import Export from "./Export";
 import Summary from "./Summary";
 import Table, { SelectedProvider } from "./Table";
 import Top from "./Top";
-import Layout from "@/components/Layout";
+import Layout from "@/app/(web)/Layout";
 import { DBStateProvider } from "@/hooks/DBState";
 import { useTitle } from "@/hooks/swr";
 

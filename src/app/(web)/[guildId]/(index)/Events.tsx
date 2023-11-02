@@ -1,25 +1,30 @@
 "use client";
 
+import { useMutation } from "@apollo/client";
 import Add from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAlert } from "../../Alert";
+import { assertSuccess, isGraphQLErrorOf } from "../../Apollo";
+import CreateEventMutation from "./CreateEvent.graphql";
 import EventCard from "@/components/EventCard";
 import EventDialog from "@/components/EventDialog";
-import { useAlert } from "@/hooks/Alert";
-import { useScopes } from "@/hooks/UserState";
-import { RouteError, useCreateEvent, useEvents } from "@/hooks/swr";
-import { CreateEvent } from "@/types/event";
+import type { Event, Member } from "@/generated/resolvers";
+import type { CreateEvent } from "@/generated/schema";
 
-export default function Events() {
-  const { data: events } = useEvents();
+export default function Events({
+  data,
+  me,
+}: {
+  data: Omit<Event, "discounts">[];
+  me: Member;
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const scopes = useScopes();
 
   return (
     <>
@@ -30,27 +35,27 @@ export default function Events() {
         <IconButton
           color="primary"
           onClick={() => setOpen(true)}
-          disabled={!scopes?.write}
+          disabled={!me.write}
         >
           <Add />
         </IconButton>
       </Box>
-      {events ? (
-        <Grid container spacing={2}>
-          {events.map((event) => (
-            <Grid item key={event.code}>
-              <EventCard
-                event={event}
-                onClick={() => router.push(`/${event.code}`)}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      ) : (
-        <CircularProgress />
-      )}
-      {scopes?.write && (
-        <CreateEventDialog open={open} onClose={() => setOpen(false)} />
+      <Grid container spacing={2}>
+        {data.map((event) => (
+          <Grid item key={event.id}>
+            <EventCard
+              event={event}
+              onClick={() => router.push(`./${event.id}`)}
+            />
+          </Grid>
+        ))}
+      </Grid>
+      {me.write && (
+        <CreateEventDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          guildId={me.guildId}
+        />
       )}
     </>
   );
@@ -59,20 +64,25 @@ export default function Events() {
 function CreateEventDialog({
   open,
   onClose,
+  guildId,
 }: {
   open: boolean;
   onClose: () => void;
+  guildId: string;
 }) {
-  const { trigger, isMutating } = useCreateEvent();
+  const [trigger, { loading }] = useMutation(CreateEventMutation);
   const router = useRouter();
   const { error } = useAlert();
 
-  async function onClick(body: CreateEvent) {
+  async function onSubmit(input: CreateEvent) {
     try {
-      await trigger(body);
-      router.push(`/${body.code}`);
+      const result = await trigger({
+        variables: { guildId, input },
+      });
+      assertSuccess(result);
+      router.push(`./${result.data.createEvent.id}`);
     } catch (e) {
-      if ((e as RouteError)?.code === "CONFLICT")
+      if (isGraphQLErrorOf(e, "CONFLICT"))
         error("イベントコードが重複しています");
       else error("イベントの作成に失敗しました");
       throw e;
@@ -81,12 +91,13 @@ function CreateEventDialog({
 
   return (
     <EventDialog
-      schema={CreateEvent}
+      mode="create"
       title="イベントを作成"
       open={open}
+      onSubmit={onSubmit}
       onClose={onClose}
-      isMutating={isMutating}
-      buttons={[{ label: "作成", needsValidation: true, onClick }]}
+      loading={loading}
+      buttons={[{ submit: true, label: "作成" }]}
     />
   );
 }

@@ -1,30 +1,27 @@
 "use client";
 
+import { useMutation } from "@apollo/client";
 import Add from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
+import { GraphQLError } from "graphql";
 import { useState } from "react";
+import { useAlert } from "../../Alert";
+import { assertSuccess, isGraphQLErrorOf } from "../../Apollo";
+import CreateItemMutation from "./CreateItem.graphql";
+import DeleteItemMutation from "./DeleteItem.graphql";
+import UpdateItemMutation from "./UpdateItem.graphql";
 import ItemCard from "@/components/ItemCard";
 import ItemDialog from "@/components/ItemDialog";
-import { useAlert } from "@/hooks/Alert";
-import { useScopes } from "@/hooks/UserState";
-import {
-  RouteError,
-  useCreateItem,
-  useDeleteItem,
-  useItems,
-  useUpdateItem,
-} from "@/hooks/swr";
-import { Item, CreateItem, UpdateItem } from "@/types/item";
+import type { Item, Member } from "@/generated/resolvers";
+import type { CreateItem, UpdateItem } from "@/generated/schema";
 
-export default function Items() {
-  const { data: items } = useItems();
+export default function Items({ data, me }: { data: Item[]; me: Member }) {
   const [open, setOpen] = useState(false);
   const [item, setItem] = useState<Item>();
-  const scopes = useScopes();
+
   return (
     <>
       <Box sx={{ display: "flex", flexDirection: "row", my: 2 }}>
@@ -34,31 +31,34 @@ export default function Items() {
         <IconButton
           color="primary"
           onClick={() => setOpen(true)}
-          disabled={!scopes?.write}
+          disabled={!me.write}
         >
           <Add />
         </IconButton>
       </Box>
-      {items ? (
-        <Grid container spacing={2}>
-          {items.map((item) => (
-            <Grid item key={item.code}>
-              <ItemCard
-                key={item.code}
-                item={item}
-                {...(scopes?.write ? { onClick: () => setItem(item) } : {})}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      ) : (
-        <CircularProgress />
+      <Grid container spacing={2}>
+        {data.map((item) => (
+          <Grid item key={item.id}>
+            <ItemCard
+              item={item}
+              {...(me.write ? { onClick: () => setItem(item) } : {})}
+            />
+          </Grid>
+        ))}
+      </Grid>
+      {me.write && (
+        <CreateItemDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          guildId={me.guildId}
+        />
       )}
-      {scopes?.write && (
-        <CreateItemDialog open={open} onClose={() => setOpen(false)} />
-      )}
-      {scopes?.write && (
-        <MutateItemDialog item={item} onClose={() => setItem(undefined)} />
+      {me.write && (
+        <MutateItemDialog
+          item={item}
+          onClose={() => setItem(undefined)}
+          guildId={me.guildId}
+        />
       )}
     </>
   );
@@ -67,20 +67,24 @@ export default function Items() {
 function CreateItemDialog({
   open,
   onClose,
+  guildId,
 }: {
   open: boolean;
   onClose: () => void;
+  guildId: string;
 }) {
-  const { trigger, isMutating } = useCreateItem();
+  const [trigger, { loading }] = useMutation(CreateItemMutation);
   const { error, success } = useAlert();
 
-  async function onClick(body: CreateItem) {
+  async function onSubmit(input: CreateItem) {
     try {
-      await trigger(body);
+      await trigger({
+        variables: { guildId, input },
+      });
       success("商品を作成しました");
       onClose();
     } catch (e) {
-      if ((e as RouteError)?.code === "CONFLICT")
+      if (e instanceof GraphQLError && e.extensions["code"] === "CONFLICT")
         error("商品コードが重複しています");
       else error("商品の作成に失敗しました");
       throw e;
@@ -89,12 +93,13 @@ function CreateItemDialog({
 
   return (
     <ItemDialog
-      schema={CreateItem}
+      mode="create"
       title="商品を作成"
       open={open}
       onClose={onClose}
-      isMutating={isMutating}
-      buttons={[{ label: "作成", needsValidation: true, onClick }]}
+      loading={loading}
+      onSubmit={onSubmit}
+      buttons={[{ submit: true, label: "作成" }]}
     />
   );
 }
@@ -102,39 +107,45 @@ function CreateItemDialog({
 function MutateItemDialog({
   item,
   onClose,
+  guildId,
 }: {
   item: Item | undefined;
   onClose: () => void;
+  guildId: string;
 }) {
-  const itemcode = item ? item.code : "";
-  const { trigger: triggerUpdate, isMutating: isUpdating } = useUpdateItem({
-    itemcode,
-  });
-  const { trigger: triggerDelete, isMutating: isDeleting } = useDeleteItem({
-    itemcode,
-  });
+  const [triggerUpdate, { loading: isUpdating }] =
+    useMutation(UpdateItemMutation);
+  const [triggerDelete, { loading: isDeleting }] =
+    useMutation(DeleteItemMutation);
   const { error, success } = useAlert();
 
-  async function onClickUpdate(body: UpdateItem) {
+  async function onSubmit(input: UpdateItem) {
+    if (!item) return;
     try {
-      await triggerUpdate(body);
+      const result = await triggerUpdate({
+        variables: { guildId, id: item.id, input },
+      });
+      assertSuccess(result);
       success("商品を更新しました");
       onClose();
     } catch (e) {
-      if ((e as RouteError)?.code === "CONFLICT")
-        error("商品コードが重複しています");
+      if (isGraphQLErrorOf(e, "CONFILCT")) error("商品コードが重複しています");
       else error("商品の更新に失敗しました");
       throw e;
     }
   }
 
-  async function onClickDelete() {
+  async function onDelete() {
+    if (!item) return;
     try {
-      await triggerDelete(null);
+      const result = await triggerDelete({
+        variables: { guildId, id: item.id },
+      });
+      assertSuccess(result);
       success("商品を削除しました");
       onClose();
     } catch (e) {
-      if ((e as RouteError)?.code === "CONFLICT")
+      if (isGraphQLErrorOf(e, "CONFILCT"))
         error("この商品は1つ以上のイベントのお品書きにあります");
       else error("商品の削除に失敗しました");
       throw e;
@@ -142,22 +153,20 @@ function MutateItemDialog({
   }
 
   return (
-    <ItemDialog
-      schema={UpdateItem}
-      title="商品を編集"
-      item={item}
-      open={Boolean(item)}
-      onClose={onClose}
-      isMutating={isUpdating || isDeleting}
-      buttons={[
-        {
-          label: "更新",
-          needsValidation: true,
-          needsUpdate: true,
-          onClick: onClickUpdate,
-        },
-        { label: "削除", color: "error", onClick: onClickDelete },
-      ]}
-    />
+    item && (
+      <ItemDialog
+        mode="update"
+        title="商品を編集"
+        open
+        onClose={onClose}
+        defaultValues={item}
+        loading={isUpdating || isDeleting}
+        onSubmit={onSubmit}
+        buttons={[
+          { submit: true, label: "更新" },
+          { label: "削除", color: "error", onClick: onDelete },
+        ]}
+      />
+    )
   );
 }

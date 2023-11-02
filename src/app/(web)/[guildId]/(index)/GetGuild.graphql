@@ -1,0 +1,28 @@
+query GetGuild($guildId: ID!) {
+  guild(guildId: $guildId) {
+    id
+    name
+    picture
+
+    me {
+      guildId
+      read
+      register
+      write
+      admin
+    }
+
+    events {
+      id
+      name
+      date
+    }
+
+    items {
+      id
+      name
+      picture
+      issuedAt
+    }
+  }
+}

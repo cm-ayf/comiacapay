@@ -1,0 +1,8 @@
+mutation UpdateItem($guildId: ID!, $id: ID!, $input: UpdateItem) {
+  updateItem(guildId: $guildId, id: $id, input: $input) {
+    id
+    name
+    picture
+    issuedAt
+  }
+}

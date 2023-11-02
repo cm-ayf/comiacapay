@@ -10,7 +10,7 @@ type Item {
 
 input CreateItem {
   name: String!
-  picture: String!
+  picture: String
   issuedAt: DateTime!
 }
 

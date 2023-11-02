@@ -1,12 +1,10 @@
 import type { ApolloError } from "@apollo/client";
-import type { User } from "@/generated/schema";
+import type { User } from "@/generated/resolvers";
 import { OAuth2Error } from "@/shared/error";
 
-export type PartialUser = Pick<User, "id" | "name" | "username" | "picture">;
-
 export type UserState =
-  | { type: "authorized"; user: PartialUser }
-  | { type: "error"; user?: PartialUser }
+  | { type: "authorized"; user: User }
+  | { type: "error"; user?: User }
   | { type: "unauthorized" | "loading"; user?: never };
 
 export class UserStateController extends EventTarget {
@@ -142,7 +140,7 @@ export class StateChangeEvent extends Event {
 }
 
 export class QuerySuccessEvent extends Event {
-  constructor(public user: PartialUser) {
+  constructor(public user: User) {
     super("QuerySuccess");
   }
 }
@@ -160,7 +158,7 @@ export class QueryErrorEvent extends Event {
 }
 
 export class RefreshSuccessEvent extends Event {
-  constructor(public user: PartialUser) {
+  constructor(public user: User) {
     super("RefreshSuccess");
   }
 }

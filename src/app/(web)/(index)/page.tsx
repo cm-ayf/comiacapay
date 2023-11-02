@@ -1,7 +1,8 @@
 "use client";
 
+import Navigation from "../Navigation";
 import Layout from "@/components/Layout";
 
 export default function Page() {
-  return <Layout />;
+  return <Layout navigation={<Navigation />} />;
 }

@@ -6,7 +6,7 @@ import { useReducer } from "react";
 import Bottom from "./Bottom";
 import ItemPanel from "./ItemPanel";
 import reducer from "./reducer";
-import Layout from "@/components/Layout";
+import Layout from "@/app/(web)/Layout";
 import { DBStateProvider } from "@/hooks/DBState";
 import { useEvent } from "@/hooks/swr";
 

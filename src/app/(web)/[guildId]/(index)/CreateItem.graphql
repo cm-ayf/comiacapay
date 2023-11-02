@@ -1,0 +1,8 @@
+mutation CreateItem($guildId: ID!, $input: CreateItem!) {
+  createItem(guildId: $guildId, input: $input) {
+    id
+    name
+    issuedAt
+    picture
+  }
+}
