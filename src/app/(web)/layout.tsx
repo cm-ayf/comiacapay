@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
-import { ApolloProvider } from "@/components/Apollo";
-import { AlertProvider } from "@/hooks/Alert";
-import { UserStateProvider } from "@/hooks/UserState";
+import { AlertProvider } from "./Alert";
+import { ApolloProvider } from "./Apollo";
+import { UserStateProvider } from "./UserState";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {

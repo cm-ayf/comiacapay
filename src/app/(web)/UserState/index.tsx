@@ -3,15 +3,15 @@
 import { ApolloError, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useEffect, type PropsWithChildren, useState } from "react";
-import { useAlert } from "./Alert";
-import GetCurrentUser from "./GetCurrentUser.graphql";
+import { useAlert } from "../Alert";
 import {
   QueryErrorEvent,
   QuerySuccessEvent,
   QueryUnauthorizedEvent,
   StateChangeEvent,
   UserStateController,
-} from "./UserStateController";
+} from "./Controller";
+import GetCurrentUser from "./GetCurrentUser.graphql";
 import { DOCS } from "@/constant";
 
 const controller = new UserStateController();
