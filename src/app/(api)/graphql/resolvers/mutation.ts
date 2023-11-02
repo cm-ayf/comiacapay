@@ -2,12 +2,24 @@ import type { Resolvers } from "./types";
 import type { Discount } from "@/generated/schema";
 import { generateSnowflake } from "@/shared/snowflake";
 
-function withoutNullableProps<T>(object: T): {
-  [K in keyof T]: Exclude<T[K], null | undefined>;
+function withoutUndefinedProps<
+  Input extends object,
+  NonNullables extends { [K in keyof Input]?: true } = {},
+>(
+  input: Input | null | undefined,
+  nonnullables?: NonNullables,
+): {
+  [K in keyof Input]: NonNullables[K] extends true
+    ? Exclude<Input[K], null | undefined>
+    : Exclude<Input[K], undefined>;
 } {
-  const cloned = { ...object };
-  for (const key in cloned) {
-    if (cloned[key] == null) {
+  if (!input) return {} as any;
+  const cloned = { ...input };
+  for (const key in input) {
+    if (
+      (nonnullables?.[key] && cloned[key] === null) ||
+      cloned[key] === undefined
+    ) {
       delete cloned[key];
     }
   }
@@ -15,6 +27,14 @@ function withoutNullableProps<T>(object: T): {
 }
 
 export const Mutation: Resolvers["Mutation"] = {
+  async updateGuild(_, { guildId, input }, context) {
+    context.assertsPermissions(["admin"]);
+    return context.prisma.guild.update({
+      where: { id: guildId },
+      data: withoutUndefinedProps(input),
+    });
+  },
+
   async createItem(_, { input }, context) {
     context.assertsPermissions(["write"]);
     return context.prisma.item.create({
@@ -31,7 +51,7 @@ export const Mutation: Resolvers["Mutation"] = {
     context.assertsPermissions(["read", "write"]);
     return context.prisma.item.update({
       where: { id, guildId: context.member.guildId },
-      data: withoutNullableProps(input) ?? {},
+      data: withoutUndefinedProps(input, { name: true, issuedAt: true }),
     });
   },
   async deleteItem(_, { id }, context) {
@@ -58,7 +78,7 @@ export const Mutation: Resolvers["Mutation"] = {
     context.assertsPermissions(["read", "write"]);
     return context.prisma.event.update({
       where: { id, guildId: context.member.guildId },
-      data: withoutNullableProps(input) ?? {},
+      data: withoutUndefinedProps(input, { name: true, date: true }),
     });
   },
   async deleteEvent(_, { id }, context) {
@@ -125,7 +145,7 @@ export const Mutation: Resolvers["Mutation"] = {
         eventId_itemId: { eventId, itemId },
         event: { guildId: context.member.guildId },
       },
-      data: withoutNullableProps(input) ?? {},
+      data: withoutUndefinedProps(input, { price: true }),
     });
   },
   async deleteDisplay(_, { eventId, itemId }, context) {

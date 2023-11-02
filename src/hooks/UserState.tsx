@@ -1,144 +1,103 @@
 "use client";
 
-import {
-  createContext,
-  PropsWithChildren,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { ApolloError, useQuery } from "@apollo/client";
+import Link from "next/link";
+import { useEffect, type PropsWithChildren, useState } from "react";
 import { useAlert } from "./Alert";
-import { SigninErrorMessage } from "@/components/SigninErrorMessage";
-import { SigninMessage } from "@/components/SigninMessage";
-import { RouteError, useRefreshInPlace, useUsersMe } from "@/hooks/swr";
-import { OAuth2Error } from "@/shared/error";
-import type { Scope, Token } from "@/types/user";
+import GetCurrentUser from "./GetCurrentUser.graphql";
+import {
+  QueryErrorEvent,
+  QuerySuccessEvent,
+  QueryUnauthorizedEvent,
+  StateChangeEvent,
+  UserStateController,
+} from "./UserStateController";
+import { DOCS } from "@/constant";
 
-export type UserState =
-  | { type: "authorized"; user: Token }
-  | { type: "refreshing" | "error"; user?: Token }
-  | { type: "unauthorized" | "loading"; user?: never };
-
-interface UserStateContext {
-  state: UserState;
-  waitUntilAuthorized: () => Promise<boolean>;
-}
-
-const UserStateContext = createContext<UserStateContext>({
-  state: { type: "loading" },
-  waitUntilAuthorized: () => Promise.reject(),
-});
+const controller = new UserStateController();
 
 export function UserStateProvider({ children }: PropsWithChildren) {
-  const [state, setState] = useState<UserState>({ type: "loading" });
-  const inner = useRef<UserState["type"]>("loading");
-
-  const { error } = useAlert();
-
-  const onError = useCallback(
-    async (e: RouteError) => {
-      if (e.code !== "UNAUTHORIZED") {
-        setState((state) => ({ ...state, type: "error" }));
-        inner.current = "error";
-        return;
-      }
-
-      switch (inner.current) {
-        case "unauthorized":
-          return;
-        case "refreshing":
-          setState({ type: "unauthorized" });
-          inner.current = "unauthorized";
-          error(<SigninMessage />);
-          return;
-        default:
-          setState((state) => ({ ...state, type: "refreshing" }));
-          inner.current = "refreshing";
-          await trigger(null).catch(() => {});
-          return;
+  const { refetch, stopPolling } = useQuery(GetCurrentUser, {
+    notifyOnNetworkStatusChange: true,
+    pollInterval: 10000,
+    onCompleted({ user }) {
+      controller.dispatchEvent(new QuerySuccessEvent(user));
+    },
+    onError(error) {
+      if (isSessionError(error)) {
+        controller.dispatchEvent(new QueryUnauthorizedEvent(error));
+      } else {
+        controller.dispatchEvent(new QueryErrorEvent(error));
       }
     },
-    // `trigger` must be declared after `onError`
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [error],
-  );
-
-  const { mutate } = useUsersMe(undefined, {
-    refreshInterval: 10000,
-    onSuccess: useCallback((user: Token) => {
-      setState({ type: "authorized", user });
-      inner.current = "authorized";
-      resolves.current.forEach((resolve) => resolve(true));
-      resolves.current = [];
-    }, []),
-    onError,
   });
-  const { trigger } = useRefreshInPlace(undefined, {
-    onSuccess: useCallback(() => mutate(), [mutate]),
-    onError,
-  });
-
-  const url = useMemo(() => global.location && new URL(location.href), []);
 
   useEffect(() => {
-    if (!url?.searchParams.get("error")) return;
-    setState({ type: "error" });
-    inner.current = "error";
+    const onSuccess = () => refetch();
+    const onUnauthorized = () => stopPolling();
+    controller.addEventListener("RefreshSuccess", onSuccess);
+    controller.addEventListener("RefreshUnauthorized", onUnauthorized);
+    return () => {
+      controller.removeEventListener("RefreshSuccess", onSuccess);
+      controller.removeEventListener("RefreshUnauthorized", onUnauthorized);
+    };
+  }, [refetch, stopPolling]);
 
-    const e = OAuth2Error.fromSearchParams(url.searchParams);
-    error(<SigninErrorMessage error={e} />);
-  }, [url, error]);
+  useEffect(() => {
+    controller.checkUrl();
+  }, []);
 
-  const resolves = useRef<((success: boolean) => void)[]>([]);
-  const waitUntilAuthorized = useCallback(async () => {
-    switch (inner.current) {
-      case "unauthorized":
-      case "error":
-        return false;
-      case "authorized":
-        try {
-          setState((state) => ({ ...state, type: "refreshing" }));
-          inner.current = "refreshing";
-          await trigger(null);
-          return true;
-        } catch {
-          return false;
-        }
-      case "refreshing":
-      case "loading":
-        return new Promise<boolean>((resolve) =>
-          resolves.current.push(resolve),
-        );
-    }
-  }, [trigger]);
+  const { error } = useAlert();
+  useEffect(() => {
+    const onUnauthorized = () => error(<SigninErrorMessage />);
+    const onError = () => error("サーバーエラーが発生しました");
+    controller.addEventListener("QueryError", onError);
+    controller.addEventListener("RefreshUnauthorized", onUnauthorized);
+    controller.addEventListener("RefreshError", onError);
+    controller.addEventListener("RedirectUnauthorized", onUnauthorized);
+    controller.addEventListener("RedirectError", onError);
+    return () => {
+      controller.removeEventListener("QueryError", onError);
+      controller.removeEventListener("RefreshUnauthorized", onUnauthorized);
+      controller.removeEventListener("RefreshError", onError);
+      controller.removeEventListener("RedirectUnauthorized", onUnauthorized);
+      controller.removeEventListener("RedirectError", onError);
+    };
+  }, [error]);
 
-  return (
-    <UserStateContext.Provider value={{ state: state, waitUntilAuthorized }}>
-      {children}
-    </UserStateContext.Provider>
-  );
+  return children;
 }
 
 export function useUserState() {
-  const { state } = useContext(UserStateContext);
+  const [state, setState] = useState(controller.state);
+  useEffect(() => {
+    const listener = (event: StateChangeEvent) => setState(event.state);
+    controller.addEventListener("StateChange", listener);
+    return () => controller.removeEventListener("StateChange", listener);
+  });
   return state;
 }
 
-export function useScopes(): Record<Scope, boolean> | undefined {
-  const state = useUserState();
-  if (!state.user?.scope) return;
-  const scopes = state.user.scope.split(" ");
-  return {
-    read: scopes.includes("read"),
-    register: scopes.includes("register"),
-    write: scopes.includes("write"),
-  };
+export function useWaitUntilAuthorized() {
+  return () => controller.waitUntilAuthorized();
 }
 
-export function useWaitUntilAuthorized() {
-  const { waitUntilAuthorized } = useContext(UserStateContext);
-  return waitUntilAuthorized;
+function isSessionError({ networkError }: ApolloError) {
+  return (
+    networkError &&
+    "response" in networkError &&
+    networkError.response.status === 401
+  );
+}
+
+function SigninErrorMessage() {
+  return (
+    <>
+      <Link href="/auth/signin">サインイン</Link>してください（
+      <Link href={`${DOCS}/signin.md`} target="_blank">
+        マニュアル
+      </Link>
+      ）
+    </>
+  );
 }

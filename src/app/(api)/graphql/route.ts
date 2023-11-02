@@ -62,17 +62,19 @@ function initApolloServer() {
 
 function formatError(
   formattedError: GraphQLFormattedError,
+  error: any,
 ): Pick<GraphQLFormattedError, "message" | "extensions"> {
-  const error = unwrapResolverError(formattedError);
-  if (error instanceof PrismaClientKnownRequestError) {
-    switch (error.code) {
+  const e = unwrapResolverError(error);
+  if (e instanceof PrismaClientKnownRequestError) {
+    console.log(e);
+    switch (e.code) {
       case "P2001": // record does not exist
       case "P2025": // no record found
         return new GraphQLError("Not found", {
           extensions: {
             code: "NOT_FOUND",
             http: { status: 404 },
-            meta: error.meta,
+            meta: e.meta,
           },
         });
       case "P2002": // unique constraint failed
@@ -82,7 +84,7 @@ function formatError(
           extensions: {
             code: "CONFLICT",
             http: { status: 409 },
-            meta: error.meta,
+            meta: e.meta,
           },
         });
     }

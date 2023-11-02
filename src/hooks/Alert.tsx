@@ -4,8 +4,8 @@ import Alert, { type AlertColor } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import {
-  PropsWithChildren,
-  ReactNode,
+  type PropsWithChildren,
+  type ReactNode,
   createContext,
   useCallback,
   useContext,

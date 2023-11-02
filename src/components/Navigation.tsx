@@ -12,10 +12,10 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { type PropsWithChildren, useEffect, useRef, useState } from "react";
 import { DOCS } from "@/constant";
 import { useUserState } from "@/hooks/UserState";
-import type { Token } from "@/types/user";
+import type { PartialUser } from "@/hooks/UserStateController";
 
 export interface NavigationProps {
   title?: string;
@@ -70,12 +70,6 @@ function MenuButton({ onClick }: { onClick: () => void }) {
   switch (state.type) {
     case "authorized":
       return <UserButton user={state.user} onClick={onClick} />;
-    case "refreshing":
-      return state.user ? (
-        <UserButton user={state.user} onClick={onClick} />
-      ) : (
-        <LoadingButton />
-      );
     case "unauthorized":
       return <SigninButton />;
     case "error":
@@ -85,12 +79,19 @@ function MenuButton({ onClick }: { onClick: () => void }) {
   }
 }
 
-function UserButton({ user, onClick }: { user: Token; onClick: () => void }) {
+function UserButton({
+  user,
+  onClick,
+}: {
+  user: PartialUser;
+  onClick: () => void;
+}) {
+  const { name, username, picture } = user;
   return (
     <Button
       color="inherit"
       onClick={onClick}
-      endIcon={<UserAvatar user={user} />}
+      endIcon={<Avatar {...(picture && { src: picture })} />}
     >
       <Box
         sx={{
@@ -100,18 +101,18 @@ function UserButton({ user, onClick }: { user: Token; onClick: () => void }) {
           textTransform: "none",
         }}
       >
-        {user.nick ? (
+        {name ? (
           <>
             <Typography variant="body2" component="span">
-              {user.nick}
+              {name}
             </Typography>
             <Typography variant="caption" component="span">
-              {user.username}
+              {username}
             </Typography>
           </>
         ) : (
           <Typography variant="body2" component="span">
-            {user.username}
+            {username}
           </Typography>
         )}
       </Box>
@@ -119,16 +120,9 @@ function UserButton({ user, onClick }: { user: Token; onClick: () => void }) {
   );
 }
 
-function UserAvatar({ user }: { user: Token }) {
-  if (!user.avatar) return <Avatar />;
-
-  const url = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp`;
-  return <Avatar src={url} />;
-}
-
 function SigninButton() {
   return (
-    <Button color="inherit" href="/api/auth/signin">
+    <Button color="inherit" href="/auth/signin">
       サインイン
     </Button>
   );

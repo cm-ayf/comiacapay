@@ -12,3 +12,9 @@ type Guild {
   items: [Item!]!
   events: [Event!]!
 }
+
+input UpdateGuild {
+  readRoleId: String
+  registerRoleId: String
+  writeRoleId: String
+}

@@ -1,4 +1,6 @@
 type Mutation {
+  updateGuild(guildId: ID!, input: UpdateGuild): Guild!
+
   createItem(guildId: ID!, input: CreateItem!): Item!
   updateItem(guildId: ID!, id: ID!, input: UpdateItem): Item!
   deleteItem(guildId: ID!, id: ID!): ID!

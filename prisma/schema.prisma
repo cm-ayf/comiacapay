@@ -18,8 +18,9 @@ datasource db {
 model User {
   id String @id @db.Char(20)
 
-  name    String
-  picture String?
+  name     String?
+  username String
+  picture  String?
 
   members  Member[]
   receipts Receipt[]

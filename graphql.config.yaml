@@ -1,7 +1,9 @@
 schema:
   - ./src/schema/*.graphql
   - ./src/schema/scalar.mjs
-documents: ./src/app/**/*.graphql
+documents:
+  - ./src/app/**/*.graphql
+  - ./src/hooks/GetCurrentUser.graphql
 extensions:
   nitrogql:
     plugins:

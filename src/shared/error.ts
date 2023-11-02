@@ -2,7 +2,6 @@ import { type Static, Type } from "@sinclair/typebox";
 import { typeCheck } from "./utils";
 
 const OAuth2ErrorCode = Type.Enum({
-  unknown_guild: "unknown_guild",
   invalid_credentials: "invalid_credentials",
   invalid_request: "invalid_request",
   server_error: "server_error",

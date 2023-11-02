@@ -41,8 +41,12 @@ export async function upsertUserAndMembers({
 }
 
 function toUserUpsert(user: APIUser): Prisma.UserUpsertArgs {
-  const attributes: Pick<Prisma.UserCreateInput, "name" | "picture"> = {
-    name: user.global_name ?? user.username,
+  const attributes: Pick<
+    Prisma.UserCreateInput,
+    "name" | "username" | "picture"
+  > = {
+    name: user.global_name,
+    username: user.username,
     picture: userAvatar(user),
   };
   return {

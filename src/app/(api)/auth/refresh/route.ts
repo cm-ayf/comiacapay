@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       cookies.token_set = await encryptTokenSet(refreshedTokenSet);
     }
 
-    return withCookies(new NextResponse(null, { status: 204 }), cookies);
+    return withCookies(NextResponse.json(user, { status: 200 }), cookies);
   } catch (e) {
     const error = OAuth2Error.fromError(e);
     return withCookies(

@@ -109,4 +109,4 @@ function sessionFromCookie(headers: HeaderMap) {
   return session;
 }
 
-type Permission = "read" | "register" | "write";
+type Permission = "read" | "register" | "write" | "admin";
