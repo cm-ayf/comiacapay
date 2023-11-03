@@ -1,9 +1,13 @@
-import { Routes } from "discord-api-types/v10";
+import {
+  OAuth2Routes,
+  OAuth2Scopes,
+  RouteBases,
+  Routes,
+} from "discord-api-types/v10";
 import type {
   APIGuild,
   APIGuildMember,
   APIUser,
-  RESTOAuth2AdvancedBotAuthorizationQuery,
   RESTOAuth2AuthorizationQuery,
   RESTPostOAuth2AccessTokenResult,
   RESTPostOAuth2AccessTokenURLEncodedData,
@@ -13,15 +17,16 @@ import type {
 import { env } from "@/app/(api)/env";
 import { OAuth2Error } from "@/shared/error";
 
-const baseUrl = "https://discord.com/api/v10";
 const client_id = env.DISCORD_CLIENT_ID;
 const client_secret = env.DISCORD_CLIENT_SECRET;
 const basic = btoa(`${client_id}:${client_secret}`);
 const redirect_uri = new URL("/auth/callback", env.HOST).toString();
 
-function authorizeUrl(params: Record<string, string>) {
-  const url = new URL(baseUrl + Routes.oauth2Authorization());
-  for (const entry of Object.entries(params)) url.searchParams.set(...entry);
+export function authorizeUrl(params: Record<string, string | boolean>) {
+  const url = new URL(OAuth2Routes.authorizationURL);
+  for (const [name, value] of Object.entries(params)) {
+    url.searchParams.set(name, String(value));
+  }
   return url;
 }
 
@@ -30,22 +35,13 @@ export function authorizeUserUrl(state: string) {
     client_id,
     redirect_uri,
     response_type: "code",
-    scope: "identify guilds guilds.members.read",
+    scope: `${OAuth2Scopes.Identify} ${OAuth2Scopes.Guilds} ${OAuth2Scopes.GuildsMembersRead}`,
     state,
   } satisfies RESTOAuth2AuthorizationQuery);
 }
 
-export function authorizeBotUrl() {
-  return authorizeUrl({
-    client_id,
-    redirect_uri,
-    response_type: "code",
-    scope: "bot guilds",
-  } satisfies RESTOAuth2AdvancedBotAuthorizationQuery);
-}
-
-async function oauth2Post(route: string, body: Record<string, string>) {
-  const response = await fetch(baseUrl + route, {
+export async function oauth2Post(route: string, body: Record<string, string>) {
+  const response = await fetch(route, {
     method: "POST",
     headers: {
       Authorization: `Basic ${basic}`,
@@ -67,7 +63,7 @@ async function oauth2Post(route: string, body: Record<string, string>) {
 export async function exchangeCode(
   code: string,
 ): Promise<RESTPostOAuth2AccessTokenResult> {
-  return oauth2Post(Routes.oauth2TokenExchange(), {
+  return oauth2Post(OAuth2Routes.tokenURL, {
     client_id,
     client_secret,
     grant_type: "authorization_code",
@@ -81,7 +77,7 @@ export async function exchangeCode(
 export async function refreshTokens(
   refresh_token: string,
 ): Promise<RESTPostOAuth2RefreshTokenResult> {
-  return oauth2Post(Routes.oauth2TokenExchange(), {
+  return oauth2Post(OAuth2Routes.tokenURL, {
     client_id,
     client_secret,
     grant_type: "refresh_token",
@@ -92,13 +88,13 @@ export async function refreshTokens(
 }
 
 export async function revokeToken(token: string) {
-  return oauth2Post(Routes.oauth2TokenRevocation(), { token }).catch((e) => {
+  return oauth2Post(OAuth2Routes.tokenRevocationURL, { token }).catch((e) => {
     throw OAuth2Error.fromError(e, "Failed to revoke token");
   });
 }
 
 async function oauth2Get<T>(route: string, accessToken: string): Promise<T> {
-  const response = await fetch(baseUrl + route, {
+  const response = await fetch(RouteBases.api + route, {
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-cache",
   });
@@ -129,7 +125,7 @@ export async function getCurrentUserGuildMember(
   guildId: string,
 ) {
   return oauth2Get<APIGuildMember>(
-    Routes.guildMember(guildId),
+    Routes.userGuildMember(guildId),
     accessToken,
   ).catch((e) => {
     throw OAuth2Error.fromError(e, "Failed to get current user guild member");

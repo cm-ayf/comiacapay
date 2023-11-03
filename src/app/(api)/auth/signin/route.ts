@@ -1,5 +1,6 @@
 import { base64url } from "jose";
 import { NextResponse } from "next/server";
+import { env } from "../../env";
 import { withCookies } from "../cookie";
 import { authorizeUserUrl } from "../oauth2";
 import { OAuth2Error } from "@/shared/error";
@@ -11,6 +12,6 @@ export async function GET() {
     return withCookies(NextResponse.redirect(url), { state });
   } catch (e) {
     const error = OAuth2Error.fromError(e);
-    return NextResponse.redirect(error.toRedirectURL());
+    return NextResponse.redirect(new URL(error.toRedirectURL(), env.HOST));
   }
 }

@@ -3,6 +3,7 @@ import {
   CDNRoutes,
   ImageFormat,
   PermissionFlagsBits,
+  RouteBases,
 } from "discord-api-types/v10";
 import type { APIUser, APIGuildMember } from "discord-api-types/v10";
 import {
@@ -59,22 +60,23 @@ function toUserUpsert(user: APIUser): Prisma.UserUpsertArgs {
 function userAvatar(user: APIUser) {
   if (user.avatar === null) return null;
   return (
-    "https://cdn.discordapp.com/" +
+    RouteBases.cdn +
     CDNRoutes.userAvatar(user.id, user.avatar, ImageFormat.WebP)
   );
 }
 
-function toMemberUpsert(
+export function toMemberUpsert(
   member: APIGuildMember,
   guild: Guild,
   admin: boolean,
 ): Prisma.MemberUpsertArgs {
+  console.log(member.roles);
   const ids = { userId: member.user!.id, guildId: guild.id };
   const { readRoleId, registerRoleId, writeRoleId } = guild;
   const permissions = {
-    read: !readRoleId || member.roles.includes(readRoleId),
-    register: !registerRoleId || member.roles.includes(registerRoleId),
-    write: !writeRoleId || member.roles.includes(writeRoleId),
+    read: hasPermission(member, guild.id, readRoleId),
+    register: hasPermission(member, guild.id, registerRoleId),
+    write: hasPermission(member, guild.id, writeRoleId),
     admin,
   } satisfies Prisma.MemberUpdateInput;
   return {
@@ -82,4 +84,12 @@ function toMemberUpsert(
     update: permissions,
     create: { ...ids, ...permissions },
   };
+}
+
+function hasPermission(
+  member: APIGuildMember,
+  guildId: string,
+  roleId: string | null,
+) {
+  return !roleId || roleId === guildId || member.roles.includes(roleId);
 }

@@ -34,7 +34,7 @@ export default function EventDialog({
         variant="standard"
       />
       <TextField
-        {...register("picture", { required: mode === "create" })}
+        {...register("picture", { required: false })}
         label="商品画像URL"
         type="url"
         variant="standard"

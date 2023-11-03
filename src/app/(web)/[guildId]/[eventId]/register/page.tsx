@@ -1,14 +1,14 @@
 "use client";
 
+import { useQuery } from "@apollo/client";
 import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
 import { useReducer } from "react";
 import Bottom from "./Bottom";
-import ItemPanel from "./ItemPanel";
+import RegisterItemPanel from "./RegisterItemPanel";
 import reducer from "./reducer";
-import Layout from "@/app/(web)/Layout";
+import Layout from "@/components/Layout";
 import { DBStateProvider } from "@/hooks/DBState";
-import { useEvent } from "@/hooks/swr";
 
 export const dynamic = "force-static";
 
@@ -17,7 +17,7 @@ export default function Register({
 }: {
   params: { eventcode: string };
 }) {
-  const { data: event } = useEvent({ eventcode });
+  const { data } = useQuery(GetEventDetailsQuery, { variables: { eventcode } });
   const [state, dispatch] = useReducer(reducer, {});
   const title = event ? event.name : eventcode;
 
@@ -36,7 +36,7 @@ export default function Register({
           <Grid container spacing={2}>
             {event.items.map((item) => (
               <Grid item xs={12} md={6} xl={4} key={item.code}>
-                <ItemPanel
+                <RegisterItemPanel
                   item={item}
                   record={state[item.code]}
                   dispatch={dispatch}

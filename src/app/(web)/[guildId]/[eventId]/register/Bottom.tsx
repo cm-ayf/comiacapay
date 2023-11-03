@@ -10,11 +10,10 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
 import type { Action, State } from "./reducer";
+import { useAlert } from "@/app/(web)/Alert";
 import { SyncButton } from "@/components/SyncButton";
-import { useAlert } from "@/hooks/Alert";
 import { useDBState } from "@/hooks/DBState";
 import { useIDBCreateReceipt } from "@/hooks/idb";
-import type { Event } from "@/types/event";
 
 export default function Bottom({
   event,

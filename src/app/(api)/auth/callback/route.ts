@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { env } from "../../env";
 import { withCookies } from "../cookie";
 import { encryptTokenSet, signSession } from "../jwt";
 import { exchangeCode } from "../oauth2";
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
   } catch (e) {
     const error = OAuth2Error.fromError(e);
     return withCookies(
-      NextResponse.redirect(error.toRedirectURL()),
+      NextResponse.redirect(new URL(error.toRedirectURL(), env.HOST)),
       error.code === "server_error" ? {} : { state: "" },
     );
   }

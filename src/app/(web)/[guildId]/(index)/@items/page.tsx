@@ -1,26 +1,32 @@
 "use client";
 
-import { useMutation } from "@apollo/client";
+import { useMutation, useSuspenseQuery } from "@apollo/client";
 import Add from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { GraphQLError } from "graphql";
+import { useParams } from "next/navigation";
 import { useState } from "react";
-import { useAlert } from "../../Alert";
-import { assertSuccess, isGraphQLErrorOf } from "../../Apollo";
+import { useAlert } from "../../../Alert";
+import { assertSuccess, isGraphQLErrorOf } from "../../../Apollo";
+import GetGuildQuery from "../GetGuild.graphql";
+import type { Params } from "../layout";
 import CreateItemMutation from "./CreateItem.graphql";
 import DeleteItemMutation from "./DeleteItem.graphql";
 import UpdateItemMutation from "./UpdateItem.graphql";
 import ItemCard from "@/components/ItemCard";
 import ItemDialog from "@/components/ItemDialog";
-import type { Item, Member } from "@/generated/resolvers";
+import type { Item } from "@/generated/resolvers";
 import type { CreateItem, UpdateItem } from "@/generated/schema";
 
-export default function Items({ data, me }: { data: Item[]; me: Member }) {
+export default function Items() {
+  const params = useParams<Params>();
+  const { data } = useSuspenseQuery(GetGuildQuery, { variables: params });
   const [open, setOpen] = useState(false);
   const [item, setItem] = useState<Item>();
+  const { me } = data.guild;
 
   return (
     <>
@@ -37,7 +43,7 @@ export default function Items({ data, me }: { data: Item[]; me: Member }) {
         </IconButton>
       </Box>
       <Grid container spacing={2}>
-        {data.map((item) => (
+        {data.guild.items.map((item) => (
           <Grid item key={item.id}>
             <ItemCard
               item={item}
@@ -47,18 +53,10 @@ export default function Items({ data, me }: { data: Item[]; me: Member }) {
         ))}
       </Grid>
       {me.write && (
-        <CreateItemDialog
-          open={open}
-          onClose={() => setOpen(false)}
-          guildId={me.guildId}
-        />
+        <CreateItemDialog open={open} onClose={() => setOpen(false)} />
       )}
-      {me.write && (
-        <MutateItemDialog
-          item={item}
-          onClose={() => setItem(undefined)}
-          guildId={me.guildId}
-        />
+      {me.write && item && (
+        <MutateItemDialog item={item} onClose={() => setItem(undefined)} />
       )}
     </>
   );
@@ -67,19 +65,20 @@ export default function Items({ data, me }: { data: Item[]; me: Member }) {
 function CreateItemDialog({
   open,
   onClose,
-  guildId,
 }: {
   open: boolean;
   onClose: () => void;
-  guildId: string;
 }) {
-  const [trigger, { loading }] = useMutation(CreateItemMutation);
+  const params = useParams<Params>();
+  const [trigger, { loading }] = useMutation(CreateItemMutation, {
+    refetchQueries: [{ query: GetGuildQuery, variables: params }],
+  });
   const { error, success } = useAlert();
 
   async function onSubmit(input: CreateItem) {
     try {
       await trigger({
-        variables: { guildId, input },
+        variables: { ...params, input },
       });
       success("商品を作成しました");
       onClose();
@@ -107,39 +106,43 @@ function CreateItemDialog({
 function MutateItemDialog({
   item,
   onClose,
-  guildId,
 }: {
-  item: Item | undefined;
+  item: Item;
   onClose: () => void;
-  guildId: string;
 }) {
-  const [triggerUpdate, { loading: isUpdating }] =
-    useMutation(UpdateItemMutation);
-  const [triggerDelete, { loading: isDeleting }] =
-    useMutation(DeleteItemMutation);
+  const params = useParams<Params>();
+  const [triggerUpdate, { loading: isUpdating }] = useMutation(
+    UpdateItemMutation,
+    {
+      refetchQueries: [{ query: GetGuildQuery, variables: params }],
+    },
+  );
+  const [triggerDelete, { loading: isDeleting }] = useMutation(
+    DeleteItemMutation,
+    {
+      refetchQueries: [{ query: GetGuildQuery, variables: params }],
+    },
+  );
   const { error, success } = useAlert();
 
-  async function onSubmit(input: UpdateItem) {
-    if (!item) return;
+  async function onUpdate(input: UpdateItem) {
     try {
       const result = await triggerUpdate({
-        variables: { guildId, id: item.id, input },
+        variables: { ...params, itemId: item.id, input },
       });
       assertSuccess(result);
       success("商品を更新しました");
       onClose();
     } catch (e) {
-      if (isGraphQLErrorOf(e, "CONFILCT")) error("商品コードが重複しています");
-      else error("商品の更新に失敗しました");
+      error("商品の更新に失敗しました");
       throw e;
     }
   }
 
   async function onDelete() {
-    if (!item) return;
     try {
       const result = await triggerDelete({
-        variables: { guildId, id: item.id },
+        variables: { ...params, itemId: item.id },
       });
       assertSuccess(result);
       success("商品を削除しました");
@@ -153,20 +156,18 @@ function MutateItemDialog({
   }
 
   return (
-    item && (
-      <ItemDialog
-        mode="update"
-        title="商品を編集"
-        open
-        onClose={onClose}
-        defaultValues={item}
-        loading={isUpdating || isDeleting}
-        onSubmit={onSubmit}
-        buttons={[
-          { submit: true, label: "更新" },
-          { label: "削除", color: "error", onClick: onDelete },
-        ]}
-      />
-    )
+    <ItemDialog
+      mode="update"
+      title="商品を編集"
+      open
+      onClose={onClose}
+      defaultValues={item}
+      loading={isUpdating || isDeleting}
+      onSubmit={onUpdate}
+      buttons={[
+        { submit: true, label: "更新" },
+        { label: "削除", color: "error", onClick: onDelete },
+      ]}
+    />
   );
 }

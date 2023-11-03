@@ -4,7 +4,7 @@ type Event {
   guild: Guild!
 
   name: String! @model
-  date: DateTime! @model
+  date: Date! @model
 
   discounts: [Discount!]! @model
   displays: [Display!]!
@@ -20,19 +20,14 @@ type Display {
 
 input CreateEvent {
   name: String!
-  date: DateTime!
+  date: Date!
 }
 
 input UpdateEvent {
   name: String
-  date: DateTime
+  date: Date
 }
 
-input CreateDisplay {
-  itemId: ID!
+input UpsertDisplay {
   price: Int!
-}
-
-input UpdateDisplay {
-  price: Int
 }

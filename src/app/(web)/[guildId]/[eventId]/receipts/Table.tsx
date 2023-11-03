@@ -9,8 +9,7 @@ import {
   useState,
 } from "react";
 import useReceiptExts, { ReceiptExt } from "./useReceiptExts";
-import { useAlert } from "@/hooks/Alert";
-import { useScopes } from "@/hooks/UserState";
+import { useAlert } from "@/app/(web)/Alert";
 import { useIDBDeleteReceipts } from "@/hooks/idb";
 import { useDeleteReceipts, useEvent } from "@/hooks/swr";
 

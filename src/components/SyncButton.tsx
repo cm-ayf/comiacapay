@@ -2,7 +2,7 @@ import CloudDone from "@mui/icons-material/CloudDone";
 import CloudUpload from "@mui/icons-material/CloudUpload";
 import LoadingButton, { type LoadingButtonProps } from "@mui/lab/LoadingButton";
 import { useCallback, useEffect, useMemo } from "react";
-import { useAlert } from "@/hooks/Alert";
+import { useAlert } from "@/app/(web)/Alert";
 import { useIDBReceipts } from "@/hooks/idb";
 import { useCreateReceipts, useReceipts } from "@/hooks/swr";
 import { Receipt } from "@/types/receipt";

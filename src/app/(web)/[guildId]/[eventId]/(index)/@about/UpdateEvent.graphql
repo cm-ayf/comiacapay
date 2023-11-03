@@ -1,0 +1,7 @@
+mutation UpdateEvent($guildId: ID!, $eventId: ID!, $input: UpdateEvent) {
+  updateEvent(guildId: $guildId, id: $eventId, input: $input) {
+    id
+    name
+    date
+  }
+}

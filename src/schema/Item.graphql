@@ -5,17 +5,17 @@ type Item {
 
   name: String! @model
   picture: String @model
-  issuedAt: DateTime! @model
+  issuedAt: Date! @model
 }
 
 input CreateItem {
   name: String!
   picture: String
-  issuedAt: DateTime!
+  issuedAt: Date!
 }
 
 input UpdateItem {
   name: String
   picture: String
-  issuedAt: DateTime
+  issuedAt: Date
 }

@@ -3,13 +3,12 @@ import CardMedia from "@mui/material/CardMedia";
 import type { MouseEventHandler } from "react";
 import BaseCard from "./BaseCard";
 import { DEFAULT_ITEM_PICTURE } from "@/constant";
-import type { Item } from "@/generated/resolvers";
 
 export default function ItemCard({
   item,
   onClick,
 }: {
-  item: Item;
+  item: { name: string; picture: string | null };
   onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
 }) {
   return (

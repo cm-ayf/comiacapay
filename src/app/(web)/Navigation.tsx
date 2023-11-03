@@ -1,3 +1,5 @@
+"use client";
+
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import CloudOff from "@mui/icons-material/CloudOff";
 import AppBar from "@mui/material/AppBar";
@@ -18,7 +20,7 @@ import { DOCS } from "@/constant";
 import type { User } from "@/generated/resolvers";
 
 export interface NavigationProps {
-  title?: string;
+  title?: string | undefined;
   back?: string;
   docs?: "register" | "receipts" | "index";
 }

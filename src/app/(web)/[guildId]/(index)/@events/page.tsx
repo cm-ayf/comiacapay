@@ -1,30 +1,28 @@
 "use client";
 
-import { useMutation } from "@apollo/client";
+import { useMutation, useSuspenseQuery } from "@apollo/client";
 import Add from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAlert } from "../../Alert";
-import { assertSuccess, isGraphQLErrorOf } from "../../Apollo";
+import { useAlert } from "../../../Alert";
+import { assertSuccess } from "../../../Apollo";
+import GetGuildQuery from "../GetGuild.graphql";
+import type { Params } from "../layout";
 import CreateEventMutation from "./CreateEvent.graphql";
 import EventCard from "@/components/EventCard";
 import EventDialog from "@/components/EventDialog";
-import type { Event, Member } from "@/generated/resolvers";
 import type { CreateEvent } from "@/generated/schema";
 
-export default function Events({
-  data,
-  me,
-}: {
-  data: Omit<Event, "discounts">[];
-  me: Member;
-}) {
+export default function Events() {
+  const params = useParams<Params>();
+  const { data } = useSuspenseQuery(GetGuildQuery, { variables: params });
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const { me } = data.guild;
 
   return (
     <>
@@ -41,21 +39,17 @@ export default function Events({
         </IconButton>
       </Box>
       <Grid container spacing={2}>
-        {data.map((event) => (
+        {data.guild.events.map((event) => (
           <Grid item key={event.id}>
             <EventCard
               event={event}
-              onClick={() => router.push(`./${event.id}`)}
+              onClick={() => router.push(`/${me.guildId}/${event.id}`)}
             />
           </Grid>
         ))}
       </Grid>
       {me.write && (
-        <CreateEventDialog
-          open={open}
-          onClose={() => setOpen(false)}
-          guildId={me.guildId}
-        />
+        <CreateEventDialog open={open} onClose={() => setOpen(false)} />
       )}
     </>
   );
@@ -64,27 +58,26 @@ export default function Events({
 function CreateEventDialog({
   open,
   onClose,
-  guildId,
 }: {
   open: boolean;
   onClose: () => void;
-  guildId: string;
 }) {
-  const [trigger, { loading }] = useMutation(CreateEventMutation);
+  const params = useParams<Params>();
+  const [trigger, { loading }] = useMutation(CreateEventMutation, {
+    refetchQueries: [{ query: GetGuildQuery, variables: params }],
+  });
   const router = useRouter();
   const { error } = useAlert();
 
   async function onSubmit(input: CreateEvent) {
     try {
       const result = await trigger({
-        variables: { guildId, input },
+        variables: { ...params, input },
       });
       assertSuccess(result);
-      router.push(`./${result.data.createEvent.id}`);
+      router.push(`/${params.guildId}/${result.data.createEvent.id}`);
     } catch (e) {
-      if (isGraphQLErrorOf(e, "CONFLICT"))
-        error("イベントコードが重複しています");
-      else error("イベントの作成に失敗しました");
+      error("イベントの作成に失敗しました");
       throw e;
     }
   }

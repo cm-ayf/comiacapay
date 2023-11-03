@@ -1,0 +1,3 @@
+mutation DeleteDisplay($guildId: ID!, $eventId: ID!, $itemId: ID!) {
+  deleteDisplay(guildId: $guildId, eventId: $eventId, itemId: $itemId)
+}

@@ -39,7 +39,7 @@ export const Mutation: Resolvers["Mutation"] = {
     context.assertsPermissions(["write"]);
     return context.prisma.item.create({
       data: {
-        ...input,
+        ...withoutUndefinedProps(input),
         id: generateSnowflake().toString(),
         guild: {
           connect: { id: context.member.guildId },
@@ -123,29 +123,24 @@ export const Mutation: Resolvers["Mutation"] = {
     });
     return id;
   },
-  async createDisplay(_, { eventId, input }, context) {
+  async upsertDisplay(_, { eventId, itemId, input }, context) {
     context.assertsPermissions(["write"]);
     const guildId = context.member.guildId;
-    return context.prisma.display.create({
-      data: {
+    return context.prisma.display.upsert({
+      where: {
+        eventId_itemId: { eventId, itemId: itemId },
+        event: { guildId },
+      },
+      create: {
         item: {
-          connect: { id: input.itemId, guildId },
+          connect: { id: itemId, guildId },
         },
         event: {
           connect: { id: eventId, guildId },
         },
-        price: input.price,
+        ...input,
       },
-    });
-  },
-  async updateDisplay(_, { eventId, itemId, input }, context) {
-    context.assertsPermissions(["read", "write"]);
-    return context.prisma.display.update({
-      where: {
-        eventId_itemId: { eventId, itemId },
-        event: { guildId: context.member.guildId },
-      },
-      data: withoutUndefinedProps(input, { price: true }),
+      update: input,
     });
   },
   async deleteDisplay(_, { eventId, itemId }, context) {

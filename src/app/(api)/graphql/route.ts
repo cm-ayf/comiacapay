@@ -45,7 +45,6 @@ declare global {
 function initApolloServer() {
   if (global._server) return global._server;
   const server = new ApolloServer<Context>({
-    logger: console,
     plugins: [Context.authPlugin],
     formatError,
     schema: mergeSchemas({
@@ -66,7 +65,6 @@ function formatError(
 ): Pick<GraphQLFormattedError, "message" | "extensions"> {
   const e = unwrapResolverError(error);
   if (e instanceof PrismaClientKnownRequestError) {
-    console.log(e);
     switch (e.code) {
       case "P2001": // record does not exist
       case "P2025": // no record found

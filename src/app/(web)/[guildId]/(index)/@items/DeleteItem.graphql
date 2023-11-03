@@ -1,0 +1,3 @@
+mutation DeleteItem($guildId: ID!, $itemId: ID!) {
+  deleteItem(guildId: $guildId, id: $itemId)
+}

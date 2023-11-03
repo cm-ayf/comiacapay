@@ -1,0 +1,34 @@
+query GetEventDetails($guildId: ID!, $eventId: ID!) {
+  event(guildId: $guildId, id: $eventId) {
+    id
+    name
+    date
+
+    displays {
+      price
+      item {
+        id
+        name
+        picture
+        issuedAt
+      }
+    }
+
+    guild {
+      name
+
+      me {
+        read
+        register
+        write
+      }
+
+      items {
+        id
+        name
+        picture
+        issuedAt
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import { GraphQLSchema } from "graphql";
-import { DateTimeResolver } from "graphql-scalars";
+import { DateTimeResolver, DateResolver } from "graphql-scalars";
 
 const schema = new GraphQLSchema({
-  types: [DateTimeResolver],
+  types: [DateTimeResolver, DateResolver],
 });
 export default schema;

@@ -1,24 +1,18 @@
-interface RecordSetCount {
-  type: "setCount";
-  itemcode: string;
-  count: number;
-}
-
-interface RecordSetDedication {
-  type: "setDedication";
-  itemcode: string;
-  dedication: boolean;
-}
-
 interface Reset {
   type: "reset";
 }
 
-export type Action = RecordSetCount | RecordSetDedication | Reset;
+interface Set extends Partial<RecordState> {
+  type: "set";
+  itemId: string;
+}
+
+export type Action = Set | Reset;
 
 export interface RecordState {
   count: number;
   dedication?: boolean;
+  internal?: boolean;
 }
 
 export type State = {
@@ -27,22 +21,15 @@ export type State = {
 
 export default function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case "setCount": {
-      const { itemcode, count } = action;
-      if (count > 0) {
-        const updated: RecordState = { ...state[itemcode], count };
-        return { ...state, [itemcode]: updated };
-      } else if (count === 0) {
-        const { [itemcode]: _, ...rest } = state;
+    case "set": {
+      const { type: _, itemId, ...rest } = action;
+      if (rest.count === 0) {
+        const { [itemId]: _, ...rest } = state;
         return rest;
       } else {
-        return state;
+        const updated: RecordState = { count: 1, ...state[itemId], ...rest };
+        return { ...state, [itemId]: updated };
       }
-    }
-    case "setDedication": {
-      const { itemcode, dedication } = action;
-      const updated: RecordState = { count: 1, ...state[itemcode], dedication };
-      return { ...state, [itemcode]: updated };
     }
     case "reset": {
       return {};

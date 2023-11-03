@@ -1,0 +1,5 @@
+mutation UpdateGuild($guildId: ID!, $input: UpdateGuild) {
+  updateGuild(guildId: $guildId, input: $input) {
+    id
+  }
+}

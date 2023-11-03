@@ -14,12 +14,11 @@ type Mutation {
     input: CreateSetDiscount!
   ): Discount!
   deleteDiscount(guildId: ID!, eventId: ID!, id: ID!): ID!
-  createDisplay(guildId: ID!, eventId: ID!, input: CreateDisplay!): Display!
-  updateDisplay(
+  upsertDisplay(
     guildId: ID!
     eventId: ID!
     itemId: ID!
-    input: UpdateDisplay
+    input: UpsertDisplay!
   ): Display!
   deleteDisplay(guildId: ID!, eventId: ID!, itemId: ID!): ID!
 

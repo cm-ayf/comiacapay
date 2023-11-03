@@ -63,7 +63,6 @@ export class OAuth2Error extends Error {
     const error = {
       invalid_request: "invalid_request",
       invalid_credentials: "invalid_grant",
-      unknown_guild: "invalid_grant",
       server_error: undefined,
     }[this.code];
     return {
@@ -77,7 +76,6 @@ export class OAuth2Error extends Error {
     const error = {
       invalid_request: "invalid_request",
       invalid_credentials: "access_denied",
-      unknown_guild: "access_denied",
       server_error: "server_error",
     }[this.code];
     const searchParams = new URLSearchParams({
