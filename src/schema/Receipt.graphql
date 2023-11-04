@@ -1,7 +1,5 @@
 type Receipt {
   id: ID! @model
-
-  createdAt: DateTime! @model
   total: Int! @model
 
   records: [Record!]!
@@ -11,7 +9,6 @@ type Record {
   item: Item!
   itemId: String! @model
 
-  index: Int! @model
   count: Int! @model
   internal: Boolean! @model
   dedication: Boolean! @model
@@ -19,8 +16,6 @@ type Record {
 
 input CreateReceipt {
   id: ID!
-
-  createdAt: DateTime!
   total: Int!
 
   records: [CreateRecord!]!

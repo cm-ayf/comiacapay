@@ -1,10 +1,8 @@
 "use client";
 
 import { useQuery } from "@apollo/client";
-import CircularProgress from "@mui/material/CircularProgress";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { useParams } from "next/navigation";
-import { Suspense, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import GetGuildQuery from "./GetGuild.graphql";
 import Navigation from "@/app/(web)/Navigation";
 import Layout from "@/components/Layout";
@@ -26,16 +24,8 @@ export default function Home({
 
   return (
     <Layout navigation={<Navigation title={data?.guild.name} back="/" />}>
-      <ErrorBoundary errorComponent={ErrorComponent}>
-        <Suspense fallback={<CircularProgress />}>
-          {events}
-          {items}
-        </Suspense>
-      </ErrorBoundary>
+      {events}
+      {items}
     </Layout>
   );
-}
-
-function ErrorComponent({ error }: { error: Error }) {
-  return JSON.stringify(error);
 }

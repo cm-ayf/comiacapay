@@ -4,7 +4,7 @@ import Tab from "@mui/material/Tab";
 import MuiTabs from "@mui/material/Tabs";
 import ReloadButton from "./ReloadButton";
 import { DeleteButton } from "./Table";
-import { SyncButton } from "@/components/SyncButton";
+import { SyncButton } from "@/app/(web)/[guildId]/[eventId]/SyncButton";
 
 export default function Top({
   eventcode,

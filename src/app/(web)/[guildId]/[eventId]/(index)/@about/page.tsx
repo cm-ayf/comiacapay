@@ -5,8 +5,8 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import type { Params } from "../../params";
 import GetEventDetailsQuery from "../GetEventDetails.graphql";
-import type { Params } from "../layout";
 import DeleteEventMutation from "./DeleteEvent.graphql";
 import UpdateEventMutation from "./UpdateEvent.graphql";
 import { useAlert } from "@/app/(web)/Alert";
@@ -67,13 +67,13 @@ function UpdateEventDialog({
   const { data } = useSuspenseQuery(GetEventDetailsQuery, {
     variables: params,
   });
-  const [triggerUpdate, { loading: isUpdating }] = useMutation(
+  const [triggerUpdate, { loading: updating }] = useMutation(
     UpdateEventMutation,
     {
       refetchQueries: [{ query: GetEventDetailsQuery, variables: params }],
     },
   );
-  const [triggerDelete, { loading: isDeleting }] = useMutation(
+  const [triggerDelete, { loading: deleting }] = useMutation(
     DeleteEventMutation,
     {
       refetchQueries: [{ query: GetEventDetailsQuery, variables: params }],
@@ -117,7 +117,7 @@ function UpdateEventDialog({
       open={open}
       onClose={onClose}
       onSubmit={onUpdate}
-      loading={isUpdating || isDeleting}
+      loading={updating || deleting}
       buttons={[
         { submit: true, label: "更新" },
         { label: "削除", color: "error", onClick: onDelete },

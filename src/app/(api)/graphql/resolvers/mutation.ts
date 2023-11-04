@@ -160,14 +160,19 @@ export const Mutation: Resolvers["Mutation"] = {
     await context.prisma.event.findUniqueOrThrow({
       where: { id: eventId, guildId: context.member.guildId },
     });
-    const { count } = await context.prisma.receipt.createMany({
+    await context.prisma.receipt.createMany({
       data: input.map((receipt) => ({
         ...receipt,
         userId: context.session.sub,
         eventId,
       })),
+      skipDuplicates: true,
     });
-    return count;
+    return context.prisma.receipt.findMany({
+      where: {
+        id: { in: input.map((receipt) => receipt.id) },
+      },
+    });
   },
   async deleteReceipts(_, { eventId, ids }, context) {
     context.assertsPermissions(["write"]);

@@ -8,7 +8,7 @@ import Summary from "./Summary";
 import Table, { SelectedProvider } from "./Table";
 import Top from "./Top";
 import Layout from "@/app/(web)/Layout";
-import { DBStateProvider } from "@/hooks/DBState";
+import { DBStateProvider } from "@/app/(web)/[guildId]/[eventId]/idb";
 import { useTitle } from "@/hooks/swr";
 
 export const dynamic = "force-static";

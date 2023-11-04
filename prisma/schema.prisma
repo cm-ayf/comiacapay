@@ -111,8 +111,7 @@ model Receipt {
   user    User   @relation(fields: [userId], references: [id])
   userId  String @map("user_id") @db.Char(20)
 
-  createdAt DateTime
-  total     Int
+  total Int
 
   records Record[]
 
@@ -127,12 +126,11 @@ model Record {
   eventId   String  @map("event_id") @db.Char(20)
   itemId    String  @map("item_id") @db.Char(20)
 
-  index      Int
   count      Int
   internal   Boolean
   dedication Boolean
 
-  @@id([receiptId, index])
+  @@id([receiptId, itemId])
   @@index([receiptId])
   @@index([eventId, itemId])
 }

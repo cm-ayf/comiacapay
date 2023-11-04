@@ -1,31 +1,62 @@
+"use client";
+
+import { useSuspenseQuery } from "@apollo/client";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { useCallback } from "react";
-import type { Action, RecordState } from "./reducer";
+import { useParams } from "next/navigation";
+import { use } from "react";
+import type { Params } from "../../params";
+import GetEventRegisterQuery from "../GetEventRegister.graphql";
+import { Register } from "../Register";
+import type { RecordState } from "../Register";
 import ItemPanel from "@/components/ItemPanel";
 
-export default function RegisterItemPanel({
-  item,
-  record,
-  dispatch,
-}: {
-  item: { id: string; name: string; picture: string | null };
-  record: RecordState | undefined;
-  dispatch: React.Dispatch<Action>;
-}) {
-  const set = useCallback(
-    <K extends keyof RecordState>(type: K) =>
-      (value: Required<RecordState>[K]) =>
-        dispatch({ type: "set", itemId: item.id, [type]: value }),
-    [dispatch, item.id],
-  );
+export default function RegisterDisplay() {
+  const [state, dispatch] = use(Register);
+  const params = useParams<Params>();
+  const { data } = useSuspenseQuery(GetEventRegisterQuery, {
+    fetchPolicy: "cache-first",
+    variables: params,
+  });
 
   return (
-    <ItemPanel item={item}>
+    <Grid container spacing={2}>
+      {data.event.displays.map((display) => (
+        <Grid item xs={12} md={6} xl={4} key={display.item.id}>
+          <RegisterItemPanel
+            display={display}
+            record={state[display.item.id]}
+            set={(key) => (value) =>
+              dispatch({ type: "set", itemId: display.item.id, [key]: value })
+            }
+          />
+        </Grid>
+      ))}
+    </Grid>
+  );
+}
+
+function RegisterItemPanel({
+  display,
+  record,
+  set,
+}: {
+  display: {
+    item: { name: string; picture: string | null };
+    price: number;
+  };
+  record: RecordState | undefined;
+  set: <K extends keyof RecordState>(
+    type: K,
+  ) => (value: Required<RecordState>[K]) => void;
+}) {
+  return (
+    <ItemPanel item={display.item}>
       <FlagsCheck
         dedication={record?.dedication ?? false}
         internal={record?.internal ?? false}

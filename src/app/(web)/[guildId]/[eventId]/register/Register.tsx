@@ -1,3 +1,10 @@
+import {
+  createContext,
+  useReducer,
+  type Dispatch,
+  type PropsWithChildren,
+} from "react";
+
 interface Reset {
   type: "reset";
 }
@@ -19,7 +26,7 @@ export type State = {
   [itemcode: string]: RecordState;
 };
 
-export default function reducer(state: State, action: Action): State {
+function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "set": {
       const { type: _, itemId, ...rest } = action;
@@ -35,4 +42,17 @@ export default function reducer(state: State, action: Action): State {
       return {};
     }
   }
+}
+
+export const Register = createContext<[State, Dispatch<Action>]>([
+  {},
+  () => {},
+]);
+
+export function RegisterProvider({ children }: PropsWithChildren) {
+  return (
+    <Register.Provider value={useReducer(reducer, {})}>
+      {children}
+    </Register.Provider>
+  );
 }

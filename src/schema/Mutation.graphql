@@ -22,6 +22,10 @@ type Mutation {
   ): Display!
   deleteDisplay(guildId: ID!, eventId: ID!, itemId: ID!): ID!
 
-  createReceipts(guildId: ID!, eventId: ID!, input: [CreateReceipt!]!): Int!
+  createReceipts(
+    guildId: ID!
+    eventId: ID!
+    input: [CreateReceipt!]!
+  ): [Receipt!]!
   deleteReceipts(guildId: ID!, eventId: ID!, ids: [ID!]!): Int!
 }

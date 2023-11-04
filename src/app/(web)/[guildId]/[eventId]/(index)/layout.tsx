@@ -3,17 +3,12 @@
 import { useQuery } from "@apollo/client";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Suspense, type ReactNode } from "react";
+import type { Params } from "../params";
 import GetEventDetailsQuery from "./GetEventDetails.graphql";
 import Navigation from "@/app/(web)/Navigation";
 import Layout from "@/components/Layout";
 
 export const dynamic = "force-static";
-
-export interface Params {
-  guildId: string;
-  eventId: string;
-  [dynamic: string]: string;
-}
 
 export default function Event({
   params,

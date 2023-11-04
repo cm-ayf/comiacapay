@@ -78,8 +78,8 @@ export function useUserState() {
   return state;
 }
 
-export function useWaitUntilAuthorized() {
-  return () => controller.waitUntilAuthorized();
+export function waitUntilAuthorized() {
+  return controller.waitUntilAuthorized();
 }
 
 function isSessionError({ networkError }: ApolloError) {

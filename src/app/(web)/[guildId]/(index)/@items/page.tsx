@@ -111,13 +111,13 @@ function MutateItemDialog({
   onClose: () => void;
 }) {
   const params = useParams<Params>();
-  const [triggerUpdate, { loading: isUpdating }] = useMutation(
+  const [triggerUpdate, { loading: updating }] = useMutation(
     UpdateItemMutation,
     {
       refetchQueries: [{ query: GetGuildQuery, variables: params }],
     },
   );
-  const [triggerDelete, { loading: isDeleting }] = useMutation(
+  const [triggerDelete, { loading: deleting }] = useMutation(
     DeleteItemMutation,
     {
       refetchQueries: [{ query: GetGuildQuery, variables: params }],
@@ -162,7 +162,7 @@ function MutateItemDialog({
       open
       onClose={onClose}
       defaultValues={item}
-      loading={isUpdating || isDeleting}
+      loading={updating || deleting}
       onSubmit={onUpdate}
       buttons={[
         { submit: true, label: "更新" },

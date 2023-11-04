@@ -70,7 +70,6 @@ export function toMemberUpsert(
   guild: Guild,
   admin: boolean,
 ): Prisma.MemberUpsertArgs {
-  console.log(member.roles);
   const ids = { userId: member.user!.id, guildId: guild.id };
   const { readRoleId, registerRoleId, writeRoleId } = guild;
   const permissions = {
