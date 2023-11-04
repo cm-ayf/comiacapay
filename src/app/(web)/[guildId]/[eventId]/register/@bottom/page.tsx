@@ -8,13 +8,15 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { useParams } from "next/navigation";
-import { Suspense, use, useCallback } from "react";
+import { use, useCallback } from "react";
+import { Suspense } from "react";
 import { PushButton } from "../../PushButton";
 import { useCreateReceipt } from "../../idb";
 import type { Params } from "../../params";
 import GetEventRegisterQuery from "../GetEventRegister.graphql";
 import { Register, type State } from "../Register";
 import { useAlert } from "@/app/(web)/Alert";
+import ErrorComponent from "@/components/ErrorComponent";
 import { generateSnowflake } from "@/shared/snowflake";
 
 export default function Bottom() {
@@ -29,7 +31,7 @@ export default function Bottom() {
         px: 2,
       }}
     >
-      <ErrorBoundary errorComponent={() => null}>
+      <ErrorBoundary errorComponent={ErrorComponent}>
         <Suspense fallback={<LinearProgress />}>
           <PushButton size="large" />
           <Box sx={{ flex: 1 }} />

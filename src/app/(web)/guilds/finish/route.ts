@@ -10,12 +10,12 @@ export async function GET(request: NextRequest) {
     if (!guildId) {
       throw new OAuth2Error("invalid_request", "missing guild_id");
     }
-    const tokenSet = request.nextUrl.searchParams.get("token_set");
+    const tokenSet = request.cookies.get("token_set");
     if (!tokenSet) {
       throw new OAuth2Error("invalid_request", "missing token_set");
     }
 
-    const decryptedTokenSet = await decryptTokenSet(tokenSet);
+    const decryptedTokenSet = await decryptTokenSet(tokenSet.value);
     await upsertMember(decryptedTokenSet, guildId);
 
     return NextResponse.redirect(new URL(`/${guildId}`, env.HOST));

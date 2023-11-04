@@ -3,6 +3,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { Suspense, type PropsWithChildren, type ReactNode } from "react";
+import ErrorComponent from "./ErrorComponent";
 
 export interface LayoutProps {
   navigation: ReactNode;
@@ -37,8 +38,4 @@ export default function Layout({
       {bottom && <Box flex={0}>{bottom}</Box>}
     </Box>
   );
-}
-
-function ErrorComponent({ error }: { error: Error }) {
-  return JSON.stringify(error);
 }

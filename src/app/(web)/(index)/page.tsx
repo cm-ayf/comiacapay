@@ -1,5 +1,3 @@
-"use client";
-
 import Navigation from "../Navigation";
 import Layout from "@/components/Layout";
 

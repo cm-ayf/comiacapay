@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery } from "@apollo/client";
-import { useParams } from "next/navigation";
 import type { ReactNode } from "react";
 import GetGuildQuery from "./GetGuild.graphql";
 import Navigation from "@/app/(web)/Navigation";
@@ -13,13 +12,14 @@ export interface Params {
 }
 
 export default function Home({
+  params,
   events,
   items,
 }: {
+  params: Params;
   events: ReactNode;
   items: ReactNode;
 }) {
-  const params = useParams<Params>();
   const { data } = useQuery(GetGuildQuery, { variables: params });
 
   return (
