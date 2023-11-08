@@ -17,10 +17,16 @@ import { assertSuccess } from "../../Apollo";
 import UpdateGuildMutation from "./UpdateGuild.graphql";
 import type { UpdateGuild } from "@/generated/schema";
 
-export default function RolesSelect({ guild }: { guild: APIGuild }) {
+export default function RolesSelect({
+  guild,
+  defaultValues,
+}: {
+  guild: APIGuild;
+  defaultValues: UpdateGuild;
+}) {
   const { success, error } = useAlert();
   const router = useRouter();
-  const { control, handleSubmit } = useForm<UpdateGuild>();
+  const { control, handleSubmit } = useForm<UpdateGuild>({ defaultValues });
 
   const [trigger, { loading }] = useMutation(UpdateGuildMutation);
 

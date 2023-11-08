@@ -14,14 +14,14 @@ export default async function Roles({
   searchParams: RESTOAuth2AdvancedBotAuthorizationQueryResult;
 }) {
   const tokenResult = await exchangeCode(code);
-  await upsertGuildAndMember(tokenResult);
+  const guild = await upsertGuildAndMember(tokenResult);
 
   return (
     <Layout navigation={<Navigation title="サーバー設定" />}>
       <Typography variant="h3" sx={{ fontSize: "medium" }}>
         {tokenResult.guild.name}の設定
       </Typography>
-      <RolesSelect guild={tokenResult.guild} />
+      <RolesSelect guild={tokenResult.guild} defaultValues={guild} />
     </Layout>
   );
 }
