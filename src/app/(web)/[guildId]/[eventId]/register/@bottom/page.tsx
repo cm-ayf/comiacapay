@@ -19,12 +19,15 @@ import { useAlert } from "@/app/(web)/Alert";
 import ErrorComponent from "@/components/ErrorComponent";
 import { generateSnowflake } from "@/shared/snowflake";
 
+export const dynamic = "force-static";
+
 export default function Bottom() {
   return (
     <Paper
       variant="outlined"
       square
       sx={{
+        height: 80,
         display: "flex",
         flexDirection: "row",
         alignItems: "center",

@@ -29,9 +29,9 @@ export default function Displays() {
   const { data } = useSuspenseQuery(GetEventDetailsQuery, {
     variables: params,
   });
-  const [creating, setCreating] = useState<PartialDisplay["item"]>();
-  const displays: PartialDisplay[] = creating
-    ? [...data.event.displays, { item: creating }]
+  const [item, setItem] = useState<PartialDisplay["item"]>();
+  const displays: PartialDisplay[] = item
+    ? [...data.event.displays, { item }]
     : data.event.displays;
 
   return (
@@ -39,39 +39,44 @@ export default function Displays() {
       <Typography variant="h2" sx={{ fontSize: "2em" }}>
         お品書き
       </Typography>
-      <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 2,
+          mb: 2,
+        }}
+      >
         {displays.map((display) => (
           <ItemPanel item={display.item} key={display.item.id}>
             <DisplayInner
+              me={data.event.guild.me}
               display={display}
-              onCreate={() => setCreating(undefined)}
+              onCreate={() => setItem(undefined)}
             />
           </ItemPanel>
         ))}
       </Box>
-      <Select value={creating?.id ?? ""}>
-        {data.event.guild.items
-          .filter(
+      {data.event.guild.me.write && (
+        <AddDisplaySelect
+          items={data.event.guild.items.filter(
             ({ id }) => !data.event.displays.some(({ item }) => item.id === id),
-          )
-          .map((item) => (
-            <MenuItem
-              key={item.id}
-              value={item.id}
-              onClick={() => setCreating(item)}
-            >
-              {item.name}
-            </MenuItem>
-          ))}
-      </Select>
+          )}
+          item={item}
+          setItem={setItem}
+        />
+      )}
     </>
   );
 }
 
 function DisplayInner({
+  me,
   display,
   onCreate,
 }: {
+  me: { write: boolean };
   display: {
     item: { id: string };
     price?: number;
@@ -89,7 +94,7 @@ function DisplayInner({
       }}
     />
   ) : (
-    <ViewDisplay display={display} onOpen={() => setOpen(true)} />
+    <ViewDisplay display={display} onOpen={() => setOpen(true)} me={me} />
   );
 }
 
@@ -129,7 +134,14 @@ function UpsertDisplay({
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 1,
+      }}
+    >
       <TextField
         label="価格"
         type="number"
@@ -139,6 +151,7 @@ function UpsertDisplay({
         InputProps={{
           startAdornment: <InputAdornment position="start">¥</InputAdornment>,
         }}
+        sx={{ width: "8em" }}
       />
       <Button onClick={onClose}>キャンセル</Button>
       <LoadingButton
@@ -154,9 +167,11 @@ function UpsertDisplay({
 }
 
 function ViewDisplay({
+  me,
   display,
   onOpen,
 }: {
+  me: { write: boolean };
   display: {
     item: { id: string };
     price?: number;
@@ -182,17 +197,47 @@ function ViewDisplay({
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 1,
+      }}
+    >
       <Typography fontSize="1.5em">¥{display.price}</Typography>
-      <Button onClick={onOpen}>編集</Button>
+      <Button variant="outlined" onClick={onOpen} disabled={!me.write}>
+        編集
+      </Button>
       <LoadingButton
+        variant="outlined"
         loading={loading}
-        variant="contained"
         color="error"
         onClick={onClick}
+        disabled={!me.write}
       >
         削除
       </LoadingButton>
     </Box>
+  );
+}
+
+function AddDisplaySelect({
+  items,
+  item,
+  setItem,
+}: {
+  items: PartialDisplay["item"][];
+  item?: PartialDisplay["item"] | undefined;
+  setItem: (item: PartialDisplay["item"]) => void;
+}) {
+  return (
+    <Select value={item?.id ?? ""} label="追加">
+      {items.map((item) => (
+        <MenuItem key={item.id} value={item.id} onClick={() => setItem(item)}>
+          {item.name}
+        </MenuItem>
+      ))}
+    </Select>
   );
 }

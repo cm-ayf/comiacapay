@@ -16,6 +16,8 @@ import { Register } from "../Register";
 import type { RecordState } from "../Register";
 import ItemPanel from "@/components/ItemPanel";
 
+export const dynamic = "force-static";
+
 export default function RegisterDisplay() {
   const [state, dispatch] = use(Register);
   const params = useParams<Params>();

@@ -10,7 +10,7 @@ import { GraphQLError } from "graphql";
 import type { PropsWithChildren } from "react";
 
 const client = new ApolloClient({
-  uri: "/graphql",
+  uri: new URL("/graphql", location.href).toString(),
   cache: new InMemoryCache(),
 });
 

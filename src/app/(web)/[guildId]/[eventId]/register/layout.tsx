@@ -8,6 +8,8 @@ import { RegisterProvider } from "./Register";
 import Navigation from "@/app/(web)/Navigation";
 import Layout from "@/components/Layout";
 
+export const dynamic = "force-static";
+
 export default function Register({
   params,
   display,
