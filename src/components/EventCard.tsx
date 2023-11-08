@@ -2,13 +2,13 @@ import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
 import type { MouseEventHandler } from "react";
 import BaseCard from "./BaseCard";
-import type { Event } from "@/generated/resolvers";
+import type { Date } from "@/generated/schema";
 
 export default function EventCard({
   event,
   onClick,
 }: {
-  event: Omit<Event, "discounts">;
+  event: { name: string; date: Date };
   onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
 }) {
   return (

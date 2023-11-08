@@ -1,6 +1,6 @@
 schema:
   - ./src/schema/*.graphql
-  - ./src/schema/scalar.mjs
+  - ./src/schema/scalar.ts
 documents: ./src/app/**/*.graphql
 extensions:
   nitrogql:

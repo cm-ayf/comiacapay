@@ -17,7 +17,6 @@ import { useRouter } from "next/navigation";
 import { type PropsWithChildren, useEffect, useRef, useState } from "react";
 import { useUserState } from "./UserState";
 import { DOCS } from "@/constant";
-import type { User } from "@/generated/resolvers";
 
 export interface NavigationProps {
   title?: string | undefined;
@@ -81,7 +80,13 @@ function MenuButton({ onClick }: { onClick: () => void }) {
   }
 }
 
-function UserButton({ user, onClick }: { user: User; onClick: () => void }) {
+function UserButton({
+  user,
+  onClick,
+}: {
+  user: { name: string | null; username: string; picture: string | null };
+  onClick: () => void;
+}) {
   const { name, username, picture } = user;
   return (
     <Button
