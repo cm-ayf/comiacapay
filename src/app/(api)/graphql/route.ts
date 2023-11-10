@@ -8,7 +8,7 @@ import { GraphQLError, type GraphQLFormattedError } from "graphql";
 import { Context } from "./context";
 import { resolvers } from "./resolvers";
 import { schema as typeDefs } from "@/generated/graphql";
-import schema from "@/schema/scalar.js";
+import schema from "@/schema/scalar";
 
 export { handler as POST, handler as GET };
 async function handler(request: Request) {
@@ -31,6 +31,10 @@ async function handler(request: Request) {
     httpGraphQLRequest,
     context: Context.init,
   });
+
+  if (response.status === 401) {
+    console.log(request.headers.get("Cookie"));
+  }
 
   return new Response(toBodyInit(response.body), {
     status: response.status!,

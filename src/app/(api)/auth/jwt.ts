@@ -33,8 +33,8 @@ export async function signSession(sub: string) {
   return await new SignJWT({})
     .setProtectedHeader({ alg: jwsAlg })
     .setIssuedAt()
-    .setIssuer(env.HOST)
-    .setAudience(env.HOST)
+    .setIssuer(env.NEXT_PUBLIC_HOST)
+    .setAudience(env.NEXT_PUBLIC_HOST)
     .setExpirationTime("2h")
     .setSubject(sub)
     .setJti(crypto.randomUUID())
@@ -52,8 +52,8 @@ export async function encryptTokenSet(tokenSet: TokenSet) {
   return await new EncryptJWT({ ...tokenSet })
     .setProtectedHeader({ alg: jweAlg, enc: "A256GCM" })
     .setIssuedAt()
-    .setIssuer(env.HOST)
-    .setAudience(env.HOST)
+    .setIssuer(env.NEXT_PUBLIC_HOST)
+    .setAudience(env.NEXT_PUBLIC_HOST)
     .setExpirationTime(`${tokenSet.expires_in}s`)
     .encrypt(encryptKey);
 }

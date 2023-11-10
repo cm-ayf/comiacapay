@@ -5,13 +5,22 @@ import {
   ApolloProvider,
   InMemoryCache,
   type FetchResult,
+  createHttpLink,
 } from "@apollo/client";
 import { GraphQLError } from "graphql";
 import type { PropsWithChildren } from "react";
 
+const link = createHttpLink({
+  uri: new URL("/graphql", process.env["NEXT_PUBLIC_HOST"]).toString(),
+  fetchOptions: {
+    credentials: "include",
+  },
+});
+
 const client = new ApolloClient({
-  uri: new URL("/graphql", location.href).toString(),
+  link,
   cache: new InMemoryCache(),
+  ssrMode: typeof window === "undefined",
 });
 
 function Apollo({ children }: PropsWithChildren) {

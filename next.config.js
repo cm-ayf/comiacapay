@@ -17,6 +17,9 @@ module.exports = nextPWA({
     ...nextPWACache,
   ],
 })({
+  experimental: {
+    ppr: true,
+  },
   reactStrictMode: true,
   webpack(config) {
     config.module.rules.push({

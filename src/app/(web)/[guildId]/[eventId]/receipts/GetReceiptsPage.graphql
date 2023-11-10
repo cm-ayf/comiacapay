@@ -1,0 +1,22 @@
+query GetReceipts($guildId: ID!, $eventId: ID!) {
+  event(guildId: $guildId, id: $eventId) {
+    id
+    name
+
+    guild {
+      id
+      name
+
+      me {
+        register
+      }
+    }
+
+    displays {
+      item {
+        id
+        name
+      }
+    }
+  }
+}

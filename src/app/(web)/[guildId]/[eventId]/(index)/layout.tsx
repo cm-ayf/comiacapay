@@ -1,8 +1,7 @@
 "use client";
 
 import { useQuery } from "@apollo/client";
-import CircularProgress from "@mui/material/CircularProgress";
-import { Suspense, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { Params } from "../params";
 import GetEventDetailsQuery from "./GetEventDetails.graphql";
 import Navigation from "@/app/(web)/Navigation";
@@ -27,11 +26,9 @@ export default function Event({
     <Layout
       navigation={<Navigation title={title} back={`/${params.guildId}`} />}
     >
-      <Suspense fallback={<CircularProgress />}>
-        {about}
-        {/* {discounts} */}
-        {displays}
-      </Suspense>
+      {about}
+      {/* {discounts} */}
+      {displays}
     </Layout>
   );
 }

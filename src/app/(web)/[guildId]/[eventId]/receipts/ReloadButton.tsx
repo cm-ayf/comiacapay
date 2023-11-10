@@ -1,17 +1,16 @@
-import LoadingButton, { LoadingButtonProps } from "@mui/lab/LoadingButton";
-import useReceiptExts from "./useReceiptExts";
+"use client";
 
-interface ReloadButtonProps extends LoadingButtonProps {
-  eventcode: string;
-}
+import LoadingButton from "@mui/lab/LoadingButton";
+import useReceiptsMerged from "./useReceiptsMerged";
 
-export default function ReloadButton({
-  eventcode,
-  ...props
-}: ReloadButtonProps) {
-  const { reload, isReloading } = useReceiptExts(eventcode);
+export default function ReloadButton() {
+  const { refetch, loading } = useReceiptsMerged();
   return (
-    <LoadingButton {...props} loading={isReloading} onClick={reload}>
+    <LoadingButton
+      variant="contained"
+      loading={loading}
+      onClick={() => refetch()}
+    >
       更新
     </LoadingButton>
   );

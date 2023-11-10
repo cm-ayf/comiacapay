@@ -1,18 +1,27 @@
 "use client";
 
 import { type DBSchema, type IDBPDatabase, openDB } from "idb";
-import { use, useCallback, useState } from "react";
+import { useParams } from "next/navigation";
+import {
+  use,
+  useCallback,
+  useState,
+  type ReactNode,
+  createContext,
+  useEffect,
+} from "react";
+import type { Params } from "../params";
 import type { CreateReceipt } from "@/generated/schema";
 
-interface DBReceipt extends CreateReceipt {
+interface IDBReceipt extends CreateReceipt {
   eventId: string;
-  pushed?: boolean;
+  pushed: boolean;
 }
 
 interface DB extends DBSchema {
   Receipt: {
     key: string;
-    value: DBReceipt;
+    value: IDBReceipt;
     indexes: {
       eventId: string;
     };
@@ -21,7 +30,7 @@ interface DB extends DBSchema {
 
 export type IDB = IDBPDatabase<DB>;
 
-type Migration = (db: IDBPDatabase<DB>) => void;
+type Migration = (idb: IDB) => void;
 
 const migrations: Migration[] = [
   (db) => {
@@ -33,34 +42,54 @@ const migrations: Migration[] = [
   },
 ];
 
-function upgrade(db: IDB, oldVersion: number, newVersion: number | null) {
+function upgrade(idb: IDB, oldVersion: number, newVersion: number | null) {
   if (newVersion) {
     migrations
       .slice(oldVersion, newVersion)
-      .forEach((migration) => migration(db));
+      .forEach((migration) => migration(idb));
   }
 }
 
-const db = openDB<DB>("comiacapay", migrations.length, { upgrade });
+const IDBContext = createContext<IDB>(null!);
 
-function useDB() {
-  return use(db);
+let idb: Promise<IDB>;
+function init() {
+  return (idb ??= openDB<DB>("comiacapay", 1, { upgrade }));
 }
 
-const cache = new Map<string, Promise<DBReceipt[]>>();
+export default function IDBProvider({ children }: { children: ReactNode }) {
+  return (
+    <IDBContext.Provider value={use(init())}>{children}</IDBContext.Provider>
+  );
+}
 
-function fetchReceipts(db: IDBPDatabase<DB>, eventId: string) {
+const cache = new Map<string, Promise<IDBReceipt[]>>();
+
+function fetchReceipts(idb: IDB, eventId: string) {
   const existing = cache.get(eventId);
   if (existing) return existing;
 
-  const fetching = db.getAllFromIndex("Receipt", "eventId", eventId);
+  const fetching = idb.getAllFromIndex("Receipt", "eventId", eventId);
   cache.set(eventId, fetching);
   return fetching;
 }
 
-export function useReceipts({ eventId }: { eventId: string }) {
-  const db = useDB();
-  return use(fetchReceipts(db, eventId));
+export function useReceipts() {
+  const { eventId } = useParams<Params>();
+  const idb = use(IDBContext);
+
+  const [loading, setLoading] = useState(true);
+  const [receipts, setReceipts] = useState<IDBReceipt[]>();
+  const [error, setError] = useState<Error>();
+
+  useEffect(() => {
+    fetchReceipts(idb, eventId)
+      .then(setReceipts)
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, [idb, eventId]);
+
+  return { loading, receipts, error };
 }
 
 type MutationTuple<Args extends unknown[]> = [
@@ -73,16 +102,16 @@ export function useCreateReceipt({
 }: {
   eventId: string;
 }): MutationTuple<[receipt: CreateReceipt]> {
-  const db = useDB();
+  const idb = use(IDBContext);
   const [loading, setLoading] = useState(false);
   const trigger = useCallback(
     async (receipt: CreateReceipt) => {
       setLoading(true);
-      await db.add("Receipt", { eventId, ...receipt });
+      await idb.add("Receipt", { eventId, ...receipt, pushed: false });
       setLoading(false);
       cache.delete(eventId);
     },
-    [db, eventId],
+    [idb, eventId],
   );
   return [trigger, { loading }];
 }
@@ -92,12 +121,12 @@ export function useSetReceiptsPushed({
 }: {
   eventId: string;
 }): MutationTuple<[ids: string[]]> {
-  const db = useDB();
+  const idb = use(IDBContext);
   const [loading, setLoading] = useState(false);
   const trigger = useCallback(
     async (ids: string[]) => {
       setLoading(true);
-      const store = db
+      const store = idb
         .transaction("Receipt", "readwrite")
         .objectStore("Receipt");
       await Promise.all(
@@ -109,29 +138,7 @@ export function useSetReceiptsPushed({
       setLoading(false);
       cache.delete(eventId);
     },
-    [db, eventId],
-  );
-  return [trigger, { loading }];
-}
-
-export function useDeleteReceipts({
-  eventId,
-}: {
-  eventId: string;
-}): MutationTuple<[ids: string[]]> {
-  const db = useDB();
-  const [loading, setLoading] = useState(false);
-  const trigger = useCallback(
-    async (ids: string[]) => {
-      setLoading(true);
-      const store = db
-        .transaction("Receipt", "readwrite")
-        .objectStore("Receipt");
-      await Promise.all(ids.map((id) => store.delete(id)));
-      setLoading(false);
-      cache.delete(eventId);
-    },
-    [db, eventId],
+    [idb, eventId],
   );
   return [trigger, { loading }];
 }

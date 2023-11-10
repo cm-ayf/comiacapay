@@ -12,6 +12,8 @@ export async function GET() {
     return withCookies(NextResponse.redirect(url), { state });
   } catch (e) {
     const error = OAuth2Error.fromError(e);
-    return NextResponse.redirect(new URL(error.toRedirectURL(), env.HOST));
+    return NextResponse.redirect(
+      new URL(error.toRedirectURL(), env.NEXT_PUBLIC_HOST),
+    );
   }
 }

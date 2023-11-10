@@ -13,9 +13,9 @@ import { useAlert } from "@/app/(web)/Alert";
 import { assertSuccess } from "@/app/(web)/Apollo";
 import type { CreateReceipt } from "@/generated/schema";
 
-export function PushButton(props: Pick<LoadingButtonProps, "size">) {
+export default function PushButton(props: Pick<LoadingButtonProps, "size">) {
   const params = useParams<Params>();
-  const receipts = useReceipts(params).filter(({ pushed }) => !pushed);
+  const { receipts, loading } = useReceipts();
   const [triggerPush, { loading: pushing }] = useMutation(
     CreateReceiptsMutation,
   );
@@ -48,13 +48,13 @@ export function PushButton(props: Pick<LoadingButtonProps, "size">) {
   );
 
   useEffect(() => {
-    if (receipts.length > 10) {
+    if (receipts && receipts.length > 10) {
       info("同期されていないデータがあります");
     }
   }, [receipts, info]);
 
   useEffect(() => {
-    if (!receipts.length) return;
+    if (!receipts?.length) return;
     const id = setTimeout(push, 5000, receipts);
     return () => clearTimeout(id);
   }, [push, receipts]);
@@ -63,10 +63,10 @@ export function PushButton(props: Pick<LoadingButtonProps, "size">) {
     <LoadingButton
       {...props}
       variant="outlined"
-      loading={pushing || settingPushed}
-      startIcon={receipts.length ? <CloudUpload /> : <CloudDone />}
-      disabled={!receipts.length}
-      onClick={() => push(receipts)}
+      loading={loading || pushing || settingPushed}
+      startIcon={receipts?.length ? <CloudUpload /> : <CloudDone />}
+      disabled={!receipts?.length}
+      onClick={() => receipts && push(receipts)}
     >
       同期
     </LoadingButton>

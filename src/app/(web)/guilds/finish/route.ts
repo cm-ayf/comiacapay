@@ -18,9 +18,11 @@ export async function GET(request: NextRequest) {
     const decryptedTokenSet = await decryptTokenSet(tokenSet.value);
     await upsertMember(decryptedTokenSet, guildId);
 
-    return NextResponse.redirect(new URL(`/${guildId}`, env.HOST));
+    return NextResponse.redirect(new URL(`/${guildId}`, env.NEXT_PUBLIC_HOST));
   } catch (e) {
     const error = OAuth2Error.fromError(e, "Failed to initiate");
-    return NextResponse.redirect(new URL(error.toRedirectURL(), env.HOST));
+    return NextResponse.redirect(
+      new URL(error.toRedirectURL(), env.NEXT_PUBLIC_HOST),
+    );
   }
 }

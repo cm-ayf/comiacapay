@@ -43,7 +43,7 @@ export default function About() {
         <Button
           variant="contained"
           onClick={() =>
-            router.push(`/${params.guildId}/${params.eventId}/register`)
+            router.push(`/${params.guildId}/${params.eventId}/receipts`)
           }
         >
           購入履歴

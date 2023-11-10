@@ -14,7 +14,10 @@ import { OAuth2Error } from "@/shared/error";
 
 const client_id = env.DISCORD_CLIENT_ID;
 const client_secret = env.DISCORD_CLIENT_SECRET;
-const redirect_uri = new URL("/guilds/callback", env.HOST).toString();
+const redirect_uri = new URL(
+  "/guilds/callback",
+  env.NEXT_PUBLIC_HOST,
+).toString();
 
 export function authorizeBotUrl(guild_id?: string | null) {
   return authorizeUrl({

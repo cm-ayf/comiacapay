@@ -10,6 +10,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(url);
   } catch (e) {
     const error = OAuth2Error.fromError(e, "Failed to initiate");
-    return NextResponse.redirect(new URL(error.toRedirectURL(), env.HOST));
+    return NextResponse.redirect(
+      new URL(error.toRedirectURL(), env.NEXT_PUBLIC_HOST),
+    );
   }
 }
