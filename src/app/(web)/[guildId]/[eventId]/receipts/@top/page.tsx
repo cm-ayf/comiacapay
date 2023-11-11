@@ -3,6 +3,7 @@
 import { useMutation } from "@apollo/client";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
 import Tab from "@mui/material/Tab";
 import MuiTabs from "@mui/material/Tabs";
@@ -14,6 +15,7 @@ import { ReceiptsPage } from "../ReceiptsPage";
 import ReloadButton from "../ReloadButton";
 import DeleteReceipts from "./DeleteReceipts.graphql";
 import { useAlert } from "@/app/(web)/Alert";
+import NoSSRSuspense from "@/components/NoSSRSuspense";
 
 export default function Top() {
   const { tab, setTab } = use(ReceiptsPage);
@@ -27,7 +29,9 @@ export default function Top() {
     >
       <Tabs tab={tab} setTab={setTab} />
       <Box sx={{ flex: 1 }} />
-      <Buttons />
+      <NoSSRSuspense fallback={<CircularProgress />}>
+        <Buttons />
+      </NoSSRSuspense>
     </Container>
   );
 }

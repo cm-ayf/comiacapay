@@ -1,0 +1,11 @@
+mutation CreateSetDiscount(
+  $guildId: ID!
+  $eventId: ID!
+  $input: CreateSetDiscount!
+) {
+  createSetDiscount(guildId: $guildId, eventId: $eventId, input: $input) {
+    id
+    itemIds
+    amount
+  }
+}

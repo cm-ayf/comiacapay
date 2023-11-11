@@ -46,15 +46,15 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export const Register = createContext<[State, Dispatch<Action>]>([
+export const RegisterPage = createContext<[State, Dispatch<Action>]>([
   {},
   () => {},
 ]);
 
 export function RegisterProvider({ children }: PropsWithChildren) {
   return (
-    <Register.Provider value={useReducer(reducer, {})}>
+    <RegisterPage.Provider value={useReducer(reducer, {})}>
       {children}
-    </Register.Provider>
+    </RegisterPage.Provider>
   );
 }

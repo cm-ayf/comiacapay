@@ -70,12 +70,12 @@ export function toMemberUpsert(
   guild: Guild,
   admin: boolean,
 ): Prisma.MemberUpsertArgs {
-  const ids = { userId: member.user!.id, guildId: guild.id };
-  const { readRoleId, registerRoleId, writeRoleId } = guild;
+  const { id: guildId, readRoleId, registerRoleId, writeRoleId } = guild;
+  const ids = { userId: member.user!.id, guildId };
   const permissions = {
-    read: hasPermission(member, guild.id, readRoleId),
-    register: hasPermission(member, guild.id, registerRoleId),
-    write: hasPermission(member, guild.id, writeRoleId),
+    read: hasPermission(member, guildId, readRoleId),
+    register: hasPermission(member, guildId, registerRoleId),
+    write: hasPermission(member, guildId, writeRoleId),
     admin,
   } satisfies Prisma.MemberUpdateInput;
   return {

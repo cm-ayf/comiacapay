@@ -1,5 +1,5 @@
 import type { Resolvers } from "./types";
-import type { Discount } from "@/generated/schema";
+import type { SetDiscount } from "@/generated/schema";
 import { generateSnowflake } from "@/shared/snowflake";
 
 function withoutUndefinedProps<
@@ -90,10 +90,10 @@ export const Mutation: Resolvers["Mutation"] = {
   },
   async createSetDiscount(_, { eventId, input }, context) {
     context.assertsPermissions(["write"]);
-    const newDiscount: Discount = {
+    const newDiscount: SetDiscount = {
       __typename: "SetDiscount",
       id: generateSnowflake().toString(),
-      discount: input.discount,
+      amount: input.amount,
       itemIds: [...input.itemIds],
     };
     await context.prisma.$transaction(async (prisma) => {

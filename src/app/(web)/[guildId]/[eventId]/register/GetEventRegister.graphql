@@ -7,7 +7,7 @@ query GetEventRegister($guildId: ID!, $eventId: ID!) {
       ... on SetDiscount {
         __typename
         itemIds
-        discount
+        amount
       }
     }
 

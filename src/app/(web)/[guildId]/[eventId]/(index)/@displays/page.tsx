@@ -19,6 +19,8 @@ import { useAlert } from "@/app/(web)/Alert";
 import { assertSuccess } from "@/app/(web)/Apollo";
 import ItemPanel from "@/components/ItemPanel";
 
+export const dynamic = "force-static";
+
 interface PartialDisplay {
   item: { id: string; name: string; picture: string | null };
   price?: number;

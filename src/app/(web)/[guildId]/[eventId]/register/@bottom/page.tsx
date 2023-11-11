@@ -6,16 +6,15 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import { useParams } from "next/navigation";
-import { Suspense, use, useCallback } from "react";
+import { use, useCallback } from "react";
 import PushButton from "../../PushButton";
 import { useCreateReceipt } from "../../idb";
 import type { Params } from "../../params";
 import GetEventRegisterQuery from "../GetEventRegister.graphql";
-import { Register, type State } from "../Register";
+import { RegisterPage, type State } from "../RegisterPage";
 import { useAlert } from "@/app/(web)/Alert";
-import ErrorComponent from "@/components/ErrorComponent";
+import NoSSRSuspense from "@/components/NoSSRSuspense";
 import { generateSnowflake } from "@/shared/snowflake";
 
 export const dynamic = "force-static";
@@ -33,20 +32,18 @@ export default function Bottom() {
         px: 2,
       }}
     >
-      <ErrorBoundary errorComponent={ErrorComponent}>
-        <Suspense fallback={<LinearProgress />}>
-          <PushButton size="large" />
-          <Box sx={{ flex: 1 }} />
-          <Total />
-          <CommitButton />
-        </Suspense>
-      </ErrorBoundary>
+      <NoSSRSuspense fallback={<LinearProgress />}>
+        <PushButton size="large" />
+        <Box sx={{ flex: 1 }} />
+        <Total />
+        <CommitButton />
+      </NoSSRSuspense>
     </Paper>
   );
 }
 
 function Total() {
-  const [state] = use(Register);
+  const [state] = use(RegisterPage);
   const calculator = useCalculator();
   const total = calculator(state);
 
@@ -58,7 +55,7 @@ function Total() {
 }
 
 function CommitButton() {
-  const [state, dispatch] = use(Register);
+  const [state, dispatch] = use(RegisterPage);
   const params = useParams<Params>();
   const { error } = useAlert();
   const calculator = useCalculator();
@@ -112,7 +109,7 @@ function useCalculator() {
             const count = Math.min(
               ...discount.itemIds.map((itemId) => state[itemId]?.count ?? 0),
             );
-            total -= count * discount.discount;
+            total -= count * discount.amount;
             break;
           }
         }

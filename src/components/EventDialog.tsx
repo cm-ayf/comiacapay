@@ -24,8 +24,7 @@ export default function EventDialog({
       {...rest}
       reset={reset}
       submitProps={{
-        disabled:
-          (!!mode && !isValid) || (!!mode && mode === "update" && !isDirty),
+        disabled: !isValid || (mode === "update" && !isDirty),
         onClick: handleSubmit(onSubmit),
       }}
     >

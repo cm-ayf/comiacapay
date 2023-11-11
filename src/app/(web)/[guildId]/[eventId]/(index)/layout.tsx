@@ -12,13 +12,13 @@ export const dynamic = "force-static";
 export default function Event({
   params,
   about,
-  // discounts,
   displays,
+  discounts,
 }: {
   params: Params;
   about: ReactNode;
-  // discounts: ReactNode;
   displays: ReactNode;
+  discounts: ReactNode;
 }) {
   const { data } = useQuery(GetEventDetailsQuery, { variables: params });
   const title = data && `${data.event.guild.name} / ${data.event.name}`;
@@ -27,8 +27,8 @@ export default function Event({
       navigation={<Navigation title={title} back={`/${params.guildId}`} />}
     >
       {about}
-      {/* {discounts} */}
       {displays}
+      {discounts}
     </Layout>
   );
 }

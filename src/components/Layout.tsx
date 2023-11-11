@@ -1,9 +1,11 @@
+"use client";
+
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
-import { Suspense, type PropsWithChildren, type ReactNode } from "react";
-import ErrorComponent from "./ErrorComponent";
+import type { PropsWithChildren, ReactNode } from "react";
+import NoSSRSuspense from "./NoSSRSuspense";
 
 export interface LayoutProps {
   navigation: ReactNode;
@@ -20,22 +22,29 @@ export default function Layout({
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       {navigation}
-      {top && <Box flex={0}>{top}</Box>}
-      <Container
-        sx={{
-          flex: "auto",
-          overflowX: "hidden",
-          overflowY: "scroll",
-          py: 2,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <ErrorBoundary errorComponent={ErrorComponent}>
-          <Suspense fallback={<CircularProgress />}>{children}</Suspense>
-        </ErrorBoundary>
-      </Container>
-      {bottom && <Box flex={0}>{bottom}</Box>}
+      <ErrorBoundary errorComponent={ErrorComponent}>
+        {top && <Box flex={0}>{top}</Box>}
+        <Container
+          sx={{
+            flex: "auto",
+            overflowX: "hidden",
+            overflowY: "scroll",
+            py: 2,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <NoSSRSuspense fallback={<CircularProgress />}>
+            {children}
+          </NoSSRSuspense>
+        </Container>
+        {bottom && <Box flex={0}>{bottom}</Box>}
+      </ErrorBoundary>
     </Box>
   );
+}
+
+function ErrorComponent({ error }: { error: Error }) {
+  console.error(error);
+  return null;
 }

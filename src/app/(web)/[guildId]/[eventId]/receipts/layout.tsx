@@ -3,8 +3,7 @@
 import { useQuery } from "@apollo/client";
 import TabContext from "@mui/lab/TabContext";
 import TabPanel from "@mui/lab/TabPanel";
-import { type ReactNode, use } from "react";
-import IDBProvider from "../idb/Provider";
+import { type ReactNode, use, type PropsWithChildren } from "react";
 import type { Params } from "../params";
 import GetReceipts from "./GetReceiptsPage.graphql";
 import { ReceiptsPage, ReceiptsPageProvider } from "./ReceiptsPage";
@@ -31,35 +30,33 @@ export default function Receipts({
 
   return (
     <ReceiptsPageProvider>
-      <IDBProvider>
-        <Layout
-          navigation={
-            <Navigation
-              title={title}
-              back={`/${params.guildId}/${params.eventId}`}
-              docs="receipts"
-            />
-          }
-          top={top}
-        >
-          <TabContextProvider>
-            <TabPanel value="summary" sx={{ p: 0, height: "100%" }}>
-              {summary}
-            </TabPanel>
-            <TabPanel value="table" sx={{ p: 0, height: "100%" }}>
-              {table}
-            </TabPanel>
-            <TabPanel value="export" sx={{ p: 0, height: "100%" }}>
-              {export_}
-            </TabPanel>
-          </TabContextProvider>
-        </Layout>
-      </IDBProvider>
+      <Layout
+        navigation={
+          <Navigation
+            title={title}
+            back={`/${params.guildId}/${params.eventId}`}
+            docs="receipts"
+          />
+        }
+        top={top}
+      >
+        <TabContextProvider>
+          <TabPanel value="summary" sx={{ p: 0, height: "100%" }}>
+            {summary}
+          </TabPanel>
+          <TabPanel value="table" sx={{ p: 0, height: "100%" }}>
+            {table}
+          </TabPanel>
+          <TabPanel value="export" sx={{ p: 0, height: "100%" }}>
+            {export_}
+          </TabPanel>
+        </TabContextProvider>
+      </Layout>
     </ReceiptsPageProvider>
   );
 }
 
-function TabContextProvider({ children }: { children: ReactNode }) {
+function TabContextProvider({ children }: PropsWithChildren) {
   const { tab } = use(ReceiptsPage);
   return <TabContext value={tab}>{children}</TabContext>;
 }

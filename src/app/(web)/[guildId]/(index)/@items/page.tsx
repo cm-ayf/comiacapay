@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useAlert } from "../../../Alert";
 import { assertSuccess, isGraphQLErrorOf } from "../../../Apollo";
 import GetGuildQuery from "../GetGuild.graphql";
-import type { Params } from "../layout";
+import type { Params } from "../params";
 import CreateItemMutation from "./CreateItem.graphql";
 import DeleteItemMutation from "./DeleteItem.graphql";
 import UpdateItemMutation from "./UpdateItem.graphql";
@@ -20,6 +20,8 @@ import ItemCard from "@/components/ItemCard";
 import ItemDialog from "@/components/ItemDialog";
 import type { Item } from "@/generated/resolvers";
 import type { CreateItem, UpdateItem } from "@/generated/schema";
+
+export const dynamic = "force-static";
 
 export default function Items() {
   const params = useParams<Params>();

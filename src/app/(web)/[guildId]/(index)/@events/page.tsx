@@ -11,11 +11,13 @@ import { useState } from "react";
 import { useAlert } from "../../../Alert";
 import { assertSuccess } from "../../../Apollo";
 import GetGuildQuery from "../GetGuild.graphql";
-import type { Params } from "../layout";
+import type { Params } from "../params";
 import CreateEventMutation from "./CreateEvent.graphql";
 import EventCard from "@/components/EventCard";
 import EventDialog from "@/components/EventDialog";
 import type { CreateEvent } from "@/generated/schema";
+
+export const dynamic = "force-static";
 
 export default function Events() {
   const params = useParams<Params>();

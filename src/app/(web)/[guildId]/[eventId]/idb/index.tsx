@@ -2,14 +2,7 @@
 
 import { type DBSchema, type IDBPDatabase, openDB } from "idb";
 import { useParams } from "next/navigation";
-import {
-  use,
-  useCallback,
-  useState,
-  type ReactNode,
-  createContext,
-  useEffect,
-} from "react";
+import { use, useCallback, useState, useEffect } from "react";
 import type { Params } from "../params";
 import type { CreateReceipt } from "@/generated/schema";
 
@@ -50,17 +43,12 @@ function upgrade(idb: IDB, oldVersion: number, newVersion: number | null) {
   }
 }
 
-const IDBContext = createContext<IDB>(null!);
-
-let idb: Promise<IDB>;
-function init() {
-  return (idb ??= openDB<DB>("comiacapay", 1, { upgrade }));
+declare global {
+  var idb: Promise<IDB>;
 }
 
-export default function IDBProvider({ children }: { children: ReactNode }) {
-  return (
-    <IDBContext.Provider value={use(init())}>{children}</IDBContext.Provider>
-  );
+function init() {
+  return (window.idb ??= openDB<DB>("comiacapay", 1, { upgrade }));
 }
 
 const cache = new Map<string, Promise<IDBReceipt[]>>();
@@ -76,7 +64,7 @@ function fetchReceipts(idb: IDB, eventId: string) {
 
 export function useReceipts() {
   const { eventId } = useParams<Params>();
-  const idb = use(IDBContext);
+  const idb = use(init());
 
   const [loading, setLoading] = useState(true);
   const [receipts, setReceipts] = useState<IDBReceipt[]>();
@@ -102,7 +90,7 @@ export function useCreateReceipt({
 }: {
   eventId: string;
 }): MutationTuple<[receipt: CreateReceipt]> {
-  const idb = use(IDBContext);
+  const idb = use(init());
   const [loading, setLoading] = useState(false);
   const trigger = useCallback(
     async (receipt: CreateReceipt) => {
@@ -121,7 +109,7 @@ export function useSetReceiptsPushed({
 }: {
   eventId: string;
 }): MutationTuple<[ids: string[]]> {
-  const idb = use(IDBContext);
+  const idb = use(init());
   const [loading, setLoading] = useState(false);
   const trigger = useCallback(
     async (ids: string[]) => {

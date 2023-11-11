@@ -2,6 +2,7 @@ import TextField from "@mui/material/TextField";
 import { useForm } from "react-hook-form";
 import { BaseDialog, type DialogProps } from "./BaseDialog";
 import type { CreateItem } from "@/generated/schema";
+import { getISODateString } from "@/shared/utils";
 
 export default function EventDialog({
   mode,
@@ -15,7 +16,7 @@ export default function EventDialog({
     reset,
     formState: { isValid, isDirty },
   } = useForm<CreateItem>({
-    defaultValues: defaultValues ?? {},
+    defaultValues: defaultValues ?? { issuedAt: getISODateString(new Date()) },
   });
 
   return (
@@ -23,8 +24,7 @@ export default function EventDialog({
       {...rest}
       reset={reset}
       submitProps={{
-        disabled:
-          (!!mode && !isValid) || (!!mode && mode === "update" && !isDirty),
+        disabled: !isValid || (mode === "update" && !isDirty),
         onClick: handleSubmit(onSubmit),
       }}
     >

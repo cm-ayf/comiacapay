@@ -36,11 +36,6 @@ function toGuildUpsert(guild: APIGuild): Prisma.GuildUpsertArgs {
     where: { id: guild.id },
     update: attributes,
     create: { id: guild.id, ...attributes },
-    select: {
-      readRoleId: true,
-      registerRoleId: true,
-      writeRoleId: true,
-    },
   };
 }
 
