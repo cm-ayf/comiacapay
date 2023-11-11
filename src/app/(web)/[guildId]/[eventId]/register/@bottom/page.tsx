@@ -112,6 +112,16 @@ function useCalculator() {
             total -= count * discount.amount;
             break;
           }
+          case "DedicationDiscount": {
+            const record = state[discount.itemId];
+            const display = data.event.displays.find(
+              (d) => d.item.id === discount.itemId,
+            );
+            if (record && record.dedication && record.count > 0 && display) {
+              total -= display.price;
+            }
+            break;
+          }
         }
       }
       return total;

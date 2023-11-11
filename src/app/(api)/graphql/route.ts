@@ -32,10 +32,6 @@ async function handler(request: Request) {
     context: Context.init,
   });
 
-  if (response.status === 401) {
-    console.log(request.headers.get("Cookie"));
-  }
-
   return new Response(toBodyInit(response.body), {
     status: response.status!,
     headers: Array.from(response.headers),

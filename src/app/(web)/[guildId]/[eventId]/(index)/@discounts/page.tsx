@@ -13,6 +13,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import type { Params } from "../../params";
 import GetEventDetailsQuery from "../GetEventDetails.graphql";
+import CreateDedicationDiscountMutation from "./CreateDedicationDiscount.graphql";
 import CreateSetDiscountMutation from "./CreateSetDiscount.graphql";
 import DeleteDiscountMutation from "./DeleteDiscount.graphql";
 import { useAlert } from "@/app/(web)/Alert";
@@ -31,7 +32,7 @@ export default function Discounts() {
   return (
     <>
       <Typography variant="h2" sx={{ fontSize: "2em" }}>
-        割引
+        割引等
       </Typography>
       <Box
         sx={{
@@ -65,12 +66,18 @@ function Discount({
     item: { id: string; name: string };
     price: number;
   }[];
-  discount: {
-    __typename: "SetDiscount";
-    id: string;
-    itemIds: string[];
-    amount: number;
-  };
+  discount:
+    | {
+        __typename: "SetDiscount";
+        id: string;
+        itemIds: string[];
+        amount: number;
+      }
+    | {
+        __typename: "DedicationDiscount";
+        id: string;
+        itemId: string;
+      };
 }) {
   switch (discount.__typename) {
     case "SetDiscount": {
@@ -103,6 +110,31 @@ function Discount({
           <Typography variant="body1" sx={{ flex: 1 }}>
             {discount.amount}円引き
           </Typography>
+          <Box sx={{ flex: 1 }}>
+            <DeleteDiscountButton me={me} discount={discount} />
+          </Box>
+        </Box>
+      );
+    }
+    case "DedicationDiscount": {
+      const display = displays.find(({ item }) => item.id === discount.itemId);
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 1,
+            width: "100%",
+          }}
+        >
+          <Typography variant="body1" sx={{ flex: 1 }}>
+            献本設定
+          </Typography>
+          <Typography variant="body1" sx={{ flex: 1 }}>
+            {display ? display.item.name : "不明"}
+          </Typography>
+          <Box sx={{ flex: 1 }} />
           <Box sx={{ flex: 1 }}>
             <DeleteDiscountButton me={me} discount={discount} />
           </Box>
@@ -155,17 +187,26 @@ type CreateDiscount = CreateSetDiscount & {
 };
 
 function CreateDiscount({ me }: { me: { write: boolean } }) {
-  const [type, setType] = useState<"SetDiscount">();
+  const [type, setType] = useState<"SetDiscount" | "DedicationDiscount">();
 
   switch (type) {
     case "SetDiscount": {
       return <CreateSetDiscount onClose={() => setType(undefined)} />;
+    }
+    case "DedicationDiscount": {
+      return <CreateDedicationDiscount onClose={() => setType(undefined)} />;
     }
     default: {
       return (
         <Box>
           <Button disabled={!me.write} onClick={() => setType("SetDiscount")}>
             セット割引を追加
+          </Button>
+          <Button
+            disabled={!me.write}
+            onClick={() => setType("DedicationDiscount")}
+          >
+            献本設定を追加
           </Button>
         </Box>
       );
@@ -239,6 +280,66 @@ function CreateSetDiscount({ onClose }: { onClose: () => void }) {
         loading={loading}
         variant="contained"
         disabled={amount === 0 || itemIds.length === 0}
+        onClick={onClick}
+      >
+        保存
+      </LoadingButton>
+    </Box>
+  );
+}
+
+function CreateDedicationDiscount({ onClose }: { onClose: () => void }) {
+  const params = useParams<Params>();
+  const { data } = useSuspenseQuery(GetEventDetailsQuery, {
+    variables: params,
+  });
+  const [itemId, setItemId] = useState("");
+  const { success, error } = useAlert();
+  const [trigger, { loading }] = useMutation(CreateDedicationDiscountMutation, {
+    refetchQueries: [{ query: GetEventDetailsQuery, variables: params }],
+  });
+
+  async function onClick() {
+    try {
+      if (!itemId) return;
+      const result = await trigger({
+        variables: {
+          ...params,
+          input: { itemId },
+        },
+      });
+      assertSuccess(result);
+      success("割引を保存しました");
+      onClose();
+    } catch {
+      error("割引の保存に失敗しました");
+    }
+  }
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 1,
+      }}
+    >
+      <Select
+        value={itemId}
+        onChange={({ target: { value } }) => setItemId(value)}
+      >
+        {data.event.displays.map(({ item }) => (
+          <MenuItem key={item.id} value={item.id}>
+            {item.name}
+          </MenuItem>
+        ))}
+      </Select>
+      <Button onClick={onClose}>キャンセル</Button>
+      <LoadingButton
+        loading={loading}
+        variant="contained"
+        disabled={!itemId}
         onClick={onClick}
       >
         保存

@@ -33,6 +33,11 @@ export default function Register() {
           <RegisterItemPanel
             display={display}
             record={state[display.item.id]}
+            enableDedication={data.event.discounts.some(
+              (discount) =>
+                discount.__typename === "DedicationDiscount" &&
+                discount.itemId === display.item.id,
+            )}
             set={(key) => (value) =>
               dispatch({ type: "set", itemId: display.item.id, [key]: value })
             }
@@ -46,6 +51,8 @@ export default function Register() {
 function RegisterItemPanel({
   display,
   record,
+  enableDedication,
+  enableInternal,
   set,
 }: {
   display: {
@@ -53,6 +60,8 @@ function RegisterItemPanel({
     price: number;
   };
   record: RecordState | undefined;
+  enableDedication: boolean;
+  enableInternal?: boolean;
   set: <K extends keyof RecordState>(
     type: K,
   ) => (value: Required<RecordState>[K]) => void;
@@ -60,6 +69,8 @@ function RegisterItemPanel({
   return (
     <ItemPanel item={display.item}>
       <FlagsCheck
+        enableDedication={enableDedication}
+        enableInternal={!!enableInternal}
         dedication={record?.dedication ?? false}
         internal={record?.internal ?? false}
         setDedication={set("dedication")}
@@ -71,38 +82,46 @@ function RegisterItemPanel({
 }
 
 function FlagsCheck({
+  enableDedication,
+  enableInternal,
   dedication,
   internal,
   setDedication,
   setInternal,
 }: {
+  enableDedication: boolean;
+  enableInternal: boolean;
   dedication: boolean;
   internal: boolean;
   setDedication: (dedication: boolean) => void;
   setInternal: (internal: boolean) => void;
 }) {
   return (
-    <Box sx={{ display: "flex", columnGap: 2 }}>
-      <FormControlLabel
-        sx={{ mx: 2 }}
-        control={
-          <Checkbox
-            checked={dedication}
-            onChange={(e) => setDedication(e.target.checked)}
-          />
-        }
-        label="献本"
-      />
-      <FormControlLabel
-        sx={{ mx: 2 }}
-        control={
-          <Checkbox
-            checked={internal}
-            onChange={(e) => setInternal(e.target.checked)}
-          />
-        }
-        label="部内"
-      />
+    <Box sx={{ display: "flex", columnGap: 2, minHeight: 50 }}>
+      {enableDedication && (
+        <FormControlLabel
+          sx={{ mx: 2 }}
+          control={
+            <Checkbox
+              checked={dedication}
+              onChange={(e) => setDedication(e.target.checked)}
+            />
+          }
+          label="献本"
+        />
+      )}
+      {enableInternal && (
+        <FormControlLabel
+          sx={{ mx: 2 }}
+          control={
+            <Checkbox
+              checked={internal}
+              onChange={(e) => setInternal(e.target.checked)}
+            />
+          }
+          label="部内"
+        />
+      )}
     </Box>
   );
 }

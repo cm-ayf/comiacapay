@@ -1,5 +1,5 @@
 import type { Resolvers } from "./types";
-import type { SetDiscount } from "@/generated/schema";
+import type { DedicationDiscount, SetDiscount } from "@/generated/schema";
 import { generateSnowflake } from "@/shared/snowflake";
 
 function withoutUndefinedProps<
@@ -95,6 +95,26 @@ export const Mutation: Resolvers["Mutation"] = {
       id: generateSnowflake().toString(),
       amount: input.amount,
       itemIds: [...input.itemIds],
+    };
+    await context.prisma.$transaction(async (prisma) => {
+      const where = { id: eventId, guildId: context.member.guildId };
+      const { discounts } = await prisma.event.findUniqueOrThrow({
+        where,
+        select: { discounts: true },
+      });
+      await prisma.event.update({
+        where,
+        data: { discounts: [...discounts, newDiscount] },
+      });
+    });
+    return newDiscount;
+  },
+  async createDedicationDiscount(_, { eventId, input }, context) {
+    context.assertsPermissions(["write"]);
+    const newDiscount: DedicationDiscount = {
+      __typename: "DedicationDiscount",
+      id: generateSnowflake().toString(),
+      ...input,
     };
     await context.prisma.$transaction(async (prisma) => {
       const where = { id: eventId, guildId: context.member.guildId };

@@ -11,6 +11,12 @@ query GetEventDetails($guildId: ID!, $eventId: ID!) {
         itemIds
         amount
       }
+
+      ... on DedicationDiscount {
+        __typename
+        id
+        itemId
+      }
     }
 
     displays {

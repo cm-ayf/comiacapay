@@ -32,8 +32,8 @@ export const resolvers: Resolvers = {
   },
   Event: EventResolver,
   Discount: {
-    __resolveType() {
-      return "SetDiscount";
+    __resolveType(s) {
+      return (s as any).__typename;
     },
   },
   Display: {
