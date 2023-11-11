@@ -1,0 +1,15 @@
+query GetGuilds {
+  user {
+    members {
+      read
+      register
+      write
+      admin
+
+      guild {
+        id
+        name
+      }
+    }
+  }
+}
