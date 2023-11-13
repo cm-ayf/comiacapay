@@ -28,7 +28,6 @@ export default function Page() {
         <Button
           variant="contained"
           onClick={() => router.push("/guilds/initiate")}
-          sx={{ mt: 2 }}
         >
           追加・設定変更
         </Button>

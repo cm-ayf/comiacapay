@@ -12,5 +12,7 @@ mutation UpsertDisplay(
   ) {
     itemId
     price
+    internalPrice
+    dedication
   }
 }

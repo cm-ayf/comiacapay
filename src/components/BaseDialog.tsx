@@ -76,7 +76,7 @@ export function BaseDialog({
           display: "flex",
           flexDirection: "column",
           alignItems: "stretch",
-          rowGap: 1,
+          gap: 1,
         }}
       >
         {children}

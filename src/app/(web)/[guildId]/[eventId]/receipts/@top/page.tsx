@@ -49,7 +49,7 @@ function Tabs({ tab, setTab }: { tab: string; setTab: (tab: string) => void }) {
 function Buttons() {
   const { tab } = use(ReceiptsPage);
   return (
-    <Box sx={{ display: "flex", p: 1, gap: 1 }}>
+    <Box sx={{ display: "flex", flexDirection: "row", p: 1, gap: 1 }}>
       <Box sx={{ flex: 1 }} />
       {tab === "table" && <DeleteButton />}
       <PushButton />

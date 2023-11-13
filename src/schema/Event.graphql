@@ -16,6 +16,8 @@ type Display {
   itemId: String! @model
 
   price: Int! @model
+  internalPrice: Int @model
+  dedication: Boolean! @model
 }
 
 input CreateEvent {
@@ -30,4 +32,6 @@ input UpdateEvent {
 
 input UpsertDisplay {
   price: Int!
+  internalPrice: Int
+  dedication: Boolean
 }

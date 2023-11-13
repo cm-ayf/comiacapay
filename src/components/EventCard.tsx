@@ -13,11 +13,15 @@ export default function EventCard({
 }) {
   return (
     <BaseCard onClick={onClick}>
-      <CardContent sx={{ textAlign: "center", textTransform: "none" }}>
-        <Typography sx={{ fontSize: "1.5em", fontWeight: "bold" }}>
-          {event.name}
-        </Typography>
-        <Typography sx={{ fontSize: "1.2em" }}>
+      <CardContent
+        sx={{
+          textAlign: "center",
+          textTransform: "none",
+          ":last-child": { pb: 2 },
+        }}
+      >
+        <Typography sx={{ fontWeight: "bold" }}>{event.name}</Typography>
+        <Typography>
           {new Date(event.date).toLocaleDateString("ja-JP")}
         </Typography>
       </CardContent>

@@ -3,7 +3,9 @@
 import { useMutation, useSuspenseQuery } from "@apollo/client";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
 import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
@@ -13,7 +15,6 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import type { Params } from "../../params";
 import GetEventDetailsQuery from "../GetEventDetails.graphql";
-import CreateDedicationDiscountMutation from "./CreateDedicationDiscount.graphql";
 import CreateSetDiscountMutation from "./CreateSetDiscount.graphql";
 import DeleteDiscountMutation from "./DeleteDiscount.graphql";
 import { useAlert } from "@/app/(web)/Alert";
@@ -34,14 +35,7 @@ export default function Discounts() {
       <Typography variant="h2" sx={{ fontSize: "2em" }}>
         割引等
       </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          mb: 2,
-        }}
-      >
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {data.event.discounts.map((discounts) => (
           <Discount
             me={me}
@@ -66,18 +60,12 @@ function Discount({
     item: { id: string; name: string };
     price: number;
   }[];
-  discount:
-    | {
-        __typename: "SetDiscount";
-        id: string;
-        itemIds: string[];
-        amount: number;
-      }
-    | {
-        __typename: "DedicationDiscount";
-        id: string;
-        itemId: string;
-      };
+  discount: {
+    __typename: "SetDiscount";
+    id: string;
+    itemIds: string[];
+    amount: number;
+  };
 }) {
   switch (discount.__typename) {
     case "SetDiscount": {
@@ -110,31 +98,6 @@ function Discount({
           <Typography variant="body1" sx={{ flex: 1 }}>
             {discount.amount}円引き
           </Typography>
-          <Box sx={{ flex: 1 }}>
-            <DeleteDiscountButton me={me} discount={discount} />
-          </Box>
-        </Box>
-      );
-    }
-    case "DedicationDiscount": {
-      const display = displays.find(({ item }) => item.id === discount.itemId);
-      return (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 1,
-            width: "100%",
-          }}
-        >
-          <Typography variant="body1" sx={{ flex: 1 }}>
-            献本設定
-          </Typography>
-          <Typography variant="body1" sx={{ flex: 1 }}>
-            {display ? display.item.name : "不明"}
-          </Typography>
-          <Box sx={{ flex: 1 }} />
           <Box sx={{ flex: 1 }}>
             <DeleteDiscountButton me={me} discount={discount} />
           </Box>
@@ -187,26 +150,21 @@ type CreateDiscount = CreateSetDiscount & {
 };
 
 function CreateDiscount({ me }: { me: { write: boolean } }) {
-  const [type, setType] = useState<"SetDiscount" | "DedicationDiscount">();
+  const [type, setType] = useState<"SetDiscount">();
 
   switch (type) {
     case "SetDiscount": {
       return <CreateSetDiscount onClose={() => setType(undefined)} />;
     }
-    case "DedicationDiscount": {
-      return <CreateDedicationDiscount onClose={() => setType(undefined)} />;
-    }
     default: {
       return (
-        <Box>
-          <Button disabled={!me.write} onClick={() => setType("SetDiscount")}>
-            セット割引を追加
-          </Button>
+        <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
           <Button
+            variant="outlined"
             disabled={!me.write}
-            onClick={() => setType("DedicationDiscount")}
+            onClick={() => setType("SetDiscount")}
           >
-            献本設定を追加
+            セット割引を追加
           </Button>
         </Box>
       );
@@ -251,6 +209,23 @@ function CreateSetDiscount({ onClose }: { onClose: () => void }) {
         gap: 1,
       }}
     >
+      <FormControl sx={{ width: 300 }}>
+        <InputLabel>商品の組み合わせ</InputLabel>
+        <Select
+          label="商品の組み合わせ"
+          multiple
+          value={itemIds}
+          onChange={({ target: { value } }) =>
+            setItemIds(typeof value === "string" ? value.split(",") : value)
+          }
+        >
+          {data.event.displays.map(({ item }) => (
+            <MenuItem key={item.id} value={item.id}>
+              {item.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <TextField
         label="割引額"
         type="number"
@@ -262,84 +237,11 @@ function CreateSetDiscount({ onClose }: { onClose: () => void }) {
         }}
         sx={{ width: "8em" }}
       />
-      <Select
-        multiple
-        value={itemIds}
-        onChange={({ target: { value } }) =>
-          setItemIds(typeof value === "string" ? value.split(",") : value)
-        }
-      >
-        {data.event.displays.map(({ item }) => (
-          <MenuItem key={item.id} value={item.id}>
-            {item.name}
-          </MenuItem>
-        ))}
-      </Select>
       <Button onClick={onClose}>キャンセル</Button>
       <LoadingButton
         loading={loading}
         variant="contained"
         disabled={amount === 0 || itemIds.length === 0}
-        onClick={onClick}
-      >
-        保存
-      </LoadingButton>
-    </Box>
-  );
-}
-
-function CreateDedicationDiscount({ onClose }: { onClose: () => void }) {
-  const params = useParams<Params>();
-  const { data } = useSuspenseQuery(GetEventDetailsQuery, {
-    variables: params,
-  });
-  const [itemId, setItemId] = useState("");
-  const { success, error } = useAlert();
-  const [trigger, { loading }] = useMutation(CreateDedicationDiscountMutation, {
-    refetchQueries: [{ query: GetEventDetailsQuery, variables: params }],
-  });
-
-  async function onClick() {
-    try {
-      if (!itemId) return;
-      const result = await trigger({
-        variables: {
-          ...params,
-          input: { itemId },
-        },
-      });
-      assertSuccess(result);
-      success("割引を保存しました");
-      onClose();
-    } catch {
-      error("割引の保存に失敗しました");
-    }
-  }
-
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 1,
-      }}
-    >
-      <Select
-        value={itemId}
-        onChange={({ target: { value } }) => setItemId(value)}
-      >
-        {data.event.displays.map(({ item }) => (
-          <MenuItem key={item.id} value={item.id}>
-            {item.name}
-          </MenuItem>
-        ))}
-      </Select>
-      <Button onClick={onClose}>キャンセル</Button>
-      <LoadingButton
-        loading={loading}
-        variant="contained"
-        disabled={!itemId}
         onClick={onClick}
       >
         保存

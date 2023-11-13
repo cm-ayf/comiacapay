@@ -1,4 +1,4 @@
-union Discount = SetDiscount | DedicationDiscount
+union Discount = SetDiscount
 
 type SetDiscount {
   id: ID! @model
@@ -6,16 +6,7 @@ type SetDiscount {
   amount: Int! @model
 }
 
-type DedicationDiscount {
-  id: ID! @model
-  itemId: String! @model
-}
-
 input CreateSetDiscount {
   itemIds: [String!]!
   amount: Int!
-}
-
-input CreateDedicationDiscount {
-  itemId: String!
 }

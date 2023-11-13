@@ -28,7 +28,7 @@ export default function About() {
 
   return (
     <>
-      <Box sx={{ my: 2, display: "flex", flexDirection: "row", columnGap: 2 }}>
+      <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
         <EventCard
           event={data.event}
           {...(me.write ? { onClick: () => setOpen(true) } : {})}

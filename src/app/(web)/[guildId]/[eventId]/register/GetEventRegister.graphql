@@ -9,15 +9,12 @@ query GetEventRegister($guildId: ID!, $eventId: ID!) {
         itemIds
         amount
       }
-
-      ... on DedicationDiscount {
-        __typename
-        itemId
-      }
     }
 
     displays {
       price
+      internalPrice
+      dedication
 
       item {
         id

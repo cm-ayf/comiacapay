@@ -32,6 +32,7 @@ export default function Layout({
             py: 2,
             display: "flex",
             flexDirection: "column",
+            gap: 2,
           }}
         >
           <NoSSRSuspense fallback={<CircularProgress />}>

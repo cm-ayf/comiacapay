@@ -28,7 +28,7 @@ export default function Events() {
 
   return (
     <>
-      <Box sx={{ display: "flex", flexDirection: "row", my: 2 }}>
+      <Box sx={{ display: "flex", flexDirection: "row" }}>
         <Typography variant="h2" sx={{ fontSize: "2em" }}>
           イベント
         </Typography>

@@ -32,7 +32,7 @@ export default function Items() {
 
   return (
     <>
-      <Box sx={{ display: "flex", flexDirection: "row", my: 2 }}>
+      <Box sx={{ display: "flex", flexDirection: "row" }}>
         <Typography variant="h2" sx={{ fontSize: "2em" }}>
           商品
         </Typography>
@@ -163,7 +163,11 @@ function MutateItemDialog({
       title="商品を編集"
       open
       onClose={onClose}
-      defaultValues={item}
+      defaultValues={{
+        name: item.name,
+        picture: item.picture,
+        issuedAt: item.issuedAt,
+      }}
       loading={updating || deleting}
       onSubmit={onUpdate}
       buttons={[

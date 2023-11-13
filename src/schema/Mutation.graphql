@@ -13,11 +13,6 @@ type Mutation {
     eventId: ID!
     input: CreateSetDiscount!
   ): SetDiscount!
-  createDedicationDiscount(
-    guildId: ID!
-    eventId: ID!
-    input: CreateDedicationDiscount!
-  ): DedicationDiscount!
   deleteDiscount(guildId: ID!, eventId: ID!, id: ID!): ID!
   upsertDisplay(
     guildId: ID!

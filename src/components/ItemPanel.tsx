@@ -13,7 +13,7 @@ export default function ItemPanel({
   item: { name: string; picture: string | null };
 }>) {
   return (
-    <Card sx={{ width: "100%", display: "flex" }}>
+    <Card sx={{ height: 220, width: "100%", display: "flex" }}>
       <CardMedia
         component="img"
         image={item.picture ?? DEFAULT_ITEM_PICTURE}

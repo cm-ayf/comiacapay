@@ -29,15 +29,10 @@ export default function Register() {
   return (
     <Grid container spacing={2}>
       {data.event.displays.map((display) => (
-        <Grid item xs={12} md={6} xl={4} key={display.item.id}>
+        <Grid item sm={12} md={6} xl={4} key={display.item.id}>
           <RegisterItemPanel
             display={display}
             record={state[display.item.id]}
-            enableDedication={data.event.discounts.some(
-              (discount) =>
-                discount.__typename === "DedicationDiscount" &&
-                discount.itemId === display.item.id,
-            )}
             set={(key) => (value) =>
               dispatch({ type: "set", itemId: display.item.id, [key]: value })
             }
@@ -51,17 +46,15 @@ export default function Register() {
 function RegisterItemPanel({
   display,
   record,
-  enableDedication,
-  enableInternal,
   set,
 }: {
   display: {
     item: { name: string; picture: string | null };
     price: number;
+    dedication: boolean;
+    internalPrice: number | null;
   };
   record: RecordState | undefined;
-  enableDedication: boolean;
-  enableInternal?: boolean;
   set: <K extends keyof RecordState>(
     type: K,
   ) => (value: Required<RecordState>[K]) => void;
@@ -69,8 +62,8 @@ function RegisterItemPanel({
   return (
     <ItemPanel item={display.item}>
       <FlagsCheck
-        enableDedication={enableDedication}
-        enableInternal={!!enableInternal}
+        enableDedication={display.dedication}
+        enableInternal={!!display.internalPrice}
         dedication={record?.dedication ?? false}
         internal={record?.internal ?? false}
         setDedication={set("dedication")}
@@ -97,10 +90,9 @@ function FlagsCheck({
   setInternal: (internal: boolean) => void;
 }) {
   return (
-    <Box sx={{ display: "flex", columnGap: 2, minHeight: 50 }}>
+    <Box sx={{ ml: 2, display: "flex", gap: 1, minHeight: 50 }}>
       {enableDedication && (
         <FormControlLabel
-          sx={{ mx: 2 }}
           control={
             <Checkbox
               checked={dedication}
@@ -112,7 +104,6 @@ function FlagsCheck({
       )}
       {enableInternal && (
         <FormControlLabel
-          sx={{ mx: 2 }}
           control={
             <Checkbox
               checked={internal}
@@ -138,7 +129,7 @@ function Counter({
   const value = count === 0 || count === 1 ? count : "+";
 
   return (
-    <Box sx={{ height: 56, mx: 2, mb: 2, display: "flex", columnGap: 2 }}>
+    <Box sx={{ height: 56, display: "flex", flexDirection: "row", gap: 1 }}>
       <ToggleButtonGroup
         value={value}
         exclusive

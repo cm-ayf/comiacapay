@@ -94,7 +94,9 @@ model Display {
   item    Item   @relation(fields: [itemId], references: [id])
   itemId  String @map("item_id") @db.Char(20)
 
-  price Int
+  price         Int
+  internalPrice Int?    @map("internal_price")
+  dedication    Boolean @default(false)
 
   records Record[]
 

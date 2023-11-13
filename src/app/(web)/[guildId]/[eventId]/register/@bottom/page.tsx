@@ -99,9 +99,15 @@ function useCalculator() {
   return useCallback(
     (state: State) => {
       let total = 0;
-      for (const [itemId, { count }] of Object.entries(state)) {
+      for (const [itemId, record] of Object.entries(state)) {
         const display = data.event.displays.find((d) => d.item.id === itemId)!;
-        total += count * display.price;
+        if (display.dedication && record.dedication) {
+          continue;
+        } else if (display.internalPrice !== null && record.internal) {
+          total += display.internalPrice * record.count;
+        } else {
+          total += display.price * record.count;
+        }
       }
       for (const discount of data.event.discounts) {
         switch (discount.__typename) {
@@ -110,16 +116,6 @@ function useCalculator() {
               ...discount.itemIds.map((itemId) => state[itemId]?.count ?? 0),
             );
             total -= count * discount.amount;
-            break;
-          }
-          case "DedicationDiscount": {
-            const record = state[discount.itemId];
-            const display = data.event.displays.find(
-              (d) => d.item.id === discount.itemId,
-            );
-            if (record && record.dedication && record.count > 0 && display) {
-              total -= display.price;
-            }
             break;
           }
         }

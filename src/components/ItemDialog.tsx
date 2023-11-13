@@ -4,7 +4,7 @@ import { BaseDialog, type DialogProps } from "./BaseDialog";
 import type { CreateItem } from "@/generated/schema";
 import { getISODateString } from "@/shared/utils";
 
-export default function EventDialog({
+export default function ItemDialog({
   mode,
   onSubmit,
   defaultValues,
