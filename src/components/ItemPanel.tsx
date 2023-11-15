@@ -5,7 +5,6 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import type { PropsWithChildren } from "react";
 import DummyItemPicture from "./DummyItemPicture";
-import { DEFAULT_ITEM_PICTURE } from "@/constant";
 
 export default function ItemPanel({
   children,
@@ -18,7 +17,7 @@ export default function ItemPanel({
       {item.picture ? (
         <CardMedia
           component="img"
-          image={item.picture ?? DEFAULT_ITEM_PICTURE}
+          image={item.picture}
           alt={item.name}
           sx={{ width: 150 }}
         />
