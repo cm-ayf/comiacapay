@@ -23,6 +23,7 @@ type Display {
 input CreateEvent {
   name: String!
   date: Date!
+  clone: ID
 }
 
 input UpdateEvent {

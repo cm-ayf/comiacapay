@@ -51,16 +51,22 @@ export default function Events() {
         ))}
       </Grid>
       {me.write && (
-        <CreateEventDialog open={open} onClose={() => setOpen(false)} />
+        <CreateEventDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          events={data.guild.events}
+        />
       )}
     </>
   );
 }
 
 function CreateEventDialog({
+  events,
   open,
   onClose,
 }: {
+  events: { id: string; name: string }[];
   open: boolean;
   onClose: () => void;
 }) {
@@ -88,6 +94,7 @@ function CreateEventDialog({
     <EventDialog
       mode="create"
       title="イベントを追加"
+      events={events}
       open={open}
       onSubmit={onSubmit}
       onClose={onClose}

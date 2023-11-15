@@ -64,15 +64,43 @@ export const Mutation: Resolvers["Mutation"] = {
 
   async createEvent(_, { input }, context) {
     context.assertsPermissions(["write"]);
-    return context.prisma.event.create({
+    const { clone, ...rest } = input;
+    const event = await context.prisma.event.create({
       data: {
-        ...input,
+        ...rest,
         id: generateSnowflake().toString(),
         guild: {
           connect: { id: context.member.guildId },
         },
       },
     });
+
+    if (clone) {
+      const { discounts, displays } =
+        await context.prisma.event.findUniqueOrThrow({
+          where: { id: clone },
+          include: { displays: true },
+        });
+
+      await context.prisma.display.createMany({
+        data: displays.map((display) => ({
+          ...display,
+          eventId: event.id,
+        })),
+      });
+
+      await context.prisma.event.update({
+        where: { id: event.id },
+        data: {
+          discounts: discounts.map((discount) => ({
+            ...discount,
+            id: generateSnowflake().toString(),
+          })),
+        },
+      });
+    }
+
+    return event;
   },
   async updateEvent(_, { id, input }, context) {
     context.assertsPermissions(["read", "write"]);

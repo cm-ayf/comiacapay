@@ -1,3 +1,7 @@
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import { useForm } from "react-hook-form";
 import { getISODateString } from "../shared/utils";
@@ -8,8 +12,11 @@ export default function EventDialog({
   mode,
   onSubmit,
   defaultValues,
+  events,
   ...rest
-}: DialogProps<CreateEvent>) {
+}: DialogProps<CreateEvent> & {
+  events?: { id: string; name: string }[];
+}) {
   const {
     register,
     handleSubmit,
@@ -39,6 +46,18 @@ export default function EventDialog({
         type="date"
         variant="standard"
       />
+      {events && (
+        <FormControl sx={{ mt: 2 }}>
+          <InputLabel>お品書きをコピー</InputLabel>
+          <Select label="お品書きをコピー" {...register("clone")}>
+            {events.map((event) => (
+              <MenuItem key={event.id} value={event.id}>
+                {event.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
     </BaseDialog>
   );
 }
