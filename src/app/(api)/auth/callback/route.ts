@@ -36,9 +36,7 @@ export async function GET(request: NextRequest) {
   } catch (e) {
     const error = OAuth2Error.fromError(e);
     return withCookies(
-      NextResponse.redirect(
-        new URL(error.toRedirectURL(), env.NEXT_PUBLIC_HOST),
-      ),
+      NextResponse.redirect(error.toRedirectURL()),
       error.code === "server_error" ? {} : { state: "" },
     );
   }

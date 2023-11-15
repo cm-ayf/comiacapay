@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { upsertMember } from "../sync";
 import { decryptTokenSet } from "@/app/(api)/auth/jwt";
-import { env } from "@/app/(api)/env";
 import { OAuth2Error } from "@/shared/error";
+import { host } from "@/shared/host";
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,11 +18,9 @@ export async function GET(request: NextRequest) {
     const decryptedTokenSet = await decryptTokenSet(tokenSet.value);
     await upsertMember(decryptedTokenSet, guildId);
 
-    return NextResponse.redirect(new URL(`/${guildId}`, env.NEXT_PUBLIC_HOST));
+    return NextResponse.redirect(new URL(`/${guildId}`, host));
   } catch (e) {
     const error = OAuth2Error.fromError(e, "Failed to initiate");
-    return NextResponse.redirect(
-      new URL(error.toRedirectURL(), env.NEXT_PUBLIC_HOST),
-    );
+    return NextResponse.redirect(error.toRedirectURL());
   }
 }

@@ -1,4 +1,5 @@
 import { type Static, Type } from "@sinclair/typebox";
+import { host } from "./host";
 import { typeCheck } from "./utils";
 
 const OAuth2ErrorCode = Type.Enum({
@@ -83,6 +84,6 @@ export class OAuth2Error extends Error {
       ...(this.description && { error_description: this.description }),
       code: this.code,
     });
-    return `/?${searchParams.toString()}`;
+    return new URL(`/?${searchParams.toString()}`, host);
   }
 }

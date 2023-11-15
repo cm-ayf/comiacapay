@@ -16,11 +16,12 @@ import type {
 } from "discord-api-types/v10";
 import { env } from "@/app/(api)/env";
 import { OAuth2Error } from "@/shared/error";
+import { host } from "@/shared/host";
 
 const client_id = env.DISCORD_CLIENT_ID;
 const client_secret = env.DISCORD_CLIENT_SECRET;
 const basic = btoa(`${client_id}:${client_secret}`);
-const redirect_uri = new URL("/auth/callback", env.NEXT_PUBLIC_HOST).toString();
+const redirect_uri = new URL("/auth/callback", host).toString();
 
 export function authorizeUrl(params: Record<string, string | boolean>) {
   const url = new URL(OAuth2Routes.authorizationURL);

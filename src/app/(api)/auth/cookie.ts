@@ -1,8 +1,6 @@
 import type { CookieSerializeOptions } from "cookie";
 import { NextResponse } from "next/server";
-import { env } from "@/app/(api)/env";
-
-const host = new URL(env.NEXT_PUBLIC_HOST);
+import { host } from "@/shared/host";
 
 const baseCookieOptions: CookieSerializeOptions = {
   httpOnly: true,

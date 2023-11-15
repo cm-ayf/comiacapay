@@ -11,13 +11,11 @@ import { verifySession } from "@/app/(api)/auth/jwt";
 import { authorizeUrl, oauth2Post } from "@/app/(api)/auth/oauth2";
 import { env } from "@/app/(api)/env";
 import { OAuth2Error } from "@/shared/error";
+import { host } from "@/shared/host";
 
 const client_id = env.DISCORD_CLIENT_ID;
 const client_secret = env.DISCORD_CLIENT_SECRET;
-const redirect_uri = new URL(
-  "/guilds/callback",
-  env.NEXT_PUBLIC_HOST,
-).toString();
+const redirect_uri = new URL("/guilds/callback", host).toString();
 
 export function authorizeBotUrl(guild_id?: string | null) {
   return authorizeUrl({

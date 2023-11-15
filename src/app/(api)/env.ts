@@ -2,7 +2,6 @@ import { Type } from "@sinclair/typebox";
 import { TypeCompiler } from "@sinclair/typebox/compiler";
 
 const Env = Type.Object({
-  NEXT_PUBLIC_HOST: Type.String(),
   DISCORD_CLIENT_ID: Type.String(),
   DISCORD_CLIENT_SECRET: Type.String(),
   KEY_PAIR: Type.String(),

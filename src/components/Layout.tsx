@@ -46,6 +46,5 @@ export default function Layout({
 }
 
 function ErrorComponent({ error }: { error: Error }) {
-  console.error(error);
-  return null;
+  return JSON.stringify(error);
 }

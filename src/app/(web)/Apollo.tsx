@@ -9,12 +9,29 @@ import {
 } from "@apollo/client";
 import { GraphQLError } from "graphql";
 import type { PropsWithChildren } from "react";
+import { waitUntilAuthorized } from "./UserState";
+import { host } from "@/shared/host";
+
+function retryFetchOnUnauthorized(fetch: typeof window.fetch) {
+  return async (input: RequestInfo, init?: RequestInit) => {
+    const request = new Request(input, init);
+    const isGetCurrentUser =
+      new URL(request.url).searchParams.get("operationName") ===
+      "GetCurrentUser";
+
+    const response = await fetch(request);
+    if (response.status !== 401 || isGetCurrentUser) return response;
+
+    const authorized = await waitUntilAuthorized();
+    if (!authorized) return response;
+
+    return await fetch(request);
+  };
+}
 
 const link = createHttpLink({
-  uri: new URL("/graphql", process.env["NEXT_PUBLIC_HOST"]).toString(),
-  fetchOptions: {
-    credentials: "include",
-  },
+  uri: new URL("/graphql", host).toString(),
+  fetch: retryFetchOnUnauthorized(fetch),
 });
 
 const client = new ApolloClient({

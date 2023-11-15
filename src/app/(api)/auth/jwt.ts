@@ -2,6 +2,7 @@ import { EncryptJWT, SignJWT, importJWK, jwtDecrypt, jwtVerify } from "jose";
 import type { JWTPayload, KeyLike } from "jose";
 import type { TokenSet } from "./tokenset";
 import { env } from "@/app/(api)/env";
+import { host } from "@/shared/host";
 
 type Keys = Record<
   "signKey" | "verifyKey" | "encryptKey" | "decryptKey",
@@ -33,8 +34,8 @@ export async function signSession(sub: string) {
   return await new SignJWT({})
     .setProtectedHeader({ alg: jwsAlg })
     .setIssuedAt()
-    .setIssuer(env.NEXT_PUBLIC_HOST)
-    .setAudience(env.NEXT_PUBLIC_HOST)
+    .setIssuer(host.href)
+    .setAudience(host.href)
     .setExpirationTime("2h")
     .setSubject(sub)
     .setJti(crypto.randomUUID())
@@ -52,8 +53,8 @@ export async function encryptTokenSet(tokenSet: TokenSet) {
   return await new EncryptJWT({ ...tokenSet })
     .setProtectedHeader({ alg: jweAlg, enc: "A256GCM" })
     .setIssuedAt()
-    .setIssuer(env.NEXT_PUBLIC_HOST)
-    .setAudience(env.NEXT_PUBLIC_HOST)
+    .setIssuer(host.href)
+    .setAudience(host.href)
     .setExpirationTime(`${tokenSet.expires_in}s`)
     .encrypt(encryptKey);
 }
