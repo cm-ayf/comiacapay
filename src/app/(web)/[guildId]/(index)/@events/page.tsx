@@ -79,7 +79,7 @@ function CreateEventDialog({
       assertSuccess(result);
       router.push(`/${params.guildId}/${result.data.createEvent.id}`);
     } catch (e) {
-      error("イベントの作成に失敗しました");
+      error("イベントの追加に失敗しました");
       throw e;
     }
   }
@@ -87,12 +87,12 @@ function CreateEventDialog({
   return (
     <EventDialog
       mode="create"
-      title="イベントを作成"
+      title="イベントを追加"
       open={open}
       onSubmit={onSubmit}
       onClose={onClose}
       loading={loading}
-      buttons={[{ submit: true, label: "作成" }]}
+      buttons={[{ submit: true, label: "保存" }]}
     />
   );
 }

@@ -21,6 +21,7 @@ import {
   useState,
   useMemo,
 } from "react";
+import { useAlert } from "./Alert";
 import { useUserState } from "./UserState";
 import { DOCS } from "@/constant";
 
@@ -37,6 +38,7 @@ export default function Navigation({
 }: NavigationProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const { success, error } = useAlert();
   const ref = useRef<HTMLDivElement>(null);
 
   const refreshUrl = useUrlWithRedirectTo("/auth/refresh");
@@ -68,6 +70,17 @@ export default function Navigation({
           <MenuLinkItem href={`${DOCS}/${docs}.md`} target="_blank">
             マニュアル
           </MenuLinkItem>
+          <MenuItem
+            onClick={() => {
+              navigator.clipboard
+                .writeText(location.href)
+                .then(() => success("URLをコピーしました"))
+                .catch(() => error("URLをコピーできませんでした"))
+                .finally(() => setOpen(false));
+            }}
+          >
+            この画面のURLをコピー
+          </MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

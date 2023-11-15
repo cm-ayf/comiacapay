@@ -13,7 +13,11 @@ export const EventResolver: Resolvers["Event"] = {
       .findUniqueOrThrow({
         where: { id: parent.id },
       })
-      .displays();
+      .displays({
+        orderBy: {
+          item: { issuedAt: "desc" },
+        },
+      });
   },
   receipts(parent, _, context) {
     return context.prisma.event

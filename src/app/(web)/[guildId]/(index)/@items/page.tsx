@@ -6,7 +6,6 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { GraphQLError } from "graphql";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useAlert } from "../../../Alert";
@@ -82,12 +81,10 @@ function CreateItemDialog({
       await trigger({
         variables: { ...params, input },
       });
-      success("商品を作成しました");
+      success("商品を追加しました");
       onClose();
     } catch (e) {
-      if (e instanceof GraphQLError && e.extensions["code"] === "CONFLICT")
-        error("商品コードが重複しています");
-      else error("商品の作成に失敗しました");
+      error("商品の追加に失敗しました");
       throw e;
     }
   }
@@ -95,12 +92,12 @@ function CreateItemDialog({
   return (
     <ItemDialog
       mode="create"
-      title="商品を作成"
+      title="商品を追加"
       open={open}
       onClose={onClose}
       loading={loading}
       onSubmit={onSubmit}
-      buttons={[{ submit: true, label: "作成" }]}
+      buttons={[{ submit: true, label: "保存" }]}
     />
   );
 }
@@ -171,7 +168,7 @@ function MutateItemDialog({
       loading={updating || deleting}
       onSubmit={onUpdate}
       buttons={[
-        { submit: true, label: "更新" },
+        { submit: true, label: "保存" },
         { label: "削除", color: "error", onClick: onDelete },
       ]}
     />

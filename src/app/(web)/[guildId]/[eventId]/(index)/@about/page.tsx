@@ -121,7 +121,7 @@ function UpdateEventDialog({
       onSubmit={onUpdate}
       loading={updating || deleting}
       buttons={[
-        { submit: true, label: "更新" },
+        { submit: true, label: "保存" },
         { label: "削除", color: "error", onClick: onDelete },
       ]}
     />

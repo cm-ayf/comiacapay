@@ -17,13 +17,17 @@ export const GuildResolver: Resolvers["Guild"] = {
       .findUniqueOrThrow({
         where: { id: parent.id },
       })
-      .events();
+      .events({
+        orderBy: { date: "desc" },
+      });
   },
   items(parent, _, context) {
     return context.prisma.guild
       .findUniqueOrThrow({
         where: { id: parent.id },
       })
-      .items();
+      .items({
+        orderBy: { issuedAt: "asc" },
+      });
   },
 };
