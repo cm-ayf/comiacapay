@@ -10,8 +10,7 @@ module.exports = nextPWA({
   cacheOnFrontEndNav: true,
   runtimeCaching: [
     {
-      urlPattern: "/api/users/me",
-      method: "GET",
+      urlPattern: "/graphql",
       handler: "NetworkOnly",
     },
     ...nextPWACache,

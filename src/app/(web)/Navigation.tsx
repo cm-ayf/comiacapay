@@ -68,7 +68,7 @@ export default function Navigation({
           transformOrigin={{ vertical: "top", horizontal: "right" }}
         >
           <MenuLinkItem href={refreshUrl}>権限を更新</MenuLinkItem>
-          <MenuLinkItem href="/api/auth/signout">サインアウト</MenuLinkItem>
+          <MenuLinkItem href="/auth/signout">サインアウト</MenuLinkItem>
           <MenuLinkItem href={`${DOCS}/${docs}.md`} target="_blank">
             マニュアル
           </MenuLinkItem>
@@ -135,8 +135,15 @@ function UserButton({
 }
 
 function SigninButton() {
+  const signinUrl = useMemo(() => {
+    const params = new URLSearchParams({
+      redirect_to: location.pathname,
+    });
+    return `/auth/signin?${params}`;
+  }, []);
+
   return (
-    <Button color="inherit" href="/auth/signin">
+    <Button color="inherit" href={signinUrl}>
       サインイン
     </Button>
   );

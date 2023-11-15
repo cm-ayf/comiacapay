@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { env } from "../../env";
 import { withCookies } from "../cookie";
 import { encryptTokenSet, signSession } from "../jwt";
 import { exchangeCode } from "../oauth2";
 import { upsertUserAndMembers } from "../sync";
 import { OAuth2Error } from "@/shared/error";
+import { host } from "@/shared/host";
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,7 +28,9 @@ export async function GET(request: NextRequest) {
     const user = await upsertUserAndMembers(tokenResult);
     const session = await signSession(user.id);
 
-    return withCookies(NextResponse.redirect(new URL("/", request.url)), {
+    const redirectToCookie = request.cookies.get("redirect_to");
+    const redirectUrl = (redirectToCookie ? redirectToCookie.value : "/", host);
+    return withCookies(NextResponse.redirect(redirectUrl), {
       session,
       token_set,
       state: "",

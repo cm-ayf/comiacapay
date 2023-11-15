@@ -23,6 +23,11 @@ const cookieOptions = {
     sameSite: "lax",
     maxAge: 600,
   },
+  redirect_to: {
+    ...baseCookieOptions,
+    sameSite: "lax",
+    maxAge: 600,
+  },
 } satisfies {
   [key: string]: CookieSerializeOptions;
 };
