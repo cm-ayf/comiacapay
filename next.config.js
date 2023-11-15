@@ -10,9 +10,6 @@ module.exports = nextPWA({
     runtimeCaching: [{ urlPattern: "/graphql", handler: "NetworkOnly" }],
   },
 })({
-  experimental: {
-    ppr: true,
-  },
   reactStrictMode: true,
   webpack(config) {
     config.module.rules.push({
