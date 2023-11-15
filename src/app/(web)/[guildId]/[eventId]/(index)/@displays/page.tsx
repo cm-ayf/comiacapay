@@ -26,8 +26,6 @@ import { assertSuccess } from "@/app/(web)/Apollo";
 import ItemPanel from "@/components/ItemPanel";
 import type { UpsertDisplay } from "@/generated/schema";
 
-export const dynamic = "force-static";
-
 interface PartialItem {
   id: string;
   name: string;

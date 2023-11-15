@@ -15,8 +15,6 @@ import EventCard from "@/components/EventCard";
 import EventDialog from "@/components/EventDialog";
 import type { UpdateEvent } from "@/generated/schema";
 
-export const dynamic = "force-static";
-
 export default function About() {
   const params = useParams<Params>();
   const { data } = useSuspenseQuery(GetEventDetailsQuery, {

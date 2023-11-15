@@ -2,6 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { authorizeBotUrl, retrieveSession } from "../oauth2";
 import { OAuth2Error } from "@/shared/error";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     await retrieveSession(request);

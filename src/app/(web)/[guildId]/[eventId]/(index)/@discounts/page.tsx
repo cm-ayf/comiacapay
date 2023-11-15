@@ -21,8 +21,6 @@ import { useAlert } from "@/app/(web)/Alert";
 import { assertSuccess } from "@/app/(web)/Apollo";
 import type { CreateSetDiscount } from "@/generated/schema";
 
-export const dynamic = "force-static";
-
 export default function Discounts() {
   const params = useParams<Params>();
   const { data } = useSuspenseQuery(GetEventDetailsQuery, {

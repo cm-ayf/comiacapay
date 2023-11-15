@@ -1,20 +1,14 @@
 // @ts-check
-const nextPWA = require("next-pwa");
-const nextPWACache = /** @type {import('workbox-build').RuntimeCaching[]} */ (
-  require("next-pwa/cache")
-);
+const { default: nextPWA } = require("@ducanh2912/next-pwa");
 
 module.exports = nextPWA({
   dest: "public",
   disable: process.env.NODE_ENV !== "production",
   cacheOnFrontEndNav: true,
-  runtimeCaching: [
-    {
-      urlPattern: "/graphql",
-      handler: "NetworkOnly",
-    },
-    ...nextPWACache,
-  ],
+  extendDefaultRuntimeCaching: true,
+  workboxOptions: {
+    runtimeCaching: [{ urlPattern: "/graphql", handler: "NetworkOnly" }],
+  },
 })({
   experimental: {
     ppr: true,

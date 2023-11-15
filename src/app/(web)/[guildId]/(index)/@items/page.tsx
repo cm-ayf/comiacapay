@@ -20,8 +20,6 @@ import ItemDialog from "@/components/ItemDialog";
 import type { Item } from "@/generated/resolvers";
 import type { CreateItem, UpdateItem } from "@/generated/schema";
 
-export const dynamic = "force-static";
-
 export default function Items() {
   const params = useParams<Params>();
   const { data } = useSuspenseQuery(GetGuildQuery, { variables: params });

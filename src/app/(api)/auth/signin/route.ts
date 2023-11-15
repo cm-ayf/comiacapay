@@ -4,6 +4,8 @@ import { withCookies } from "../cookie";
 import { authorizeUserUrl } from "../oauth2";
 import { OAuth2Error } from "@/shared/error";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     const redirect_to = request.nextUrl.searchParams.get("redirect_to") ?? "/";

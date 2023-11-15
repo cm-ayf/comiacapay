@@ -6,6 +6,8 @@ import { upsertUserAndMembers } from "../sync";
 import { OAuth2Error } from "@/shared/error";
 import { host } from "@/shared/host";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     const code = request.nextUrl.searchParams.get("code");

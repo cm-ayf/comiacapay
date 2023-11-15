@@ -17,8 +17,6 @@ import EventCard from "@/components/EventCard";
 import EventDialog from "@/components/EventDialog";
 import type { CreateEvent } from "@/generated/schema";
 
-export const dynamic = "force-static";
-
 export default function Events() {
   const params = useParams<Params>();
   const { data } = useSuspenseQuery(GetGuildQuery, { variables: params });

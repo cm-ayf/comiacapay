@@ -7,8 +7,6 @@ import type { Params } from "./params";
 import Navigation from "@/app/(web)/Navigation";
 import Layout from "@/components/Layout";
 
-export const dynamic = "force-static";
-
 export default function Home({
   params,
   events,

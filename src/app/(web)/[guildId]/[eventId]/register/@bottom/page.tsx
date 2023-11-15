@@ -17,8 +17,6 @@ import { useAlert } from "@/app/(web)/Alert";
 import NoSSRSuspense from "@/components/NoSSRSuspense";
 import { generateSnowflake } from "@/shared/snowflake";
 
-export const dynamic = "force-static";
-
 export default function Bottom() {
   return (
     <Paper

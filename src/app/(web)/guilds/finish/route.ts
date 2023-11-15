@@ -4,6 +4,8 @@ import { decryptTokenSet } from "@/app/(api)/auth/jwt";
 import { OAuth2Error } from "@/shared/error";
 import { host } from "@/shared/host";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     const guildId = request.nextUrl.searchParams.get("guild_id");
