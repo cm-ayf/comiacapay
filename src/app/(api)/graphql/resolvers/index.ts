@@ -8,7 +8,7 @@ export const resolvers: Resolvers = {
   User: {
     members(parent, _, context) {
       return context.prisma.member.findMany({
-        where: { userId: parent.id },
+        where: { userId: parent.id, read: true },
       });
     },
   },

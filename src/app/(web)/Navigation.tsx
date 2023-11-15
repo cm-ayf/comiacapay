@@ -14,7 +14,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
-import { type PropsWithChildren, useEffect, useRef, useState } from "react";
+import {
+  type PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from "react";
 import { useUserState } from "./UserState";
 import { DOCS } from "@/constant";
 
@@ -32,6 +38,12 @@ export default function Navigation({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const refreshUrl = useMemo(() => {
+    const params = new URLSearchParams({
+      redirect_to: location.pathname,
+    });
+    return `/auth/refresh?${params}`;
+  }, []);
 
   useEffect(() => {
     if (title) document.title = title + " | Comiacapay";
@@ -55,6 +67,7 @@ export default function Navigation({
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           transformOrigin={{ vertical: "top", horizontal: "right" }}
         >
+          <MenuLinkItem href={refreshUrl}>権限を更新</MenuLinkItem>
           <MenuLinkItem href="/api/auth/signout">サインアウト</MenuLinkItem>
           <MenuLinkItem href={`${DOCS}/${docs}.md`} target="_blank">
             マニュアル
