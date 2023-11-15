@@ -1,9 +1,10 @@
 "use client";
 
-import { ApolloError, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useEffect, type PropsWithChildren, useState } from "react";
 import { useAlert } from "../Alert";
+import { isSessionError } from "../Apollo";
 import {
   QueryErrorEvent,
   QuerySuccessEvent,
@@ -80,14 +81,6 @@ export function useUserState() {
 
 export function waitUntilAuthorized() {
   return controller.waitUntilAuthorized();
-}
-
-function isSessionError({ networkError }: ApolloError) {
-  return (
-    networkError &&
-    "response" in networkError &&
-    networkError.response.status === 401
-  );
 }
 
 function SigninErrorMessage() {

@@ -6,6 +6,7 @@ import {
   InMemoryCache,
   type FetchResult,
   createHttpLink,
+  ApolloError,
 } from "@apollo/client";
 import { GraphQLError } from "graphql";
 import type { PropsWithChildren } from "react";
@@ -15,6 +16,7 @@ import { host } from "@/shared/host";
 function retryFetchOnUnauthorized(fetch: typeof window.fetch) {
   return async (input: RequestInfo, init?: RequestInit) => {
     const request = new Request(input, init);
+    const isQuery = request.method === "GET";
     const isGetCurrentUser =
       new URL(request.url).searchParams.get("operationName") ===
       "GetCurrentUser";
@@ -23,7 +25,7 @@ function retryFetchOnUnauthorized(fetch: typeof window.fetch) {
     if (response.status !== 401 || isGetCurrentUser) return response;
 
     const authorized = await waitUntilAuthorized();
-    if (!authorized) return response;
+    if (!authorized || !isQuery) return response;
 
     return await fetch(request);
   };
@@ -31,6 +33,7 @@ function retryFetchOnUnauthorized(fetch: typeof window.fetch) {
 
 const link = createHttpLink({
   uri: new URL("/graphql", host).toString(),
+  useGETForQueries: true,
   fetch: retryFetchOnUnauthorized(fetch),
 });
 
@@ -57,4 +60,12 @@ export function assertSuccess<T>(
   if (error) throw error;
   else if (data) return;
   else throw new Error("Unexpected error");
+}
+
+export function isSessionError({ networkError }: ApolloError) {
+  return (
+    networkError &&
+    "response" in networkError &&
+    networkError.response.status === 401
+  );
 }

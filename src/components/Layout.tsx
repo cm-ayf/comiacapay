@@ -1,11 +1,18 @@
 "use client";
 
+import { ApolloError } from "@apollo/client";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import type { PropsWithChildren, ReactNode } from "react";
 import NoSSRSuspense from "./NoSSRSuspense";
+import { isSessionError } from "@/app/(web)/Apollo";
 
 export interface LayoutProps {
   navigation: ReactNode;
@@ -46,5 +53,19 @@ export default function Layout({
 }
 
 function ErrorComponent({ error }: { error: Error }) {
-  return JSON.stringify(error);
+  if (error instanceof ApolloError && isSessionError(error)) return "";
+  return (
+    <Container sx={{ py: 2 }}>
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMore />}>
+          エラーが発生しました（詳細）
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography component="pre">
+            {JSON.stringify(error, null, 2)}
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+    </Container>
+  );
 }

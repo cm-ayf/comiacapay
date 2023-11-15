@@ -38,7 +38,7 @@ export default function Navigation({
   }, [title]);
 
   return (
-    <AppBar position="static" ref={ref}>
+    <AppBar position="static" ref={ref} sx={{ height: 48 }}>
       <Toolbar variant="dense">
         {back && (
           <IconButton color="inherit" onClick={() => router.push(back)}>
