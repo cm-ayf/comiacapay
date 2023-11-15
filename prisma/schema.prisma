@@ -129,8 +129,8 @@ model Record {
   itemId    String  @map("item_id") @db.Char(20)
 
   count      Int
-  internal   Boolean
-  dedication Boolean
+  internal   Boolean @default(false)
+  dedication Boolean @default(false)
 
   @@id([receiptId, itemId])
   @@index([receiptId])

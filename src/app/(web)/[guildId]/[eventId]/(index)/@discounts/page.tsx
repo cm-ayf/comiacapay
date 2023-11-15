@@ -89,7 +89,7 @@ function Discount({
             {setDisplays
               .map((discount) => (discount ? discount.item.name : "不明"))
               .join(" + ")}
-            =
+            = ¥
             {setDisplays.reduce(
               (sum, display) => sum + (display ? display.price : 0),
               -discount.amount,

@@ -4,6 +4,7 @@ import { type DBSchema, type IDBPDatabase, openDB } from "idb";
 import { useParams } from "next/navigation";
 import { use, useCallback, useState, useEffect } from "react";
 import type { Params } from "../params";
+import RefetchController, { RefetchEvent } from "./RefetchController";
 import type { CreateReceipt } from "@/generated/schema";
 
 interface IDBReceipt extends CreateReceipt {
@@ -62,6 +63,9 @@ function fetchReceipts(idb: IDB, eventId: string) {
   return fetching;
 }
 
+const controller = new RefetchController();
+controller.addEventListener("refetch", (e) => cache.delete(e.eventId));
+
 export function useReceipts() {
   const { eventId } = useParams<Params>();
   const idb = use(init());
@@ -70,12 +74,23 @@ export function useReceipts() {
   const [receipts, setReceipts] = useState<IDBReceipt[]>();
   const [error, setError] = useState<Error>();
 
-  useEffect(() => {
+  const fetch = useCallback(() => {
+    setLoading(true);
     fetchReceipts(idb, eventId)
       .then(setReceipts)
       .catch(setError)
       .finally(() => setLoading(false));
   }, [idb, eventId]);
+
+  useEffect(fetch, [fetch]);
+
+  useEffect(() => {
+    const refetch = (e: RefetchEvent) => {
+      if (e.eventId === eventId) fetch();
+    };
+    controller.addEventListener("refetch", refetch);
+    return () => controller.removeEventListener("refetch", refetch);
+  }, [fetch, eventId]);
 
   return { loading, receipts, error };
 }
@@ -97,7 +112,7 @@ export function useCreateReceipt({
       setLoading(true);
       await idb.add("Receipt", { eventId, ...receipt, pushed: false });
       setLoading(false);
-      cache.delete(eventId);
+      controller.dispatchEvent(new RefetchEvent(eventId));
     },
     [idb, eventId],
   );
@@ -124,7 +139,7 @@ export function useSetReceiptsPushed({
         }),
       );
       setLoading(false);
-      cache.delete(eventId);
+      controller.dispatchEvent(new RefetchEvent(eventId));
     },
     [idb, eventId],
   );

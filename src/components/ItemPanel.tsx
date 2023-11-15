@@ -4,6 +4,7 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import type { PropsWithChildren } from "react";
+import DummyItemPicture from "./DummyItemPicture";
 import { DEFAULT_ITEM_PICTURE } from "@/constant";
 
 export default function ItemPanel({
@@ -14,12 +15,16 @@ export default function ItemPanel({
 }>) {
   return (
     <Card sx={{ height: 220, width: "100%", display: "flex" }}>
-      <CardMedia
-        component="img"
-        image={item.picture ?? DEFAULT_ITEM_PICTURE}
-        alt={item.name}
-        sx={{ width: 150 }}
-      />
+      {item.picture ? (
+        <CardMedia
+          component="img"
+          image={item.picture ?? DEFAULT_ITEM_PICTURE}
+          alt={item.name}
+          sx={{ width: 150 }}
+        />
+      ) : (
+        <DummyItemPicture item={item} sx={{ width: 150 }} />
+      )}
       <Box sx={{ width: "100%", display: "flex", flexDirection: "column" }}>
         <CardContent sx={{ fontSize: "1.5em" }}>{item.name}</CardContent>
         <Box sx={{ flex: 1 }} />

@@ -161,11 +161,25 @@ export const Mutation: Resolvers["Mutation"] = {
       where: { id: eventId, guildId: context.member.guildId },
     });
     await context.prisma.receipt.createMany({
-      data: input.map((receipt) => ({
-        ...receipt,
+      data: input.map(({ id, total }) => ({
+        id,
+        total,
         userId: context.session.sub,
         eventId,
       })),
+      skipDuplicates: true,
+    });
+    await context.prisma.record.createMany({
+      data: input.flatMap(({ id, records }) => {
+        return records.map(({ itemId, count, internal, dedication }) => ({
+          receiptId: id,
+          eventId,
+          itemId,
+          count,
+          internal: internal ?? false,
+          dedication: dedication ?? false,
+        }));
+      }),
       skipDuplicates: true,
     });
     return context.prisma.receipt.findMany({
@@ -176,10 +190,24 @@ export const Mutation: Resolvers["Mutation"] = {
   },
   async deleteReceipts(_, { eventId, ids }, context) {
     context.assertsPermissions(["write"]);
-    const { count } = await context.prisma.receipt.deleteMany({
+    // make sure that all the receipts is of the event in the guild
+    const count = await context.prisma.receipt.count({
       where: {
         id: { in: ids },
         event: { id: eventId, guildId: context.member.guildId },
+      },
+    });
+    if (count !== ids.length)
+      throw new Error("Some receipts are not of the event in the guild");
+
+    await context.prisma.record.deleteMany({
+      where: {
+        receiptId: { in: ids },
+      },
+    });
+    await context.prisma.receipt.deleteMany({
+      where: {
+        id: { in: ids },
       },
     });
     return count;

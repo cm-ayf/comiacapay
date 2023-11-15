@@ -2,7 +2,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import type { MouseEventHandler } from "react";
 import BaseCard from "./BaseCard";
-import { DEFAULT_ITEM_PICTURE } from "@/constant";
+import DummyItemPicture from "./DummyItemPicture";
 
 export default function ItemCard({
   item,
@@ -13,12 +13,17 @@ export default function ItemCard({
 }) {
   return (
     <BaseCard onClick={onClick}>
-      <CardMedia
-        component="img"
-        image={item.picture ?? DEFAULT_ITEM_PICTURE}
-        alt={item.name}
-        sx={{ width: 200, m: 2 }}
-      />
+      {item.picture ? (
+        <CardMedia
+          component="img"
+          image={item.picture}
+          alt={item.name}
+          sx={{ width: 200, m: 2 }}
+        />
+      ) : (
+        <DummyItemPicture item={item} sx={{ width: 200, height: 250, m: 2 }} />
+      )}
+
       <CardContent
         sx={{
           pt: 0,

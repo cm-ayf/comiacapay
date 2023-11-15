@@ -5,7 +5,7 @@ import CloudDone from "@mui/icons-material/CloudDone";
 import CloudUpload from "@mui/icons-material/CloudUpload";
 import LoadingButton, { type LoadingButtonProps } from "@mui/lab/LoadingButton";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useReceipts, useSetReceiptsPushed } from "../idb";
 import type { Params } from "../params";
 import CreateReceiptsMutation from "./CreateReceipts.graphql";
@@ -16,6 +16,11 @@ import type { CreateReceipt } from "@/generated/schema";
 export default function PushButton(props: Pick<LoadingButtonProps, "size">) {
   const params = useParams<Params>();
   const { receipts, loading } = useReceipts();
+  const receiptsToPush = useMemo(() => {
+    return receipts
+      ?.filter(({ pushed }) => !pushed)
+      .map<CreateReceipt>(({ id, total, records }) => ({ id, total, records }));
+  }, [receipts]);
   const [triggerPush, { loading: pushing }] = useMutation(
     CreateReceiptsMutation,
   );
@@ -48,25 +53,25 @@ export default function PushButton(props: Pick<LoadingButtonProps, "size">) {
   );
 
   useEffect(() => {
-    if (receipts && receipts.length > 10) {
+    if (receiptsToPush && receiptsToPush.length > 10) {
       info("同期されていないデータがあります");
     }
-  }, [receipts, info]);
+  }, [receiptsToPush, info]);
 
   useEffect(() => {
-    if (!receipts?.length) return;
-    const id = setTimeout(push, 5000, receipts);
+    if (!receiptsToPush?.length) return;
+    const id = setTimeout(push, 5000, receiptsToPush);
     return () => clearTimeout(id);
-  }, [push, receipts]);
+  }, [push, receiptsToPush]);
 
   return (
     <LoadingButton
       {...props}
       variant="outlined"
       loading={loading || pushing || settingPushed}
-      startIcon={receipts?.length ? <CloudUpload /> : <CloudDone />}
-      disabled={!receipts?.length}
-      onClick={() => receipts && push(receipts)}
+      startIcon={receiptsToPush?.length ? <CloudUpload /> : <CloudDone />}
+      disabled={!receiptsToPush?.length}
+      onClick={() => receiptsToPush && push(receiptsToPush)}
     >
       同期
     </LoadingButton>
