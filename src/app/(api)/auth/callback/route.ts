@@ -29,7 +29,10 @@ export async function GET(request: NextRequest) {
     const session = await signSession(user.id);
 
     const redirectToCookie = request.cookies.get("redirect_to");
-    const redirectUrl = (redirectToCookie ? redirectToCookie.value : "/", host);
+    const redirectUrl = new URL(
+      redirectToCookie ? redirectToCookie.value : "/",
+      host,
+    );
     return withCookies(NextResponse.redirect(redirectUrl), {
       session,
       token_set,

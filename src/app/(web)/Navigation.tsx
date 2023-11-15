@@ -38,12 +38,8 @@ export default function Navigation({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const refreshUrl = useMemo(() => {
-    const params = new URLSearchParams({
-      redirect_to: location.pathname,
-    });
-    return `/auth/refresh?${params}`;
-  }, []);
+
+  const refreshUrl = useUrlWithRedirectTo("/auth/refresh");
 
   useEffect(() => {
     if (title) document.title = title + " | Comiacapay";
@@ -135,13 +131,7 @@ function UserButton({
 }
 
 function SigninButton() {
-  const signinUrl = useMemo(() => {
-    const params = new URLSearchParams({
-      redirect_to: location.pathname,
-    });
-    return `/auth/signin?${params}`;
-  }, []);
-
+  const signinUrl = useUrlWithRedirectTo("/auth/signin");
   return (
     <Button color="inherit" href={signinUrl}>
       サインイン
@@ -176,4 +166,12 @@ function MenuLinkItem({
       </ButtonBase>
     </MenuItem>
   );
+}
+
+function useUrlWithRedirectTo(base: string) {
+  const redirect_to = globalThis.location?.pathname;
+  return useMemo(() => {
+    const params = new URLSearchParams({ redirect_to });
+    return `${base}?${params}`;
+  }, [base, redirect_to]);
 }
