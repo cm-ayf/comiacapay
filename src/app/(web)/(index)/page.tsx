@@ -15,7 +15,7 @@ export default function Page() {
 
   return (
     <>
-      <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+      <Box sx={{ display: "flex", flexDirection: "row" }}>
         <Typography variant="h2" sx={{ fontSize: "2em" }}>
           サーバー
         </Typography>
