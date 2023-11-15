@@ -8,7 +8,7 @@ import { GraphQLError, type GraphQLFormattedError } from "graphql";
 import { Context } from "./context";
 import { resolvers } from "./resolvers";
 import { schema as typeDefs } from "@/generated/graphql";
-import schema from "@/schema/scalar";
+import schema from "@/schema/scalar.mjs";
 
 export { handler as POST, handler as GET };
 async function handler(request: Request) {
