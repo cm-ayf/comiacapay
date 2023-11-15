@@ -60,7 +60,7 @@ Vercel 上で設定し，[Vercel CLI](https://vercel.com/docs/cli)でダウン�
 - `DISCORD_CLIENT_ID`：Discord の OAuth2 認証に利用します．
 - `DISCORD_CLIENT_SECRET`：Discord の OAuth2 認証に利用します．
 - `KEY_PAIR`：JWT の署名・検証に利用する鍵のペアです．
-  - `node scripts/key.js`を実行すると，鍵のペアが生成され，環境変数に設定すべき値が表示されます．
+  - `node scripts/key.mjs`を実行すると，鍵のペアが生成され，環境変数に設定すべき値が表示されます．
 
 ### ダウンロードする
 

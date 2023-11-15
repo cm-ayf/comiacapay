@@ -6,4 +6,4 @@ const [publicJWK, privateJWK] = await Promise.all([
   exportJWK(publicKey),
   exportJWK(privateKey),
 ]);
-console.log(`KEY_PAIR='${JSON.stringify({ publicJWK, privateJWK })}`);
+console.log(`KEY_PAIR='${JSON.stringify({ publicJWK, privateJWK })}'`);
