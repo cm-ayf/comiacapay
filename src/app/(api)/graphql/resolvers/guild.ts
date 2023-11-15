@@ -27,7 +27,7 @@ export const GuildResolver: Resolvers["Guild"] = {
         where: { id: parent.id },
       })
       .items({
-        orderBy: { issuedAt: "asc" },
+        orderBy: { issuedAt: "desc" },
       });
   },
 };
