@@ -9,7 +9,7 @@ import {
   ApolloError,
 } from "@apollo/client";
 import { GraphQLError } from "graphql";
-import type { PropsWithChildren } from "react";
+import { useEffect, type PropsWithChildren } from "react";
 import { waitUntilAuthorized } from "./UserState";
 import { host } from "@/shared/host";
 
@@ -44,6 +44,11 @@ const client = new ApolloClient({
 });
 
 function Apollo({ children }: PropsWithChildren) {
+  const location = typeof window !== "undefined" ? window.location : undefined;
+  useEffect(() => {
+    client.resetStore();
+  }, [location?.href]);
+
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 }
 
