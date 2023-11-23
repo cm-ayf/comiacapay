@@ -36,6 +36,7 @@ export function authorizeUserUrl(state: string) {
     client_id,
     redirect_uri,
     response_type: "code",
+    prompt: "none",
     scope: `${OAuth2Scopes.Identify} ${OAuth2Scopes.Guilds} ${OAuth2Scopes.GuildsMembersRead}`,
     state,
   } satisfies RESTOAuth2AuthorizationQuery);
