@@ -2,6 +2,8 @@
 
 同人誌即売会用のレジアプリです．[Kiradopay](https://github.com/takemar/kiradopay) および [Kiradopay2](https://github.com/cm-ayf/kiradopay2) を原型としています．
 
+以下の説明は開発者向けです．[利用者向けの説明はこちら](docs/index.md)．
+
 ## 技術スタック
 
 - [TypeScript](https://www.typescriptlang.org/)
