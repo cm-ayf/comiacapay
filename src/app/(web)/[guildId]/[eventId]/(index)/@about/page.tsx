@@ -113,7 +113,10 @@ function UpdateEventDialog({
     <EventDialog
       mode="update"
       title="イベントを更新"
-      defaultValues={data.event}
+      defaultValues={{
+        name: data.event.name,
+        date: data.event.date,
+      }}
       open={open}
       onClose={onClose}
       onSubmit={onUpdate}
