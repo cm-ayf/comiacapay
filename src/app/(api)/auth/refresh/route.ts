@@ -19,7 +19,11 @@ async function handler(request: NextRequest) {
   }
 
   try {
-    const decryptedTokenSet = await decryptTokenSet(tokenSet.value);
+    const decryptedTokenSet = await decryptTokenSet(tokenSet.value).catch(
+      () => {
+        throw new OAuth2Error("invalid_credentials", "invalid token_set");
+      },
+    );
     const refreshedTokenSet = await refreshTokenSet(decryptedTokenSet);
     const user = await upsertUserAndMembers(
       refreshedTokenSet ?? decryptedTokenSet,

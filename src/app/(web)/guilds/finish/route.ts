@@ -17,7 +17,11 @@ export async function GET(request: NextRequest) {
       throw new OAuth2Error("invalid_request", "missing token_set");
     }
 
-    const decryptedTokenSet = await decryptTokenSet(tokenSet.value);
+    const decryptedTokenSet = await decryptTokenSet(tokenSet.value).catch(
+      () => {
+        throw new OAuth2Error("invalid_credentials", "invalid token_set");
+      },
+    );
     await upsertMember(decryptedTokenSet, guildId);
 
     return NextResponse.redirect(new URL(`/${guildId}`, host));
