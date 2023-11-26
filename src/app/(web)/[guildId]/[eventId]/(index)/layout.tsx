@@ -1,9 +1,8 @@
 "use client";
 
-import { useQuery } from "@apollo/client";
 import type { ReactNode } from "react";
 import type { Params } from "../params";
-import GetEventDetailsQuery from "./GetEventDetails.graphql";
+import useEventTitle from "../useEventTitle";
 import Navigation from "@/app/(web)/Navigation";
 import Layout from "@/components/Layout";
 
@@ -18,8 +17,7 @@ export default function Event({
   displays: ReactNode;
   discounts: ReactNode;
 }) {
-  const { data } = useQuery(GetEventDetailsQuery, { variables: params });
-  const title = data && `${data.event.guild.name} / ${data.event.name}`;
+  const title = useEventTitle();
   return (
     <Layout
       navigation={<Navigation title={title} back={`/${params.guildId}`} />}

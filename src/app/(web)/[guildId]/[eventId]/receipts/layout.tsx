@@ -1,11 +1,10 @@
 "use client";
 
-import { useQuery } from "@apollo/client";
 import TabContext from "@mui/lab/TabContext";
 import TabPanel from "@mui/lab/TabPanel";
 import { type ReactNode, use, type PropsWithChildren } from "react";
 import type { Params } from "../params";
-import GetReceipts from "./GetReceiptsPage.graphql";
+import useEventTitle from "../useEventTitle";
 import { ReceiptsPage, ReceiptsPageProvider } from "./ReceiptsPage";
 import Navigation from "@/app/(web)/Navigation";
 import Layout from "@/components/Layout";
@@ -23,8 +22,7 @@ export default function Receipts({
   table: ReactNode;
   export: ReactNode;
 }) {
-  const { data } = useQuery(GetReceipts, { variables: params });
-  const title = data && `${data.event.guild.name} / ${data.event.name}`;
+  const title = useEventTitle();
 
   return (
     <ReceiptsPageProvider>

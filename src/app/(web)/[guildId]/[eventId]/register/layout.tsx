@@ -1,9 +1,8 @@
 "use client";
 
-import { useQuery } from "@apollo/client";
 import type { PropsWithChildren, ReactNode } from "react";
 import type { Params } from "../params";
-import GetEventRegisterQuery from "./GetEventRegister.graphql";
+import useEventTitle from "../useEventTitle";
 import { RegisterProvider } from "./RegisterPage";
 import Navigation from "@/app/(web)/Navigation";
 import Layout from "@/components/Layout";
@@ -16,11 +15,7 @@ export default function Register({
   params: Params;
   bottom: ReactNode;
 }>) {
-  const { data } = useQuery(GetEventRegisterQuery, {
-    variables: params,
-    ssr: false,
-  });
-  const title = data && `${data.event.guild.name} / ${data.event.name}`;
+  const title = useEventTitle();
 
   return (
     <RegisterProvider>

@@ -1,0 +1,9 @@
+query GetTitle($guildId: ID!, $eventId: ID!) {
+  event(guildId: $guildId, id: $eventId) {
+    name
+
+    guild {
+      name
+    }
+  }
+}
