@@ -26,6 +26,7 @@ query GetEventDetails($guildId: ID!, $eventId: ID!) {
     }
 
     guild {
+      id
       name
 
       me {

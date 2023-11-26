@@ -6,6 +6,7 @@ query GetEventRegister($guildId: ID!, $eventId: ID!) {
     discounts {
       ... on SetDiscount {
         __typename
+        id
         itemIds
         amount
       }
@@ -24,6 +25,7 @@ query GetEventRegister($guildId: ID!, $eventId: ID!) {
     }
 
     guild {
+      id
       name
 
       me {
