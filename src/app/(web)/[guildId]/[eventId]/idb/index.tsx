@@ -100,11 +100,8 @@ type MutationTuple<Args extends unknown[]> = [
   { loading: boolean },
 ];
 
-export function useCreateReceipt({
-  eventId,
-}: {
-  eventId: string;
-}): MutationTuple<[receipt: CreateReceipt]> {
+export function useCreateReceipt(): MutationTuple<[receipt: CreateReceipt]> {
+  const { eventId } = useParams<Params>();
   const idb = use(init());
   const [loading, setLoading] = useState(false);
   const trigger = useCallback(

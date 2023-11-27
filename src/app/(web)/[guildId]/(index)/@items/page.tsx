@@ -20,8 +20,7 @@ import ItemDialog from "@/components/ItemDialog";
 import type { Item } from "@/generated/resolvers";
 import type { CreateItem, UpdateItem } from "@/generated/schema";
 
-export default function Items() {
-  const params = useParams<Params>();
+export default function Items({ params }: { params: Params }) {
   const { data } = useSuspenseQuery(GetGuildQuery, { variables: params });
   const [open, setOpen] = useState(false);
   const [item, setItem] = useState<Item>();

@@ -2,15 +2,28 @@
 
 import { useSuspenseQuery } from "@apollo/client";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import type { Params } from "../../params";
-import GetReceiptsPage from "../GetReceiptsPage.graphql";
+import GetReceiptsPageQuery from "../GetReceiptsPage.graphql";
 import useReceiptsMerged, { toRow } from "../useReceiptsMerged";
 
-export default function Export() {
+export default function Export({ params }: { params: Params }) {
   const { receipts, loading } = useReceiptsMerged();
-  const header = useHeader();
+  const { data } = useSuspenseQuery(GetReceiptsPageQuery, {
+    variables: params,
+  });
+  const header = useMemo<{ key: string; title: string }[]>(() => {
+    return [
+      { key: "id", title: "ID" },
+      { key: "timestamp", title: "時刻" },
+      { key: "total", title: "合計" },
+      { key: "pushed", title: "同期" },
+      ...data.event.displays.map(({ item }) => ({
+        key: item.id,
+        title: item.name,
+      })),
+    ];
+  }, [data.event.displays]);
 
   async function onClick() {
     if (!receipts) return;
@@ -32,24 +45,6 @@ export default function Export() {
       CSV
     </LoadingButton>
   );
-}
-
-function useHeader() {
-  const params = useParams<Params>();
-  const { data } = useSuspenseQuery(GetReceiptsPage, { variables: params });
-
-  return useMemo<{ key: string; title: string }[]>(() => {
-    return [
-      { key: "id", title: "ID" },
-      { key: "timestamp", title: "時刻" },
-      { key: "total", title: "合計" },
-      { key: "pushed", title: "同期" },
-      ...data.event.displays.map(({ item }) => ({
-        key: item.id,
-        title: item.name,
-      })),
-    ];
-  }, [data.event.displays]);
 }
 
 function download(blob: Blob, filename: string) {

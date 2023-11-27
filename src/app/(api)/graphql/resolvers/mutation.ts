@@ -217,7 +217,7 @@ export const Mutation: Resolvers["Mutation"] = {
     });
   },
   async deleteReceipts(_, { eventId, ids }, context) {
-    context.assertsPermissions(["write"]);
+    context.assertsPermissions(["register"]);
     // make sure that all the receipts is of the event in the guild
     const count = await context.prisma.receipt.count({
       where: {

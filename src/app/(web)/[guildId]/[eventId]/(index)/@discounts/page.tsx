@@ -21,10 +21,10 @@ import { useAlert } from "@/app/(web)/Alert";
 import { assertSuccess } from "@/app/(web)/Apollo";
 import type { CreateSetDiscount } from "@/generated/schema";
 
-export default function Discounts() {
-  const params = useParams<Params>();
+export default function Discounts({ params }: { params: Params }) {
   const { data } = useSuspenseQuery(GetEventDetailsQuery, {
     variables: params,
+    fetchPolicy: "cache-and-network",
   });
   const { me } = data.event.guild;
 
@@ -43,7 +43,7 @@ export default function Discounts() {
           />
         ))}
       </Box>
-      <CreateDiscount me={me} />
+      <CreateDiscount me={me} displays={data.event.displays} />
     </>
   );
 }
@@ -147,12 +147,25 @@ type CreateDiscount = CreateSetDiscount & {
   __typename: "SetDiscount";
 };
 
-function CreateDiscount({ me }: { me: { write: boolean } }) {
+function CreateDiscount({
+  me,
+  displays,
+}: {
+  me: { write: boolean };
+  displays: {
+    item: { id: string; name: string };
+  }[];
+}) {
   const [type, setType] = useState<"SetDiscount">();
 
   switch (type) {
     case "SetDiscount": {
-      return <CreateSetDiscount onClose={() => setType(undefined)} />;
+      return (
+        <CreateSetDiscount
+          onClose={() => setType(undefined)}
+          displays={displays}
+        />
+      );
     }
     default: {
       return (
@@ -170,11 +183,16 @@ function CreateDiscount({ me }: { me: { write: boolean } }) {
   }
 }
 
-function CreateSetDiscount({ onClose }: { onClose: () => void }) {
+function CreateSetDiscount({
+  onClose,
+  displays,
+}: {
+  onClose: () => void;
+  displays: {
+    item: { id: string; name: string };
+  }[];
+}) {
   const params = useParams<Params>();
-  const { data } = useSuspenseQuery(GetEventDetailsQuery, {
-    variables: params,
-  });
   const [amount, setAmount] = useState(0);
   const [itemIds, setItemIds] = useState<string[]>([]);
   const { success, error } = useAlert();
@@ -217,7 +235,7 @@ function CreateSetDiscount({ onClose }: { onClose: () => void }) {
             setItemIds(typeof value === "string" ? value.split(",") : value)
           }
         >
-          {data.event.displays.map(({ item }) => (
+          {displays.map(({ item }) => (
             <MenuItem key={item.id} value={item.id}>
               {item.name}
             </MenuItem>

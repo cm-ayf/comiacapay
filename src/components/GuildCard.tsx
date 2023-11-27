@@ -9,10 +9,8 @@ export default function GuildCard({
 }: {
   member: {
     guild: { name: string };
-    read: boolean;
     register: boolean;
     write: boolean;
-    admin: boolean;
   };
   onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
 }) {

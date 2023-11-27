@@ -1,7 +1,6 @@
 query GetEventRegister($guildId: ID!, $eventId: ID!) {
   event(guildId: $guildId, id: $eventId) {
     id
-    name
 
     discounts {
       ... on SetDiscount {
@@ -26,7 +25,6 @@ query GetEventRegister($guildId: ID!, $eventId: ID!) {
 
     guild {
       id
-      name
 
       me {
         register

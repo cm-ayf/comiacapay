@@ -3,41 +3,18 @@
 import { useSuspenseQuery } from "@apollo/client";
 import CircularProgress from "@mui/material/CircularProgress";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import { useParams } from "next/navigation";
 import { use, useMemo } from "react";
 import type { Params } from "../../params";
-import GetReceipts from "../GetReceiptsPage.graphql";
+import GetReceiptsPageQuery from "../GetReceiptsPage.graphql";
 import { ReceiptsPage } from "../ReceiptsPage";
 import useReceiptsMerged, { toRow } from "../useReceiptsMerged";
 
 export default function Table({ params }: { params: Params }) {
-  const columns = useColumns();
-  const { data } = useSuspenseQuery(GetReceipts, { variables: params });
-  const { receipts } = useReceiptsMerged();
-  const { selected, setSelected } = use(ReceiptsPage);
-
-  if (!receipts) return <CircularProgress />;
-
-  return (
-    <DataGrid
-      rows={receipts.map(toRow)}
-      columns={columns}
-      checkboxSelection={data.event.guild.me.register}
-      getRowId={(row) => row.id}
-      rowSelectionModel={selected}
-      onRowSelectionModelChange={(selected) =>
-        setSelected(selected.map(String))
-      }
-      sx={{ height: "100%" }}
-    />
-  );
-}
-
-function useColumns() {
-  const params = useParams<Params>();
-  const { data } = useSuspenseQuery(GetReceipts, { variables: params });
-
-  return useMemo<GridColDef[]>(
+  const { data } = useSuspenseQuery(GetReceiptsPageQuery, {
+    variables: params,
+  });
+  const { me } = data.event.guild;
+  const columns = useMemo<GridColDef[]>(
     () => [
       {
         field: "timestamp",
@@ -55,5 +32,23 @@ function useColumns() {
       })),
     ],
     [data.event.displays],
+  );
+  const { receipts } = useReceiptsMerged();
+  const { selected, setSelected } = use(ReceiptsPage);
+
+  if (!receipts) return <CircularProgress />;
+
+  return (
+    <DataGrid
+      rows={receipts.map(toRow)}
+      columns={columns}
+      checkboxSelection={me.register}
+      getRowId={(row) => row.id}
+      rowSelectionModel={selected}
+      onRowSelectionModelChange={(selected) =>
+        setSelected(selected.map(String))
+      }
+      sx={{ height: "100%" }}
+    />
   );
 }
