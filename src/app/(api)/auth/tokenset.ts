@@ -1,15 +1,15 @@
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
+import type { JWTPayload } from "jose";
 import { refreshTokens } from "./oauth2";
 
-export interface TokenSet extends RESTPostOAuth2AccessTokenResult {
-  expires_at: number;
-}
+export interface TokenSet
+  extends Required<JWTPayload>,
+    RESTPostOAuth2AccessTokenResult {}
 
-export async function refreshTokenSet(
-  tokenSet: TokenSet,
-): Promise<TokenSet | undefined> {
-  if (tokenSet.expires_at > Math.floor(Date.now() / 1000)) return;
-  const tokenResult = await refreshTokens(tokenSet.refresh_token);
-  const expires_at = Math.floor(Date.now() / 1000) + tokenResult.expires_in;
-  return { ...tokenResult, expires_at };
+export type AccessTokenSet = Pick<TokenSet, "access_token" | "token_type">;
+export type RefreshTokenSet = Pick<TokenSet, "refresh_token" | "exp">;
+
+export async function refreshTokenSet(tokenSet: RefreshTokenSet) {
+  if (tokenSet.exp * 1000 - Date.now() > 6 * 24 * 60 * 60 * 1000) return;
+  return await refreshTokens(tokenSet);
 }

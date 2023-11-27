@@ -3,6 +3,8 @@ import { withCookies } from "../cookie";
 import { decryptTokenSet } from "../jwt";
 import { revokeToken } from "../oauth2";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   const tokenSet = request.cookies.get("token_set");
   if (tokenSet) {

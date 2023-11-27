@@ -14,6 +14,7 @@ import type {
   RESTPostOAuth2RefreshTokenResult,
   RESTPostOAuth2RefreshTokenURLEncodedData,
 } from "discord-api-types/v10";
+import type { AccessTokenSet, RefreshTokenSet } from "./tokenset";
 import { env } from "@/app/(api)/env";
 import { OAuth2Error } from "@/shared/error";
 import { host } from "@/shared/host";
@@ -76,9 +77,9 @@ export async function exchangeCode(
   });
 }
 
-export async function refreshTokens(
-  refresh_token: string,
-): Promise<RESTPostOAuth2RefreshTokenResult> {
+export async function refreshTokens({
+  refresh_token,
+}: RefreshTokenSet): Promise<RESTPostOAuth2RefreshTokenResult> {
   return oauth2Post(OAuth2Routes.tokenURL, {
     client_id,
     client_secret,
@@ -95,9 +96,14 @@ export async function revokeToken(token: string) {
   });
 }
 
-async function oauth2Get<T>(route: string, accessToken: string): Promise<T> {
+async function oauth2Get<T>(
+  route: string,
+  tokenSet: AccessTokenSet,
+): Promise<T> {
   const response = await fetch(RouteBases.api + route, {
-    headers: { Authorization: `Bearer ${accessToken}` },
+    headers: {
+      Authorization: `${tokenSet.token_type} ${tokenSet.access_token}`,
+    },
     cache: "no-cache",
   });
 
@@ -110,25 +116,25 @@ async function oauth2Get<T>(route: string, accessToken: string): Promise<T> {
   return await response.json();
 }
 
-export async function getCurrentUser(accessToken: string) {
-  return oauth2Get<APIUser>(Routes.user(), accessToken).catch((e) => {
+export async function getCurrentUser(tokenSet: AccessTokenSet) {
+  return oauth2Get<APIUser>(Routes.user(), tokenSet).catch((e) => {
     throw OAuth2Error.fromError(e, "Failed to get current user");
   });
 }
 
-export async function getCurrentUserGuilds(accessToken: string) {
-  return oauth2Get<APIGuild[]>(Routes.userGuilds(), accessToken).catch((e) => {
+export async function getCurrentUserGuilds(tokenSet: AccessTokenSet) {
+  return oauth2Get<APIGuild[]>(Routes.userGuilds(), tokenSet).catch((e) => {
     throw OAuth2Error.fromError(e, "Failed to get current user guilds");
   });
 }
 
 export async function getCurrentUserGuildMember(
-  accessToken: string,
+  tokenSet: AccessTokenSet,
   guildId: string,
 ) {
   return oauth2Get<APIGuildMember>(
     Routes.userGuildMember(guildId),
-    accessToken,
+    tokenSet,
   ).catch((e) => {
     throw OAuth2Error.fromError(e, "Failed to get current user guild member");
   });
