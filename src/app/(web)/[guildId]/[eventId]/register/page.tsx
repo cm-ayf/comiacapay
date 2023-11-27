@@ -8,7 +8,6 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { useParams } from "next/navigation";
 import { use } from "react";
 import type { Params } from "../params";
 import GetEventRegisterQuery from "./GetEventRegister.graphql";
@@ -16,11 +15,9 @@ import { RegisterPage } from "./RegisterPage";
 import type { RecordState } from "./RegisterPage";
 import ItemPanel from "@/components/ItemPanel";
 
-export default function Register() {
+export default function Register({ params }: { params: Params }) {
   const [state, dispatch] = use(RegisterPage);
-  const params = useParams<Params>();
   const { data } = useSuspenseQuery(GetEventRegisterQuery, {
-    fetchPolicy: "cache-first",
     variables: params,
   });
 

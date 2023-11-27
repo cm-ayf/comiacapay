@@ -6,10 +6,8 @@ query GetGuild($guildId: ID!) {
 
     me {
       guildId
-      read
       register
       write
-      admin
     }
 
     events {

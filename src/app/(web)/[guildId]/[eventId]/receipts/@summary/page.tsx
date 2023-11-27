@@ -8,12 +8,14 @@ import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import { useMemo } from "react";
 import type { Params } from "../../params";
-import GetReceipts from "../GetReceiptsPage.graphql";
+import GetReceiptsPageQuery from "../GetReceiptsPage.graphql";
 import useReceiptsMerged from "../useReceiptsMerged";
 import type { CreateReceipt } from "@/generated/schema";
 
 export default function Summary({ params }: { params: Params }) {
-  const { data } = useSuspenseQuery(GetReceipts, { variables: params });
+  const { data } = useSuspenseQuery(GetReceiptsPageQuery, {
+    variables: params,
+  });
   const { receipts } = useReceiptsMerged();
   const total = useTotal(receipts ?? []);
   const counts = useCounts(receipts ?? []);

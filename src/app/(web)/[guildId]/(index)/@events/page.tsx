@@ -17,8 +17,7 @@ import EventCard from "@/components/EventCard";
 import EventDialog from "@/components/EventDialog";
 import type { CreateEvent } from "@/generated/schema";
 
-export default function Events() {
-  const params = useParams<Params>();
+export default function Events({ params }: { params: Params }) {
   const { data } = useSuspenseQuery(GetGuildQuery, { variables: params });
   const router = useRouter();
   const [open, setOpen] = useState(false);

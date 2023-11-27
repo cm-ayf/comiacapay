@@ -1,5 +1,7 @@
 query GetReceipts($guildId: ID!, $eventId: ID!) {
   event(guildId: $guildId, id: $eventId) {
+    id
+
     receipts {
       id
       total

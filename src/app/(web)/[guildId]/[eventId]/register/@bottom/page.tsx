@@ -54,10 +54,9 @@ function Total() {
 
 function CommitButton() {
   const [state, dispatch] = use(RegisterPage);
-  const params = useParams<Params>();
   const { error } = useAlert();
   const calculator = useCalculator();
-  const [trigger, { loading }] = useCreateReceipt(params);
+  const [trigger, { loading }] = useCreateReceipt();
 
   async function onClickCreate() {
     try {
@@ -91,7 +90,6 @@ function CommitButton() {
 function useCalculator() {
   const params = useParams<Params>();
   const { data } = useSuspenseQuery(GetEventRegisterQuery, {
-    fetchPolicy: "cache-first",
     variables: params,
   });
   return useCallback(

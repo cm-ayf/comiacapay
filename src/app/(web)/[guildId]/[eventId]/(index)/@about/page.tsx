@@ -15,10 +15,10 @@ import EventCard from "@/components/EventCard";
 import EventDialog from "@/components/EventDialog";
 import type { UpdateEvent } from "@/generated/schema";
 
-export default function About() {
-  const params = useParams<Params>();
+export default function About({ params }: { params: Params }) {
   const { data } = useSuspenseQuery(GetEventDetailsQuery, {
     variables: params,
+    fetchPolicy: "cache-and-network",
   });
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -50,7 +50,11 @@ export default function About() {
         </Button>
       </Box>
       {me.write && (
-        <UpdateEventDialog open={open} onClose={() => setOpen(false)} />
+        <UpdateEventDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          event={data.event}
+        />
       )}
     </>
   );
@@ -59,14 +63,13 @@ export default function About() {
 function UpdateEventDialog({
   open,
   onClose,
+  event,
 }: {
   open: boolean;
   onClose: () => void;
+  event: { name: string; date: string };
 }) {
   const params = useParams<Params>();
-  const { data } = useSuspenseQuery(GetEventDetailsQuery, {
-    variables: params,
-  });
   const [triggerUpdate, { loading: updating }] = useMutation(
     UpdateEventMutation,
     {
@@ -114,8 +117,8 @@ function UpdateEventDialog({
       mode="update"
       title="イベントを更新"
       defaultValues={{
-        name: data.event.name,
-        date: data.event.date,
+        name: event.name,
+        date: event.date,
       }}
       open={open}
       onClose={onClose}

@@ -32,11 +32,12 @@ interface PartialItem {
   picture: string | null;
 }
 
-export default function Displays() {
-  const params = useParams<Params>();
+export default function Displays({ params }: { params: Params }) {
   const { data } = useSuspenseQuery(GetEventDetailsQuery, {
     variables: params,
+    fetchPolicy: "cache-and-network",
   });
+  const { me } = data.event.guild;
   const [item, setItem] = useState<CreatingDisplay["item"]>();
 
   return (
@@ -56,12 +57,12 @@ export default function Displays() {
             </ItemPanel>
           </Grid>
         ))}
-        {data.event.guild.me.write && (
+        {me.write && (
           <Grid item lg={6} xs={12}>
             {item ? (
               <ItemPanel item={item}>
                 <DisplayInner
-                  me={data.event.guild.me}
+                  me={me}
                   display={{ item, creating: true }}
                   onCreate={() => setItem(undefined)}
                 />
