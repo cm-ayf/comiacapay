@@ -6,6 +6,8 @@ import { refreshTokenSet } from "../tokenset";
 import { OAuth2Error } from "@/shared/error";
 import { host } from "@/shared/host";
 
+export const dynamic = "force-dynamic";
+
 export { handler as GET, handler as POST };
 async function handler(request: NextRequest) {
   if (request.method !== "GET" && request.method !== "POST") {
@@ -24,15 +26,15 @@ async function handler(request: NextRequest) {
         throw new OAuth2Error("invalid_credentials", "invalid token_set");
       },
     );
-    const refreshedTokenSet = await refreshTokenSet(decryptedTokenSet);
+    const refreshedTokenResult = await refreshTokenSet(decryptedTokenSet);
     const user = await upsertUserAndMembers(
-      refreshedTokenSet ?? decryptedTokenSet,
+      refreshedTokenResult ?? decryptedTokenSet,
     );
 
     const cookies: Cookies = {};
     cookies.session = await signSession(user.id);
-    if (refreshedTokenSet) {
-      cookies.token_set = await encryptTokenSet(refreshedTokenSet);
+    if (refreshedTokenResult) {
+      cookies.token_set = await encryptTokenSet(refreshedTokenResult);
     }
 
     switch (request.method) {

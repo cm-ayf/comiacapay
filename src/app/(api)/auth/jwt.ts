@@ -1,3 +1,4 @@
+import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { EncryptJWT, SignJWT, importJWK, jwtDecrypt, jwtVerify } from "jose";
 import type { JWTPayload, KeyLike } from "jose";
 import type { TokenSet } from "./tokenset";
@@ -48,19 +49,21 @@ export async function verifySession(token: string) {
   return payload as Required<JWTPayload>;
 }
 
-export async function encryptTokenSet(tokenSet: TokenSet) {
+export async function encryptTokenSet(
+  tokenResult: RESTPostOAuth2AccessTokenResult,
+) {
   const { encryptKey } = await initKeys();
-  return await new EncryptJWT({ ...tokenSet })
+  return await new EncryptJWT({ ...tokenResult })
     .setProtectedHeader({ alg: jweAlg, enc: "A256GCM" })
     .setIssuedAt()
     .setIssuer(host.href)
     .setAudience(host.href)
-    .setExpirationTime(`${tokenSet.expires_in}s`)
+    .setExpirationTime(`${tokenResult.expires_in}s`)
     .encrypt(encryptKey);
 }
 
 export async function decryptTokenSet(token: string) {
   const { decryptKey } = await initKeys();
   const { payload } = await jwtDecrypt(token, decryptKey);
-  return payload as Required<JWTPayload> & TokenSet;
+  return payload as TokenSet;
 }

@@ -11,18 +11,18 @@ import {
   getCurrentUserGuildMember,
   getCurrentUserGuilds,
 } from "./oauth2";
-import type { TokenSet } from "./tokenset";
+import type { AccessTokenSet } from "./tokenset";
 import { initPrisma } from "@/app/(api)/prisma";
 
-export async function upsertUserAndMembers({
-  access_token,
-}: Pick<TokenSet, "access_token">): Promise<User> {
+export async function upsertUserAndMembers(
+  tokenSet: AccessTokenSet,
+): Promise<User> {
   const prisma = await initPrisma();
 
-  const currentUser = await getCurrentUser(access_token);
+  const currentUser = await getCurrentUser(tokenSet);
   const user = await prisma.user.upsert(toUserUpsert(currentUser));
 
-  const currentUserGuilds = await getCurrentUserGuilds(access_token);
+  const currentUserGuilds = await getCurrentUserGuilds(tokenSet);
   const guilds = await prisma.guild.findMany({
     where: {
       id: { in: currentUserGuilds.map((guild) => guild.id) },
@@ -30,7 +30,7 @@ export async function upsertUserAndMembers({
   });
   // no Promise.all() for throttling
   for (const guild of guilds) {
-    const member = await getCurrentUserGuildMember(access_token, guild.id);
+    const member = await getCurrentUserGuildMember(tokenSet, guild.id);
     const { permissions } = currentUserGuilds.find((g) => g.id === guild.id)!;
     const admin = Boolean(
       BigInt(permissions!) & PermissionFlagsBits.Administrator,

@@ -21,20 +21,13 @@ export async function GET(request: NextRequest) {
     }
 
     const tokenResult = await exchangeCode(code);
-    const expires_at = Math.floor(Date.now() / 1000) + tokenResult.expires_in;
-    const token_set = await encryptTokenSet({
-      ...tokenResult,
-      expires_at,
-    });
+    const token_set = await encryptTokenSet(tokenResult);
 
     const user = await upsertUserAndMembers(tokenResult);
     const session = await signSession(user.id);
 
-    const redirectToCookie = request.cookies.get("redirect_to");
-    const redirectUrl = new URL(
-      redirectToCookie ? redirectToCookie.value : "/",
-      host,
-    );
+    const redirectTo = request.cookies.get("redirect_to");
+    const redirectUrl = new URL(redirectTo ? redirectTo.value : "/", host);
     return withCookies(NextResponse.redirect(redirectUrl), {
       session,
       token_set,
