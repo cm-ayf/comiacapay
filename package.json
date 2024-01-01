@@ -23,7 +23,7 @@
     "@ducanh2912/next-pwa": "^9.7.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@graphql-tools/schema": "^10.0.0",
+    "@graphql-tools/schema": "^10.0.2",
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.154",
     "@mui/material": "^5.14.2",
