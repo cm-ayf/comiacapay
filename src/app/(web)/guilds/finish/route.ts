@@ -19,14 +19,14 @@ export async function GET(request: NextRequest) {
 
     const decryptedTokenSet = await decryptTokenSet(tokenSet.value).catch(
       () => {
-        throw new OAuth2Error("invalid_credentials", "invalid token_set");
+        throw new OAuth2Error("access_denied", "invalid token_set");
       },
     );
     await upsertMember(decryptedTokenSet, guildId);
 
     return NextResponse.redirect(new URL(`/${guildId}`, host));
   } catch (e) {
-    const error = OAuth2Error.fromError(e, "Failed to initiate");
+    const error = OAuth2Error.fromError(e);
     return NextResponse.redirect(error.toRedirectURL());
   }
 }

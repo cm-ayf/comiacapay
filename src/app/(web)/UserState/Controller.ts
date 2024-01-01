@@ -80,7 +80,7 @@ export class UserStateController extends EventTarget {
       }
     } catch (error) {
       const e = OAuth2Error.fromError(error);
-      if (e.code === "server_error")
+      if (e.error === "server_error")
         this.dispatchEvent(new RefreshErrorEvent(e));
       else this.dispatchEvent(new RefreshUnauthorizedEvent(e));
     }

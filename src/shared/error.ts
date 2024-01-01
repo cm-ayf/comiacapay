@@ -35,14 +35,14 @@ function isOAuth2ErrorJson(error: unknown): error is OAuth2ErrorJson {
 }
 
 export class OAuth2Error extends Error {
-  static fromError(e: unknown, defaultMessage?: string) {
+  static fromError(e: unknown, defaults?: Partial<OAuth2ErrorJson>) {
     if (e instanceof this) {
+      if (defaults) Object.assign(e, defaults);
       return e;
     } else {
-      const errorMessage = e instanceof Error ? e.message : undefined;
-      return new this("server_error", errorMessage || defaultMessage, {
-        cause: e,
-      });
+      const message = e instanceof Error ? e.message : undefined;
+      const error = new this("server_error", message, { cause: e });
+      return error;
     }
   }
 
