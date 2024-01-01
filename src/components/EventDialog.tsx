@@ -4,8 +4,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import { useForm } from "react-hook-form";
-import { getISODateString } from "../shared/utils";
 import { BaseDialog, type DialogProps } from "./BaseDialog";
+import { getISODateString } from "./date";
 import type { CreateEvent } from "@/generated/schema";
 
 export default function EventDialog({

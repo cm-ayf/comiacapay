@@ -37,7 +37,10 @@ export async function exchangeCode(
     code,
     redirect_uri,
   } satisfies RESTPostOAuth2AccessTokenURLEncodedData).catch((e) => {
-    throw OAuth2Error.fromError(e, "Failed to exchange code");
+    throw OAuth2Error.fromError(e, {
+      error: "access_denied",
+      error_description: "Failed to exchange code",
+    });
   });
 }
 
@@ -48,6 +51,6 @@ export async function retrieveSession(request: NextRequest) {
   }
 
   return await verifySession(session.value).catch(() => {
-    throw new OAuth2Error("invalid_credentials", "invalid session");
+    throw new OAuth2Error("access_denied", "invalid session");
   });
 }

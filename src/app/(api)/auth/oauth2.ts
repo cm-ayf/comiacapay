@@ -55,7 +55,8 @@ export async function oauth2Post(route: string, body: Record<string, string>) {
   });
 
   if (response.status === 400) {
-    throw new OAuth2Error("invalid_credentials", "Invalid grant");
+    const json = await response.json();
+    throw OAuth2Error.fromJSON(json);
   } else if (!response.ok) {
     throw new Error();
   }
@@ -73,7 +74,10 @@ export async function exchangeCode(
     code,
     redirect_uri,
   } satisfies RESTPostOAuth2AccessTokenURLEncodedData).catch((e) => {
-    throw OAuth2Error.fromError(e, "Failed to exchange code");
+    throw OAuth2Error.fromError(e, {
+      error: "access_denied",
+      error_description: "Failed to exchange code",
+    });
   });
 }
 
@@ -86,13 +90,19 @@ export async function refreshTokens({
     grant_type: "refresh_token",
     refresh_token,
   } satisfies RESTPostOAuth2RefreshTokenURLEncodedData).catch((e) => {
-    throw OAuth2Error.fromError(e, "Failed to refresh tokens");
+    throw OAuth2Error.fromError(e, {
+      error: "access_denied",
+      error_description: "Failed to refresh token",
+    });
   });
 }
 
 export async function revokeToken(token: string) {
   return oauth2Post(OAuth2Routes.tokenRevocationURL, { token }).catch((e) => {
-    throw OAuth2Error.fromError(e, "Failed to revoke token");
+    throw OAuth2Error.fromError(e, {
+      error: "server_error",
+      error_description: "Failed to revoke token",
+    });
   });
 }
 
@@ -108,7 +118,7 @@ async function oauth2Get<T>(
   });
 
   if (response.status === 401) {
-    throw new OAuth2Error("invalid_credentials", "Invalid token");
+    throw new OAuth2Error("access_denied");
   } else if (!response.ok) {
     throw new Error();
   }
@@ -118,13 +128,17 @@ async function oauth2Get<T>(
 
 export async function getCurrentUser(tokenSet: AccessTokenSet) {
   return oauth2Get<APIUser>(Routes.user(), tokenSet).catch((e) => {
-    throw OAuth2Error.fromError(e, "Failed to get current user");
+    throw OAuth2Error.fromError(e, {
+      error_description: "Failed to get current user",
+    });
   });
 }
 
 export async function getCurrentUserGuilds(tokenSet: AccessTokenSet) {
   return oauth2Get<APIGuild[]>(Routes.userGuilds(), tokenSet).catch((e) => {
-    throw OAuth2Error.fromError(e, "Failed to get current user guilds");
+    throw OAuth2Error.fromError(e, {
+      error_description: "Failed to get current user guilds",
+    });
   });
 }
 
@@ -136,6 +150,8 @@ export async function getCurrentUserGuildMember(
     Routes.userGuildMember(guildId),
     tokenSet,
   ).catch((e) => {
-    throw OAuth2Error.fromError(e, "Failed to get current user guild member");
+    throw OAuth2Error.fromError(e, {
+      error_description: "Failed to get current user guild member",
+    });
   });
 }

@@ -29,7 +29,6 @@
     "@mui/material": "^5.14.2",
     "@mui/x-data-grid": "^6.18.2",
     "@prisma/client": "5.1.0",
-    "@sinclair/typebox": "^0.31.8",
     "@types/node": "^18.16.18",
     "@types/react": "^18.2.18",
     "@types/react-dom": "^18.2.7",

@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const url = authorizeBotUrl(request.nextUrl.searchParams.get("guild_id"));
     return NextResponse.redirect(url);
   } catch (e) {
-    const error = OAuth2Error.fromError(e, "Failed to initiate");
+    const error = OAuth2Error.fromError(e);
     return NextResponse.redirect(error.toRedirectURL());
   }
 }

@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       throw new OAuth2Error("invalid_request", "missing code or state");
     }
     if (stateFromQuery !== stateFromCookie.value) {
-      throw new OAuth2Error("invalid_credentials", "state mismatch");
+      throw new OAuth2Error("invalid_request", "state mismatch");
     }
 
     const tokenResult = await exchangeCode(code);
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     const error = OAuth2Error.fromError(e);
     return withCookies(
       NextResponse.redirect(error.toRedirectURL()),
-      error.code === "server_error" ? {} : { state: "", redirect_to: "" },
+      error.error === "server_error" ? {} : { state: "", redirect_to: "" },
     );
   }
 }

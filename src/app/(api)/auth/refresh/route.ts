@@ -23,7 +23,7 @@ async function handler(request: NextRequest) {
   try {
     const decryptedTokenSet = await decryptTokenSet(tokenSet.value).catch(
       () => {
-        throw new OAuth2Error("invalid_credentials", "invalid token_set");
+        throw new OAuth2Error("access_denied", "invalid token_set");
       },
     );
     const refreshedTokenResult = await refreshTokenSet(decryptedTokenSet);
@@ -50,7 +50,7 @@ async function handler(request: NextRequest) {
   } catch (e) {
     const error = OAuth2Error.fromError(e);
     const cookies: Cookies =
-      error.code === "server_error"
+      error.error === "server_error"
         ? {}
         : { state: "", session: "", token_set: "" };
     switch (request.method) {

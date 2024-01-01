@@ -1,89 +1,87 @@
-import { type Static, Type } from "@sinclair/typebox";
 import { host } from "./host";
-import { typeCheck } from "./utils";
 
-const OAuth2ErrorCode = Type.Enum({
-  invalid_credentials: "invalid_credentials",
-  invalid_request: "invalid_request",
-  server_error: "server_error",
-});
+type OAuth2ErrorString =
+  | "invalid_request"
+  | "access_denied"
+  | "invalid_grant"
+  | "server_error";
 
-type OAuth2ErrorCode = Static<typeof OAuth2ErrorCode>;
+function isOAuth2ErrorString(error: unknown): error is OAuth2ErrorString {
+  return (
+    typeof error === "string" &&
+    [
+      "invalid_request",
+      "invalid_credentials",
+      "invalid_grant",
+      "server_error",
+    ].includes(error)
+  );
+}
 
-const OAuth2ErrorJson = Type.Object({
-  error: Type.Optional(Type.String()),
-  error_description: Type.Optional(Type.String()),
-  code: OAuth2ErrorCode,
-});
+interface OAuth2ErrorJson {
+  error: OAuth2ErrorString;
+  error_description?: string;
+}
 
-type OAuth2ErrorJson = Static<typeof OAuth2ErrorJson>;
+function isOAuth2ErrorJson(error: unknown): error is OAuth2ErrorJson {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "error" in error &&
+    isOAuth2ErrorString(error.error) &&
+    (!("error_description" in error) ||
+      typeof error.error_description === "string")
+  );
+}
 
 export class OAuth2Error extends Error {
-  static fromError(e: unknown, defaultMessage?: string) {
+  static fromError(e: unknown, defaults?: Partial<OAuth2ErrorJson>) {
     if (e instanceof this) {
+      if (defaults) Object.assign(e, defaults);
       return e;
     } else {
-      const errorMessage = e instanceof Error ? e.message : undefined;
-      return new this("server_error", errorMessage || defaultMessage, {
-        cause: e,
-      });
+      const message = e instanceof Error ? e.message : undefined;
+      const error = new this("server_error", message, { cause: e });
+      return error;
     }
   }
 
   static fromSearchParams(searchParams: URLSearchParams) {
+    const error = searchParams.get("error");
     const description = searchParams.get("error_description") ?? undefined;
-    const code = searchParams.get("code");
-    if (typeCheck(OAuth2ErrorCode, code)) {
-      return new this(code, description);
+    if (isOAuth2ErrorString(error)) {
+      return new this(error, description);
     } else {
       return new this("server_error", description);
     }
   }
 
   static fromJSON(e: unknown) {
-    if (typeCheck(OAuth2ErrorJson, e)) {
-      return new this(e.code, e.error_description);
+    if (isOAuth2ErrorJson(e)) {
+      return new this(e.error, e.error_description);
     } else {
-      return new this("server_error", undefined, { cause: e });
+      return new this("server_error", String(e), { cause: e });
     }
   }
 
   constructor(
-    public code: OAuth2ErrorCode,
-    public description?: string,
+    public error: OAuth2ErrorString,
+    public error_description?: string,
     options?: ErrorOptions,
   ) {
-    super(description ?? code, options);
+    super(error_description ?? error, options);
   }
 
   get status() {
-    return this.code === "server_error" ? 500 : 400;
-  }
-
-  toJSON(): OAuth2ErrorJson {
-    const error = {
-      invalid_request: "invalid_request",
-      invalid_credentials: "invalid_grant",
-      server_error: undefined,
-    }[this.code];
-    return {
-      ...(error && { error }),
-      ...(this.description && { error_description: this.description }),
-      code: this.code,
-    };
+    return this.error === "server_error" ? 500 : 400;
   }
 
   toRedirectURL() {
-    const error = {
-      invalid_request: "invalid_request",
-      invalid_credentials: "access_denied",
-      server_error: "server_error",
-    }[this.code];
-    const searchParams = new URLSearchParams({
-      error,
-      ...(this.description && { error_description: this.description }),
-      code: this.code,
-    });
-    return new URL(`/?${searchParams.toString()}`, host);
+    const url = new URL("/", host);
+    url.searchParams.set("error", this.error);
+    if (this.error_description) {
+      url.searchParams.set("error_description", this.error_description);
+    }
+    return url;
   }
 }
