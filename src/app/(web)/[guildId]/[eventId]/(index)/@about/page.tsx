@@ -13,7 +13,7 @@ import { useAlert } from "@/app/(web)/Alert";
 import { assertSuccess, isGraphQLErrorOf } from "@/app/(web)/Apollo";
 import EventCard from "@/components/EventCard";
 import EventDialog from "@/components/EventDialog";
-import type { UpdateEvent } from "@/generated/schema";
+import type { DateTime, UpdateEvent } from "@/generated/schema";
 
 export default function About({ params }: { params: Params }) {
   const { data } = useSuspenseQuery(GetEventDetailsQuery, {
@@ -67,7 +67,7 @@ function UpdateEventDialog({
 }: {
   open: boolean;
   onClose: () => void;
-  event: { name: string; date: string };
+  event: { name: string; date: DateTime };
 }) {
   const params = useParams<Params>();
   const [triggerUpdate, { loading: updating }] = useMutation(
