@@ -16,7 +16,7 @@ datasource db {
 }
 
 model User {
-  id String @id @db.Char(20)
+  id String @id
 
   name     String?
   username String
@@ -27,13 +27,13 @@ model User {
 }
 
 model Guild {
-  id String @id @db.Char(20)
+  id String @id
 
   name           String
   picture        String?
-  readRoleId     String? @map("read_role_id") @db.Char(20)
-  registerRoleId String? @map("register_role_id") @db.Char(20)
-  writeRoleId    String? @map("write_role_id") @db.Char(20)
+  readRoleId     String? @map("read_role_id")
+  registerRoleId String? @map("register_role_id")
+  writeRoleId    String? @map("write_role_id")
 
   members Member[]
   items   Item[]
@@ -42,9 +42,9 @@ model Guild {
 
 model Member {
   user    User   @relation(fields: [userId], references: [id])
-  userId  String @map("user_id") @db.Char(20)
+  userId  String @map("user_id")
   guild   Guild  @relation(fields: [guildId], references: [id])
-  guildId String @map("guild_id") @db.Char(20)
+  guildId String @map("guild_id")
 
   read     Boolean
   register Boolean
@@ -55,10 +55,10 @@ model Member {
 }
 
 model Item {
-  id String @id @db.Char(20)
+  id String @id
 
   guild   Guild  @relation(fields: [guildId], references: [id])
-  guildId String @map("guild_id") @db.Char(20)
+  guildId String @map("guild_id")
 
   name     String
   picture  String?
@@ -68,10 +68,10 @@ model Item {
 }
 
 model Event {
-  id String @id @db.Char(20)
+  id String @id
 
   guild   Guild  @relation(fields: [guildId], references: [id])
-  guildId String @map("guild_id") @db.Char(20)
+  guildId String @map("guild_id")
 
   name      String
   date      DateTime
@@ -84,9 +84,9 @@ model Event {
 
 model Display {
   event   Event  @relation(fields: [eventId], references: [id])
-  eventId String @map("event_id") @db.Char(20)
+  eventId String @map("event_id")
   item    Item   @relation(fields: [itemId], references: [id])
-  itemId  String @map("item_id") @db.Char(20)
+  itemId  String @map("item_id")
 
   price         Int
   internalPrice Int?    @map("internal_price")
@@ -101,9 +101,9 @@ model Receipt {
   id String @id @db.Char(36)
 
   event   Event  @relation(fields: [eventId], references: [id])
-  eventId String @map("event_id") @db.Char(20)
+  eventId String @map("event_id")
   user    User   @relation(fields: [userId], references: [id])
-  userId  String @map("user_id") @db.Char(20)
+  userId  String @map("user_id")
 
   total Int
 
@@ -112,10 +112,10 @@ model Receipt {
 
 model Record {
   receipt   Receipt @relation(fields: [receiptId], references: [id])
-  receiptId String  @map("receipt_id") @db.Char(36)
+  receiptId String  @map("receipt_id")
   display   Display @relation(fields: [eventId, itemId], references: [eventId, itemId])
-  eventId   String  @map("event_id") @db.Char(20)
-  itemId    String  @map("item_id") @db.Char(20)
+  eventId   String  @map("event_id")
+  itemId    String  @map("item_id")
 
   count      Int
   internal   Boolean @default(false)
