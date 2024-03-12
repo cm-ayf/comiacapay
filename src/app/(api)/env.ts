@@ -8,11 +8,6 @@ function check<T extends string>(
   }
 }
 
-check(process.env, [
-  "DISCORD_CLIENT_ID",
-  "DISCORD_CLIENT_SECRET",
-  "KEY_PAIR",
-  "DATABASE_URL",
-]);
+check(process.env, ["DISCORD_CLIENT_ID", "DISCORD_CLIENT_SECRET", "KEY_PAIR"]);
 
 export const env = process.env;
