@@ -10,9 +10,8 @@ generator json {
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -52,8 +51,6 @@ model Member {
   admin    Boolean
 
   @@id([userId, guildId])
-  @@index([userId])
-  @@index([guildId])
 }
 
 model Item {
@@ -67,8 +64,6 @@ model Item {
   issuedAt DateTime @map("issued_at")
 
   displays Display[]
-
-  @@index([guildId])
 }
 
 model Event {
@@ -84,8 +79,6 @@ model Event {
 
   displays Display[]
   receipts Receipt[]
-
-  @@index([guildId])
 }
 
 model Display {
@@ -101,8 +94,6 @@ model Display {
   records Record[]
 
   @@id([eventId, itemId])
-  @@index([eventId])
-  @@index([itemId])
 }
 
 model Receipt {
@@ -116,9 +107,6 @@ model Receipt {
   total Int
 
   records Record[]
-
-  @@index([eventId])
-  @@index([userId])
 }
 
 model Record {
@@ -133,6 +121,4 @@ model Record {
   dedication Boolean @default(false)
 
   @@id([receiptId, itemId])
-  @@index([receiptId])
-  @@index([eventId, itemId])
 }
