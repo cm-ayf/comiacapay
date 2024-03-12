@@ -32,12 +32,12 @@
 
 ### データベース
 
-データベースには[Planetscale](https://planetscale.com/)を利用することを想定しています．
-デプロイ方法については[公式のクイックスタートガイド](https://planetscale.com/docs/tutorials/planetscale-quick-start-guide)を参照してください．
+データベースには[Supabase](https://supabase.com/)を利用することを想定しています．なお，データベース以外の機能は利用しません．  
+デプロイするには，プロジェクトを作成し，[Prismaで利用するための公式のガイド](https://supabase.com/partners/integrations/prisma)を参照してください．
 
-また，[VercelとのIntegration](https://vercel.com/integrations/planetscale)が公式に提供されています．
+また，[VercelとのIntegration](https://vercel.com/integrations/supabase)が公式に提供されています．
 
-なお，[Prisma スキーマ](prisma/schema.prisma)を変更することで，他のデータベースでも動作すると考えられます．スキーマは Planetscale 向けに調整されていることに注意してください．
+なお，[Prisma スキーマ](prisma/schema.prisma)を変更することで，他のデータベースでも動作すると考えられます．スキーマは Supabase 向けに調整されていることに注意してください．
 
 #### マイグレーション
 
@@ -53,9 +53,9 @@
 
 Vercel 上で設定し，[Vercel CLI](https://vercel.com/docs/cli)でダウンロードすることを想定しています．
 
-### 設定する
+データベースの接続情報は，Production向けにはVercelとSupabaseとのIntegrationにより自動的に設定されます．Development向けには，Vercel上で設定するか，ダウンロードした後に手動で設定してください．
 
-データベースの接続情報は Vercel Postgres により自動的に設定されます．
+### 設定する
 
 - `NEXT_PUBLIC_HOST`：OAuth2 認証に利用するホスト名です．スキーマとホスト名を含んでください．
   - Vercel 上では，Production および Preview 環境では Vercel のホスト名を，Development 環境では`http://localhost:3000`を指定してください．
