@@ -14,8 +14,8 @@ import { waitUntilAuthorized } from "./UserState";
 import { host } from "@/shared/host";
 
 function retryFetchOnUnauthorized(fetch: typeof window.fetch) {
-  return async (input: RequestInfo, init?: RequestInit) => {
-    const request = new Request(input, init);
+  return async (...args: ConstructorParameters<typeof Request>) => {
+    const request = new Request(...args);
     const isQuery = request.method === "GET";
     const isGetCurrentUser =
       new URL(request.url).searchParams.get("operationName") ===

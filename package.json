@@ -17,7 +17,7 @@
     "lint": "prettier --check . && next lint"
   },
   "dependencies": {
-    "@apollo/client": "^3.8.6",
+    "@apollo/client": "^3.9.6",
     "@apollo/sandbox": "^2.5.1",
     "@apollo/server": "^4.10.0",
     "@ducanh2912/next-pwa": "^10.2.5",
