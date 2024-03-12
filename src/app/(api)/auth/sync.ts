@@ -31,9 +31,12 @@ export async function upsertUserAndMembers(
   // no Promise.all() for throttling
   for (const guild of guilds) {
     const member = await getCurrentUserGuildMember(tokenSet, guild.id);
-    const { permissions } = currentUserGuilds.find((g) => g.id === guild.id)!;
+    const currentUserGuild = currentUserGuilds.find((g) => g.id === guild.id);
+    // somehow this may be undefined; it must be defined thanks to `where` query above
+    if (!currentUserGuild) continue;
+
     const admin = Boolean(
-      BigInt(permissions!) & PermissionFlagsBits.Administrator,
+      BigInt(currentUserGuild.permissions!) & PermissionFlagsBits.Administrator,
     );
     await prisma.member.upsert(toMemberUpsert(member, guild, admin));
   }
