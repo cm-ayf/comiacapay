@@ -26,7 +26,7 @@
     "@graphql-tools/schema": "^10.0.2",
     "@mui/icons-material": "^5.15.2",
     "@mui/lab": "^5.0.0-alpha.154",
-    "@mui/material": "^5.15.12",
+    "@mui/material": "^5.15.14",
     "@mui/x-data-grid": "^6.18.2",
     "@prisma/client": "5.1.0",
     "@types/node": "^20.11.26",
