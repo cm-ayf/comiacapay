@@ -27,7 +27,7 @@
     "@mui/icons-material": "^5.15.2",
     "@mui/lab": "^5.0.0-alpha.154",
     "@mui/material": "^5.15.12",
-    "@mui/x-data-grid": "^6.18.2",
+    "@mui/x-data-grid": "^7.1.0",
     "@prisma/client": "5.1.0",
     "@types/node": "^20.11.26",
     "@types/react": "^18.2.65",
