@@ -98,7 +98,7 @@ model Display {
 }
 
 model Receipt {
-  id String @id @db.Char(36)
+  id String @id
 
   event   Event  @relation(fields: [eventId], references: [id])
   eventId String @map("event_id")
