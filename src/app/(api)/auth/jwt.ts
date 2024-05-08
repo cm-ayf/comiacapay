@@ -45,8 +45,8 @@ export async function signSession(sub: string) {
 
 export async function verifySession(token: string) {
   const { verifyKey } = await initKeys();
-  const { payload } = await jwtVerify(token, verifyKey);
-  return payload as Required<JWTPayload>;
+  const { payload } = await jwtVerify<Required<JWTPayload>>(token, verifyKey);
+  return payload;
 }
 
 export async function encryptTokenSet(
