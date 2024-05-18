@@ -11,7 +11,7 @@ function isOAuth2ErrorString(error: unknown): error is OAuth2ErrorString {
     typeof error === "string" &&
     [
       "invalid_request",
-      "invalid_credentials",
+      "access_denied",
       "invalid_grant",
       "server_error",
     ].includes(error)
