@@ -2,7 +2,11 @@
 
 import { useSuspenseQuery } from "@apollo/client";
 import CircularProgress from "@mui/material/CircularProgress";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  gridDateTimeFormatter,
+  type GridColDef,
+} from "@mui/x-data-grid";
 import { use, useMemo } from "react";
 import type { Params } from "../../params";
 import GetReceiptsPageQuery from "../GetReceiptsPage.graphql";
@@ -20,7 +24,7 @@ export default function Table({ params }: { params: Params }) {
         field: "timestamp",
         headerName: "時刻",
         width: 160,
-        valueGetter: ({ value }) => new Date(value).toLocaleString("ja-JP"),
+        valueFormatter: gridDateTimeFormatter,
       },
       { field: "total", headerName: "合計", width: 90, align: "right" },
       { field: "pushed", headerName: "同期", width: 90, align: "center" },
