@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.9.6",
-    "@apollo/sandbox": "^2.5.1",
+    "@apollo/sandbox": "^2.6.0",
     "@apollo/server": "^4.10.1",
     "@ducanh2912/next-pwa": "^10.2.5",
     "@emotion/react": "^11.11.1",
