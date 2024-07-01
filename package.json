@@ -21,7 +21,7 @@
     "@apollo/sandbox": "^2.6.0",
     "@apollo/server": "^4.10.1",
     "@ducanh2912/next-pwa": "^10.2.5",
-    "@emotion/react": "^11.11.1",
+    "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@graphql-tools/schema": "^10.0.2",
     "@mui/icons-material": "^5.15.2",
