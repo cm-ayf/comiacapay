@@ -22,7 +22,7 @@
     "@apollo/server": "^4.10.1",
     "@ducanh2912/next-pwa": "^10.2.5",
     "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
+    "@emotion/styled": "^11.11.5",
     "@graphql-tools/schema": "^10.0.2",
     "@mui/icons-material": "^5.15.2",
     "@mui/lab": "^5.0.0-alpha.170",
