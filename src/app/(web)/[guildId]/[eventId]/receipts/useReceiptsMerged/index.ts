@@ -49,7 +49,7 @@ export function toRow({
   ...rest
 }: CreateReceipt & { pushed: boolean }): {
   id: string;
-  timestamp: number;
+  datetime: Date;
   total: number;
   pushed: boolean;
   [itemId: `${bigint}`]: number;
@@ -57,7 +57,7 @@ export function toRow({
   const { timestamp } = parseSnowflake(rest.id);
   return {
     ...rest,
-    timestamp,
+    datetime: new Date(timestamp),
     ...Object.fromEntries(records.map(({ itemId, count }) => [itemId, count])),
   };
 }
