@@ -21,10 +21,10 @@ export default function Table({ params }: { params: Params }) {
   const columns = useMemo<GridColDef[]>(
     () => [
       {
-        field: "timestamp",
+        field: "datetime",
         headerName: "時刻",
         width: 160,
-        valueFormatter: gridDateTimeFormatter,
+        valueGetter: gridDateTimeFormatter,
       },
       { field: "total", headerName: "合計", width: 90, align: "right" },
       { field: "pushed", headerName: "同期", width: 90, align: "center" },
