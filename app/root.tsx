@@ -8,6 +8,8 @@ import {
 import type { LinksFunction } from "@vercel/remix";
 import type { PropsWithChildren } from "react";
 
+import "@mui/material-pigment-css/styles.css";
+
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {

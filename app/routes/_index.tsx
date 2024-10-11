@@ -1,7 +1,10 @@
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material-pigment-css/Container";
+
 export default function Page() {
   return (
-    <div>
-      <h1>Comiacapay</h1>
-    </div>
+    <Container sx={{ background: "lightgray" }}>
+      <Typography variant="h1">Comiacapay</Typography>
+    </Container>
   );
 }

@@ -2,12 +2,14 @@
 
 import { fixupPluginRules, includeIgnoreFile } from "@eslint/compat";
 import prettier from "eslint-config-prettier";
-import pluginImportX from "eslint-plugin-import-x";
+import importX from "eslint-plugin-import-x";
 import jsxA11y from "eslint-plugin-jsx-a11y";
+import muiPathImports from "eslint-plugin-mui-path-imports";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
 import tseslint from "typescript-eslint";
+import muiPigmentCss from "./eslint-plugin-mui-pigment-css/index.js";
 /** @import { Linter } from "eslint" */
 /** @import { FixupPluginDefinition } from "@eslint/compat" */
 
@@ -23,13 +25,23 @@ const reactHooksFlatConfigRecommended = {
   ),
 };
 
+/** @type {Linter.Config} */
+const muiPathImportsMuiPathImports = {
+  plugins: {
+    "mui-path-imports": muiPathImports,
+  },
+  rules: {
+    "mui-path-imports/mui-path-imports": "error",
+  },
+};
+
 export default tseslint.config(
   ...tseslint.configs.recommended,
   prettier,
-  pluginImportX.flatConfigs.typescript,
-  pluginImportX.flatConfigs.react,
+  importX.flatConfigs.typescript,
+  importX.flatConfigs.react,
   {
-    ...pluginImportX.flatConfigs.recommended,
+    ...importX.flatConfigs.recommended,
     settings: {
       "import-x/internal-regex": "^~/",
       "import/resolver": {
@@ -64,6 +76,8 @@ export default tseslint.config(
   }),
   /** @type {Linter.Config} */ (react.configs.flat["jsx-runtime"]),
   reactHooksFlatConfigRecommended,
+  muiPathImportsMuiPathImports,
+  muiPigmentCss,
   includeIgnoreFile(new URL(import.meta.resolve("./.gitignore")).pathname),
   {
     rules: {
