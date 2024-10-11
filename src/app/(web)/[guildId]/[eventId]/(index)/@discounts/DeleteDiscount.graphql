@@ -1,3 +1,0 @@
-mutation DeleteDiscount($guildId: ID!, $eventId: ID!, $id: ID!) {
-  deleteDiscount(guildId: $guildId, eventId: $eventId, id: $id)
-}

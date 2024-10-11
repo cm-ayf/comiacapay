@@ -1,3 +1,0 @@
-mutation DeleteReceipts($guildId: ID!, $eventId: ID!, $ids: [ID!]!) {
-  deleteReceipts(guildId: $guildId, eventId: $eventId, ids: $ids)
-}

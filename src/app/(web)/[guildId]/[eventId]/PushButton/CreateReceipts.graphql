@@ -1,9 +1,0 @@
-mutation CreateReceipts(
-  $guildId: ID!
-  $eventId: ID!
-  $input: [CreateReceipt!]!
-) {
-  createReceipts(guildId: $guildId, eventId: $eventId, input: $input) {
-    id
-  }
-}

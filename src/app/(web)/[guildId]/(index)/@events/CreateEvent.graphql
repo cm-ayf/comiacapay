@@ -1,5 +1,0 @@
-mutation CreateEvent($guildId: ID!, $input: CreateEvent!) {
-  createEvent(guildId: $guildId, input: $input) {
-    id
-  }
-}

@@ -1,5 +1,0 @@
-type Query {
-  user: User!
-  guild(guildId: ID!): Guild!
-  event(guildId: ID!, id: ID!): Event!
-}
