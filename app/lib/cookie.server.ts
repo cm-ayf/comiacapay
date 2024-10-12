@@ -1,7 +1,7 @@
 import { createCookie, type Cookie, type CookieOptions } from "@vercel/remix";
 import { host } from "./host";
 
-export type CookieName = "session" | "token_set" | "state" | "redirect_to";
+export type CookieName = "session" | "token_set" | "state";
 export type CookieValues = Partial<Record<CookieName, string>>;
 
 type TypedCookie = Cookie & { readonly name: CookieName };
@@ -21,11 +21,6 @@ const cookies: TypedCookie[] = [
   createTypedCookie("session", { ...baseOptions, maxAge: 3600 }),
   createTypedCookie("token_set", { ...baseOptions, maxAge: 31557600 }),
   createTypedCookie("state", { ...baseOptions, sameSite: "lax", maxAge: 600 }),
-  createTypedCookie("redirect_to", {
-    ...baseOptions,
-    sameSite: "lax",
-    maxAge: 600,
-  }),
 ];
 
 export async function setCookies(cookieValues: CookieValues): Promise<Headers> {

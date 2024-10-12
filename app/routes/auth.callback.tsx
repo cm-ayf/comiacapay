@@ -1,7 +1,9 @@
-import { redirect, type LoaderFunctionArgs } from "@vercel/remix";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "@remix-run/react";
+import { json, redirect, type LoaderFunctionArgs } from "@vercel/remix";
+import { useEffect } from "react";
 import { getCookies, setCookies } from "~/lib/cookie.server";
 import { OAuth2Error } from "~/lib/error";
-import { host } from "~/lib/host";
 import { encryptTokenSet, signSession } from "~/lib/jwt.server";
 import { exchangeCode } from "~/lib/oauth2.server";
 import { upsertUserAndMembers } from "~/lib/sync.server";
@@ -28,19 +30,28 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const user = await upsertUserAndMembers(tokenResult);
     const session = await signSession(user.id);
 
-    const redirectUrl = new URL(cookies.redirect_to ?? "/", host);
     const headers = await setCookies({
       session,
       token_set,
       state: "",
-      redirect_to: "",
     });
-    return redirect(redirectUrl.toString(), { headers });
+    return json({}, { headers });
   } catch (e) {
     const error = OAuth2Error.fromError(e);
     const headers = await setCookies(
-      error.error === "server_error" ? {} : { state: "", redirect_to: "" },
+      error.error === "server_error" ? {} : { state: "" },
     );
     return redirect(error.toRedirectURL().toString(), { headers });
   }
+}
+
+export default function Page() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const redirectTo = sessionStorage.getItem("redirect_to") ?? "/";
+    setTimeout(() => navigate(redirectTo, { replace: true }));
+  }, [navigate]);
+
+  return <CircularProgress />;
 }
