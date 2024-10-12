@@ -19,7 +19,6 @@ export default defineConfig({
     remixPWA(),
   ],
   ssr: {
-    target: "webworker",
     noExternal: ["@mui/material", "@mui/utils", "@mui/material-pigment-css"],
   },
 });

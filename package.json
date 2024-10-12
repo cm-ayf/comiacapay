@@ -27,6 +27,7 @@
     "@remix-run/node": "^2.12.0",
     "@remix-run/react": "2.12.0",
     "@remix-run/serve": "2.12.0",
+    "discord-api-types": "^0.37.101",
     "isbot": "4.1.0",
     "jose": "5.9.3",
     "react": "18.3.1",
