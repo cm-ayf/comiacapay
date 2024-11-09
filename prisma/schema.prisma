@@ -10,9 +10,10 @@ generator json {
 }
 
 datasource db {
-  provider  = "postgres"
-  url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
+  provider = "postgres"
+  // url       = env("POSTGRES_PRISMA_URL")
+  // directUrl = env("POSTGRES_URL_NON_POOLING")
+  url      = "postgresql://futaiwata@localhost:5432/comiacapay"
 }
 
 model User {
@@ -24,6 +25,24 @@ model User {
 
   members  Member[]
   receipts Receipt[]
+  sessions Session[]
+}
+
+model Session {
+  id  String @id // snowflake
+  sid String @unique // secure random string
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  // from token response
+  access_token  String
+  token_type    String
+  refresh_token String
+  expires_in    Int
+  scope         String
 }
 
 model Guild {

@@ -2,45 +2,44 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "@remix-run/react";
 import { json, redirect, type LoaderFunctionArgs } from "@vercel/remix";
 import { useEffect } from "react";
-import { getCookies, setCookies } from "~/lib/cookie.server";
+import { sidCookie, stateCookie } from "~/lib/cookie.server";
 import { OAuth2Error } from "~/lib/error";
-import { encryptTokenSet, signSession } from "~/lib/jwt.server";
 import { exchangeCode } from "~/lib/oauth2.server";
+import { createSession } from "~/lib/session.server";
 import { upsertUserAndMembers } from "~/lib/sync.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const url = new URL(request.url);
     const code = url.searchParams.get("code");
-    const state = url.searchParams.get("state");
-
-    const cookies = await getCookies(request.headers);
+    const stateFromQuery = url.searchParams.get("state");
+    const stateFromCookie = await stateCookie.parse(
+      request.headers.get("Cookie"),
+    );
     if (!code)
       throw new OAuth2Error("invalid_request", "missing code in query");
-    if (!state)
+    if (!stateFromQuery)
       throw new OAuth2Error("invalid_request", "missing state in query");
-    if (!cookies.state)
+    if (!stateFromCookie)
       throw new OAuth2Error("invalid_request", "missing state in cookie");
-    if (state !== cookies.state)
+    if (stateFromQuery !== stateFromCookie)
       throw new OAuth2Error("invalid_request", "state mismatch");
 
     const tokenResult = await exchangeCode(code);
-    const token_set = await encryptTokenSet(tokenResult);
 
     const user = await upsertUserAndMembers(tokenResult);
-    const session = await signSession(user.id);
+    const session = await createSession(user, tokenResult);
 
-    const headers = await setCookies({
-      session,
-      token_set,
-      state: "",
+    const setCookie = await sidCookie.serialize(session.sid);
+    return json(null, {
+      headers: { "Set-Cookie": setCookie },
     });
-    return json({}, { headers });
   } catch (e) {
     const error = OAuth2Error.fromError(e);
-    const headers = await setCookies(
-      error.error === "server_error" ? {} : { state: "" },
-    );
+    const headers =
+      error.error === "server_error"
+        ? {}
+        : { "Set-Cookie": await stateCookie.serialize("", { maxAge: 0 }) };
     return redirect(error.toRedirectURL().toString(), { headers });
   }
 }

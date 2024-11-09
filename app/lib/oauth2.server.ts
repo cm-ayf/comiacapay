@@ -1,3 +1,4 @@
+import type { Session } from "@prisma/client";
 import {
   OAuth2Routes,
   OAuth2Scopes,
@@ -14,18 +15,17 @@ import type {
   RESTPostOAuth2RefreshTokenResult,
   RESTPostOAuth2RefreshTokenURLEncodedData,
 } from "discord-api-types/v10";
-import type { JWTPayload } from "jose";
 import { env } from "./env.server";
 import { OAuth2Error } from "./error";
 import { host } from "./host";
 
 const redirect_uri = new URL("/auth/callback", host).toString();
 
-export interface TokenSet
-  extends Required<JWTPayload>,
-    RESTPostOAuth2AccessTokenResult {}
-export type AccessTokenSet = Pick<TokenSet, "access_token" | "token_type">;
-export type RefreshTokenSet = Pick<TokenSet, "refresh_token" | "exp">;
+export type AccessTokenSet = Pick<Session, "access_token" | "token_type">;
+export type RefreshTokenSet = Pick<
+  Session,
+  "refresh_token" | "expires_in" | "updatedAt"
+>;
 
 export function authorizeUrl(params: Record<string, string | boolean>) {
   const url = new URL(OAuth2Routes.authorizationURL);
@@ -87,10 +87,6 @@ export async function exchangeCode(
   });
 }
 
-export function shouldRefreshTokens(tokenSet: RefreshTokenSet) {
-  return tokenSet.exp * 1000 - Date.now() > 6 * 24 * 60 * 60 * 1000;
-}
-
 export async function refreshTokens({
   refresh_token,
 }: RefreshTokenSet): Promise<RESTPostOAuth2RefreshTokenResult> {
@@ -107,8 +103,10 @@ export async function refreshTokens({
   });
 }
 
-export async function revokeToken(token: string) {
-  return oauth2Post(OAuth2Routes.tokenRevocationURL, { token }).catch((e) => {
+export async function revokeToken({ access_token }: AccessTokenSet) {
+  return oauth2Post(OAuth2Routes.tokenRevocationURL, {
+    token: access_token,
+  }).catch((e) => {
     throw OAuth2Error.fromError(e, {
       error: "server_error",
       error_description: "Failed to revoke token",
