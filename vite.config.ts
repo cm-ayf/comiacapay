@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 import { pigment } from "@pigment-css/vite-plugin";
 import { remixPWA } from "@remix-pwa/dev";
 import { vitePlugin as remix } from "@remix-run/dev";
@@ -19,6 +19,6 @@ export default defineConfig({
     remixPWA(),
   ],
   ssr: {
-    noExternal: ["@mui/material", "@mui/utils", "@mui/material-pigment-css"],
+    noExternal: [/^@mui\//, "@pigment-css/react"],
   },
 });

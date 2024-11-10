@@ -1,14 +1,21 @@
+import "@mui/material-pigment-css/styles.css";
+import "./global.css";
+import Box from "@mui/material-pigment-css/Box";
+import Container from "@mui/material-pigment-css/Container";
 import {
+  json,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
-import type { LinksFunction } from "@vercel/remix";
-import type { PropsWithChildren } from "react";
-
-import "@mui/material-pigment-css/styles.css";
+import type { LinksFunction, LoaderFunctionArgs } from "@vercel/remix";
+import { type PropsWithChildren } from "react";
+import Navigation from "./components/Navigation";
+import { useHandle } from "./handle";
+import { getSession } from "./lib/session.server";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -23,6 +30,15 @@ export const links: LinksFunction = () => [
   },
 ];
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  try {
+    const session = await getSession(request);
+    return json(session.user);
+  } catch {
+    return json(null, { status: 401 });
+  }
+}
+
 export function Layout({ children }: PropsWithChildren) {
   return (
     <html lang="ja">
@@ -32,7 +48,7 @@ export function Layout({ children }: PropsWithChildren) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -42,5 +58,27 @@ export function Layout({ children }: PropsWithChildren) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const data = useLoaderData<typeof loader>();
+  const { ButtomComponent } = useHandle();
+
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <Navigation user={data} />
+      <Container
+        sx={{
+          flex: "auto",
+          overflowX: "hidden",
+          overflowY: "scroll",
+          paddingTop: 2,
+          paddingBottom: 2,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <Outlet />
+      </Container>
+      {ButtomComponent && <ButtomComponent />}
+    </Box>
+  );
 }
