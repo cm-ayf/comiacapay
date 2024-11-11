@@ -1,5 +1,3 @@
-"use client";
-
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import CloudDone from "@mui/icons-material/CloudDone";
 import CloudOff from "@mui/icons-material/CloudOff";
@@ -23,6 +21,7 @@ import {
   useMemo,
   createContext,
 } from "react";
+import { useAlert } from "./Alert";
 
 export const REPOSITORY: string = "https://github.com/cm-ayf/comiacapay";
 export const DOCS = REPOSITORY + "/blob/main/docs";
@@ -31,16 +30,6 @@ export interface NavigationContext {
   title?: string | undefined;
   docs?: "register" | "receipts" | "index";
   back?(): void;
-}
-
-// stub
-function useAlert() {
-  return useMemo(() => {
-    return {
-      success(_: string) {},
-      error(_: string) {},
-    };
-  }, []);
 }
 
 const NavigationContext = createContext<NavigationContext>({});

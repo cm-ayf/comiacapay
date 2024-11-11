@@ -1,15 +1,16 @@
 import { createCookie } from "@vercel/remix";
-import { host } from "./host";
+
+console.log(import.meta.env.MODE);
 
 export const sidCookie = createCookie("sid", {
   httpOnly: true,
-  secure: host.protocol === "https:",
+  secure: import.meta.env.MODE === "production",
   path: "/",
   maxAge: 31536000,
 });
 export const stateCookie = createCookie("state", {
   httpOnly: true,
-  secure: host.protocol === "https:",
+  secure: import.meta.env.MODE === "production",
   path: "/",
   sameSite: "lax",
   maxAge: 600,

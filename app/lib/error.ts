@@ -1,5 +1,3 @@
-import { host } from "./host";
-
 type OAuth2ErrorString =
   | "invalid_request"
   | "access_denied"
@@ -76,12 +74,12 @@ export class OAuth2Error extends Error {
     return this.error === "server_error" ? 500 : 400;
   }
 
-  toRedirectURL() {
-    const url = new URL(host);
-    url.searchParams.set("error", this.error);
+  toRedirectLocation(pathname = "/") {
+    const searchParams = new URLSearchParams();
+    searchParams.set("error", this.error);
     if (this.error_description) {
-      url.searchParams.set("error_description", this.error_description);
+      searchParams.set("error_description", this.error_description);
     }
-    return url;
+    return `${pathname}?${searchParams}`;
   }
 }

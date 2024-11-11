@@ -17,9 +17,11 @@ import type {
 } from "discord-api-types/v10";
 import { env } from "./env.server";
 import { OAuth2Error } from "./error";
-import { host } from "./host";
 
-const redirect_uri = new URL("/auth/callback", host).toString();
+const redirect_uri = new URL(
+  "/auth/callback",
+  env.DISCORD_OAUTH2_ORIGIN,
+).toString();
 
 export type AccessTokenSet = Pick<Session, "access_token" | "token_type">;
 export type RefreshTokenSet = Pick<
@@ -27,17 +29,19 @@ export type RefreshTokenSet = Pick<
   "refresh_token" | "expires_in" | "updatedAt"
 >;
 
-export function authorizeUrl(params: Record<string, string | boolean>) {
-  const url = new URL(OAuth2Routes.authorizationURL);
-  for (const [name, value] of Object.entries(params)) {
+export function oauth2Url(
+  route: string,
+  params: Record<string, string | boolean>,
+) {
+  const url = new URL(route);
+  for (const [name, value] of Object.entries(params))
     url.searchParams.set(name, String(value));
-  }
   return url;
 }
 
-export function authorizeUserUrl(state: string) {
-  return authorizeUrl({
-    client_id: env["DISCORD_CLIENT_ID"],
+export function authorizeUrl(state: string) {
+  return oauth2Url(OAuth2Routes.authorizationURL, {
+    client_id: env.DISCORD_CLIENT_ID,
     redirect_uri,
     response_type: "code",
     prompt: "none",
@@ -47,15 +51,9 @@ export function authorizeUserUrl(state: string) {
 }
 
 export async function oauth2Post(route: string, body: Record<string, string>) {
-  const basic = btoa(
-    `${env["DISCORD_CLIENT_ID"]}:${env["DISCORD_CLIENT_SECRET"]}`,
-  );
   const response = await fetch(route, {
     method: "POST",
-    headers: {
-      Authorization: `Basic ${basic}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams(body),
     cache: "no-cache",
   });
@@ -74,8 +72,8 @@ export async function exchangeCode(
   code: string,
 ): Promise<RESTPostOAuth2AccessTokenResult> {
   return oauth2Post(OAuth2Routes.tokenURL, {
-    client_id: env["DISCORD_CLIENT_ID"],
-    client_secret: env["DISCORD_CLIENT_SECRET"],
+    client_id: env.DISCORD_CLIENT_ID,
+    client_secret: env.DISCORD_CLIENT_SECRET,
     grant_type: "authorization_code",
     code,
     redirect_uri,
@@ -91,8 +89,8 @@ export async function refreshTokens({
   refresh_token,
 }: RefreshTokenSet): Promise<RESTPostOAuth2RefreshTokenResult> {
   return oauth2Post(OAuth2Routes.tokenURL, {
-    client_id: env["DISCORD_CLIENT_ID"],
-    client_secret: env["DISCORD_CLIENT_SECRET"],
+    client_id: env.DISCORD_CLIENT_ID,
+    client_secret: env.DISCORD_CLIENT_SECRET,
     grant_type: "refresh_token",
     refresh_token,
   } satisfies RESTPostOAuth2RefreshTokenURLEncodedData).catch((e) => {

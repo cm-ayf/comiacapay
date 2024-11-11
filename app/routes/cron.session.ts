@@ -15,10 +15,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   for (const session of sessions) {
     switch (getSessionStatus(session)) {
-      case "shouldDelete":
+      case "didExpire":
         await deleteSession(session);
         continue;
-      case "shouldRefresh":
+      case "willExpireSoon":
         await refreshSession(session);
         continue;
     }

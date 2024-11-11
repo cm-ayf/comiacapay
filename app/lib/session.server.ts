@@ -1,4 +1,4 @@
-import type { Session, User } from "@prisma/client";
+import type { Prisma, Session, User } from "@prisma/client";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { base64url } from "jose";
 import { sidCookie } from "./cookie.server";
@@ -6,13 +6,21 @@ import { refreshTokens, type RefreshTokenSet } from "./oauth2.server";
 import { initPrisma } from "./prisma.server";
 import { generateSnowflake } from "./snowflake";
 
-export async function getSession(request: Request) {
+export async function getSession<Include extends Prisma.SessionInclude>(
+  request: Request,
+  include = {} as Include,
+) {
   const prisma = await initPrisma();
   const sid = await sidCookie.parse(request.headers.get("Cookie"));
-  return await prisma.session.findUniqueOrThrow({
+  if (!sid) return null;
+
+  const session = await prisma.session.findUnique({
     where: { sid },
-    include: { user: true },
+    include,
   });
+  if (!session) return null;
+  if (getSessionStatus(session) === "didExpire") return null;
+  return session;
 }
 
 export async function getAllSessions() {
@@ -42,8 +50,8 @@ export async function createSession(
 
 export function getSessionStatus({ expires_in, updatedAt }: RefreshTokenSet) {
   const timeLimit = expires_in * 1000 + updatedAt.getTime() - Date.now();
-  if (timeLimit < 0) return "shouldDelete";
-  else if (timeLimit < 86400000) return "shouldRefresh";
+  if (timeLimit < 0) return "didExpire";
+  else if (timeLimit < 86400000) return "willExpireSoon";
   else return "ok";
 }
 

@@ -40,7 +40,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       error.error === "server_error"
         ? {}
         : { "Set-Cookie": await stateCookie.serialize("", { maxAge: 0 }) };
-    return redirect(error.toRedirectURL().toString(), { headers });
+    return redirect(error.toRedirectLocation(), { headers });
   }
 }
 

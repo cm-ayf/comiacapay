@@ -19,6 +19,6 @@ export default defineConfig({
     remixPWA(),
   ],
   ssr: {
-    noExternal: [/^@mui\//, "@pigment-css/react"],
+    noExternal: [/^@mui\//, "@pigment-css/react", "@remix-run/react"],
   },
 });

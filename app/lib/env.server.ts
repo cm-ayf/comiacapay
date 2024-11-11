@@ -8,6 +8,10 @@ function check<T extends string>(
   }
 }
 
-check(process.env, ["DISCORD_CLIENT_ID", "DISCORD_CLIENT_SECRET"]);
+check(process.env, [
+  "DISCORD_OAUTH2_ORIGIN",
+  "DISCORD_CLIENT_ID",
+  "DISCORD_CLIENT_SECRET",
+]);
 
 export const env = process.env;

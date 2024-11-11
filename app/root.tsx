@@ -13,6 +13,7 @@ import {
 } from "@remix-run/react";
 import type { LinksFunction, LoaderFunctionArgs } from "@vercel/remix";
 import { type PropsWithChildren } from "react";
+import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
 import { useHandle } from "./handle";
 import { getSession } from "./lib/session.server";
@@ -31,12 +32,9 @@ export const links: LinksFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  try {
-    const session = await getSession(request);
-    return json(session.user);
-  } catch {
-    return json(null, { status: 401 });
-  }
+  const session = await getSession(request, { user: true });
+  if (!session) return json(null, 401);
+  return json(session.user);
 }
 
 export function Layout({ children }: PropsWithChildren) {
@@ -64,20 +62,22 @@ export default function App() {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <Navigation user={data} />
-      <Container
-        sx={{
-          flex: "auto",
-          overflowX: "hidden",
-          overflowY: "scroll",
-          paddingTop: 2,
-          paddingBottom: 2,
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-        }}
-      >
-        <Outlet />
-      </Container>
+      <AlertProvider>
+        <Container
+          sx={{
+            flex: "auto",
+            overflowX: "hidden",
+            overflowY: "scroll",
+            paddingTop: 2,
+            paddingBottom: 2,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          <Outlet />
+        </Container>
+      </AlertProvider>
       {ButtomComponent && <ButtomComponent />}
     </Box>
   );

@@ -6,7 +6,8 @@ import { deleteSession, getSession } from "~/lib/session.server";
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const session = await getSession(request);
-    await Promise.all([revokeToken(session), deleteSession(session)]);
+    if (session)
+      await Promise.all([revokeToken(session), deleteSession(session)]);
   } catch {}
 
   const setCookie = await sidCookie.serialize("", { maxAge: 0 });
