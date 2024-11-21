@@ -1,5 +1,5 @@
-import "@mui/material-pigment-css/styles.css";
 import "./global.css";
+import "@pigment-css/react/styles.css";
 import Box from "@mui/material-pigment-css/Box";
 import Container from "@mui/material-pigment-css/Container";
 import {
@@ -46,7 +46,7 @@ export function Layout({ children }: PropsWithChildren) {
         <Meta />
         <Links />
       </head>
-      <body suppressHydrationWarning>
+      <body>
         {children}
         <ScrollRestoration />
         <Scripts />

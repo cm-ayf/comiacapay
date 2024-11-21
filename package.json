@@ -16,7 +16,7 @@
     "fix:prettier": "prettier --write .",
     "fix:eslint": "eslint --cache --cache-location ./node_modules/.cache/eslint --fix .",
     "fix": "run-s fix:*",
-    "start": "remix-serve ./build/server/index.js",
+    "start": "PORT=5173 remix-serve ./build/server/index.js",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -25,11 +25,10 @@
     "@mui/lab": "6.0.0-beta.14",
     "@mui/material": "6.1.6",
     "@mui/material-pigment-css": "6.1.6",
-    "@pigment-css/react": "^0.0.26",
+    "@pigment-css/react": "0.0.26",
     "@prisma/client": "5.20.0",
     "@remix-pwa/client": "3.0.7",
     "@remix-pwa/worker-runtime": "2.1.4",
-    "@remix-run/node": "^2.12.0",
     "@remix-run/react": "2.12.0",
     "@remix-run/serve": "2.12.0",
     "discord-api-types": "^0.37.101",
@@ -83,6 +82,6 @@
     }
   },
   "engines": {
-    "node": "20"
+    "node": ">= 20"
   }
 }
