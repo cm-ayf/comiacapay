@@ -1,6 +1,6 @@
 import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
-import { OAuth2Error } from "~/lib/error";
-import { authorizeBotUrl } from "~/lib/oauth2guilds.server";
+import { OAuth2Error } from "~/lib/oauth2/error";
+import { authorizeBotUrl } from "~/lib/oauth2/setup.server";
 import { getSession } from "~/lib/session.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {

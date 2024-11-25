@@ -10,8 +10,8 @@ import {
   getCurrentUser,
   getCurrentUserGuildMember,
   getCurrentUserGuilds,
-} from "./oauth2.server";
-import type { AccessTokenSet } from "./oauth2.server";
+} from "./oauth2/auth.server";
+import type { AccessTokenSet } from "./oauth2/auth.server";
 import { prisma } from "./prisma.server";
 
 export async function upsertUserAndMembers(

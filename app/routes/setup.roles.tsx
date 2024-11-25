@@ -22,7 +22,7 @@ import {
   useRemixFormContext,
 } from "remix-hook-form";
 import { getValidatedBody } from "~/lib/body.server";
-import { exchangeBotCode } from "~/lib/oauth2guilds.server";
+import { exchangeBotCode } from "~/lib/oauth2/setup.server";
 import { prisma } from "~/lib/prisma.server";
 import {
   UpdateGuild,

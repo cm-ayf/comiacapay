@@ -1,8 +1,8 @@
 import { redirect } from "@vercel/remix";
 import { base64url } from "jose";
 import { stateCookie } from "~/lib/cookie.server";
-import { OAuth2Error } from "~/lib/error";
-import { authorizeUrl } from "~/lib/oauth2.server";
+import { authorizeUrl } from "~/lib/oauth2/auth.server";
+import { OAuth2Error } from "~/lib/oauth2/error";
 
 export async function loader() {
   try {

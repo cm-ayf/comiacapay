@@ -1,8 +1,8 @@
 import { redirect } from "@remix-run/react";
 import type { LoaderFunctionArgs } from "@vercel/remix";
 import { sidCookie, stateCookie } from "~/lib/cookie.server";
-import { OAuth2Error } from "~/lib/error";
-import { exchangeCode } from "~/lib/oauth2.server";
+import { exchangeCode } from "~/lib/oauth2/auth.server";
+import { OAuth2Error } from "~/lib/oauth2/error";
 import { createSession } from "~/lib/session.server";
 import { upsertUserAndMembers } from "~/lib/sync.server";
 

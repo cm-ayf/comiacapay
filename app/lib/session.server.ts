@@ -2,7 +2,7 @@ import type { Session, User } from "@prisma/client";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { base64url } from "jose";
 import { sidCookie } from "./cookie.server";
-import { refreshTokens, type RefreshTokenSet } from "./oauth2.server";
+import { refreshTokens, type RefreshTokenSet } from "./oauth2/auth.server";
 import { prisma } from "./prisma.server";
 import { Snowflake } from "./snowflake";
 

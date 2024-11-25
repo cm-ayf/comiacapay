@@ -1,6 +1,6 @@
 import { redirect, type LoaderFunctionArgs } from "@vercel/remix";
 import { sidCookie } from "~/lib/cookie.server";
-import { revokeToken } from "~/lib/oauth2.server";
+import { revokeToken } from "~/lib/oauth2/auth.server";
 import { deleteSession, getSession } from "~/lib/session.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {

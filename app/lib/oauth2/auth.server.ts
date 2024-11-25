@@ -15,13 +15,9 @@ import type {
   RESTPostOAuth2RefreshTokenResult,
   RESTPostOAuth2RefreshTokenURLEncodedData,
 } from "discord-api-types/v10";
-import { env } from "./env.server";
+import { env } from "../env.server";
 import { OAuth2Error } from "./error";
-
-const redirect_uri = new URL(
-  "/auth/callback",
-  env.DISCORD_OAUTH2_ORIGIN,
-).toString();
+import { oauth2Post, oauth2Url } from "./shared.server";
 
 export type AccessTokenSet = Pick<Session, "access_token" | "token_type">;
 export type RefreshTokenSet = Pick<
@@ -29,15 +25,10 @@ export type RefreshTokenSet = Pick<
   "refresh_token" | "expires_in" | "updatedAt"
 >;
 
-export function oauth2Url(
-  route: string,
-  params: Record<string, string | boolean>,
-) {
-  const url = new URL(route);
-  for (const [name, value] of Object.entries(params))
-    url.searchParams.set(name, String(value));
-  return url;
-}
+const redirect_uri = new URL(
+  "/auth/callback",
+  env.DISCORD_OAUTH2_ORIGIN,
+).toString();
 
 export function authorizeUrl(state: string) {
   return oauth2Url(OAuth2Routes.authorizationURL, {
@@ -48,24 +39,6 @@ export function authorizeUrl(state: string) {
     scope: `${OAuth2Scopes.Identify} ${OAuth2Scopes.Guilds} ${OAuth2Scopes.GuildsMembersRead}`,
     state,
   } satisfies RESTOAuth2AuthorizationQuery);
-}
-
-export async function oauth2Post(route: string, body: Record<string, string>) {
-  const response = await fetch(route, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(body),
-    cache: "no-cache",
-  });
-
-  if (response.status === 400) {
-    const json = await response.json();
-    throw OAuth2Error.fromJSON(json);
-  } else if (!response.ok) {
-    throw new Error();
-  }
-
-  return await response.json();
 }
 
 export async function exchangeCode(

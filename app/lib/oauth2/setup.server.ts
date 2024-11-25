@@ -4,9 +4,9 @@ import type {
   RESTPostOAuth2AccessTokenURLEncodedData,
   RESTPostOAuth2AccessTokenWithBotAndGuildsScopeResult,
 } from "discord-api-types/v10";
-import { env } from "./env.server";
+import { env } from "../env.server";
 import { OAuth2Error } from "./error";
-import { oauth2Post, oauth2Url } from "./oauth2.server";
+import { oauth2Post, oauth2Url } from "./shared.server";
 
 const redirect_uri = new URL(
   "/setup/callback",
