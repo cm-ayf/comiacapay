@@ -9,15 +9,14 @@
     "prepare": "node .husky/install.js",
     "build": "remix vite:build",
     "dev": "remix vite:dev",
-    "check:prettier": "prettier --check .",
-    "check:eslint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
+    "check:prettier": "prettier --cache --check .",
+    "check:eslint": "eslint --cache --cache-location ./node_modules/.cache/eslint/ .",
     "check:tsc": "tsc",
     "check": "run-p check:*",
-    "fix:prettier": "prettier --write .",
-    "fix:eslint": "eslint --cache --cache-location ./node_modules/.cache/eslint --fix .",
+    "fix:prettier": "prettier --cache --write .",
+    "fix:eslint": "eslint --cache --cache-location ./node_modules/.cache/eslint/ --fix .",
     "fix": "run-s fix:*",
-    "start": "PORT=5173 remix-serve ./build/server/index.js",
-    "typecheck": "tsc"
+    "start": "PORT=5173 remix-serve ./build/server/index.js"
   },
   "dependencies": {
     "@hookform/resolvers": "3.9.1",
