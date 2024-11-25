@@ -4,9 +4,11 @@ import { authorizeBotUrl } from "~/lib/oauth2guilds.server";
 import { getSession } from "~/lib/session.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const session = await getSession(request).catch(() => null);
-  if (!session)
-    return redirect(new OAuth2Error("invalid_request").toRedirectLocation());
+  const session = await getSession(request);
+  if (!session) {
+    const error = new OAuth2Error("invalid_request");
+    return redirect(error.toRedirectLocation());
+  }
 
   const url = new URL(request.url);
   const authorizeUrl = authorizeBotUrl(url.searchParams.get("guild_id"));

@@ -9,7 +9,7 @@ import { OAuth2Error } from "./error";
 import { oauth2Post, oauth2Url } from "./oauth2.server";
 
 const redirect_uri = new URL(
-  "/guilds/callback",
+  "/setup/callback",
   env.DISCORD_OAUTH2_ORIGIN,
 ).toString();
 

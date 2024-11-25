@@ -1,21 +1,27 @@
 import "./global.css";
 import "@pigment-css/react/styles.css";
-import Box from "@mui/material-pigment-css/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
 import Container from "@mui/material-pigment-css/Container";
+import type { User } from "@prisma/client";
 import {
+  isRouteErrorResponse,
   json,
+  Link,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useRouteError,
 } from "@remix-run/react";
 import type { LinksFunction, LoaderFunctionArgs } from "@vercel/remix";
 import { type PropsWithChildren } from "react";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
-import { useHandle } from "./handle";
+import { useButtomComponent, type Handle } from "./lib/handle";
+import { prisma } from "./lib/prisma.server";
 import { getSession } from "./lib/session.server";
 
 export const links: LinksFunction = () => [
@@ -32,10 +38,20 @@ export const links: LinksFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const session = await getSession(request, { user: true });
-  if (!session) return json(null, 401);
-  return json(session.user);
+  const session = await getSession(request);
+  if (!session) throw json(null, 401);
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.userId },
+  });
+  if (!user) throw json(null, 404);
+
+  return json(user);
 }
+
+export const handle: Handle<typeof loader> = {
+  breadcrumbLabel: () => "Comiacapay",
+};
 
 export function Layout({ children }: PropsWithChildren) {
   return (
@@ -55,30 +71,64 @@ export function Layout({ children }: PropsWithChildren) {
   );
 }
 
-export default function App() {
-  const data = useLoaderData<typeof loader>();
-  const { ButtomComponent } = useHandle();
+function AppLayout({ children, user }: PropsWithChildren<{ user?: User }>) {
+  const ButtomComponent = useButtomComponent();
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <Navigation user={data} />
+    <>
+      <Navigation user={user} />
+      <Toolbar variant="dense" />
       <AlertProvider>
         <Container
+          component="main"
           sx={{
-            flex: "auto",
-            overflowX: "hidden",
-            overflowY: "scroll",
-            paddingTop: 2,
-            paddingBottom: 2,
+            padding: "16px 24px",
             display: "flex",
             flexDirection: "column",
-            gap: 2,
+            gap: "16px",
           }}
         >
-          <Outlet />
+          {children}
         </Container>
       </AlertProvider>
       {ButtomComponent && <ButtomComponent />}
-    </Box>
+    </>
   );
+}
+
+export default function App() {
+  const data = useLoaderData<typeof loader>();
+
+  return (
+    <AppLayout user={data}>
+      <Outlet />
+    </AppLayout>
+  );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error) && error.status === 401) {
+    return (
+      <AppLayout>
+        <Typography>
+          <Link to="/auth/signin">サインイン</Link>してください
+        </Typography>
+      </AppLayout>
+    );
+  }
+
+  return (
+    <AppLayout>
+      <Typography>エラーが発生しました</Typography>
+      <pre>
+        <code>{JSON.stringify(error, null, 2)}</code>
+      </pre>
+    </AppLayout>
+  );
+}
+
+export function shouldRevalidate() {
+  return false;
 }

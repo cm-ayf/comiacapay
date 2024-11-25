@@ -1,11 +1,10 @@
-import ArrowBack from "@mui/icons-material/ArrowBack";
 import CloudDone from "@mui/icons-material/CloudDone";
 import CloudOff from "@mui/icons-material/CloudOff";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Button from "@mui/material/Button";
-import ButtonBase, { type ButtonBaseProps } from "@mui/material/ButtonBase";
-import IconButton from "@mui/material/IconButton";
+import ButtonBase from "@mui/material/ButtonBase";
 import Menu, { type MenuProps } from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
@@ -13,29 +12,17 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import type { User } from "@prisma/client";
 import { useNetworkConnectivity } from "@remix-pwa/client";
-import { useLocation, useNavigate } from "@remix-run/react";
-import {
-  type PropsWithChildren,
-  useRef,
-  useState,
-  useMemo,
-  createContext,
-} from "react";
+import { useLocation } from "@remix-run/react";
+import { type PropsWithChildren, useRef, useState, useMemo } from "react";
 import { useAlert } from "./Alert";
+import { LinkComponent } from "./LinkComponent";
+import { useBreadcrumbs } from "~/lib/handle";
 
 export const REPOSITORY: string = "https://github.com/cm-ayf/comiacapay";
 export const DOCS = REPOSITORY + "/blob/main/docs";
 
-export interface NavigationContext {
-  title?: string | undefined;
-  docs?: "register" | "receipts" | "index";
-  back?(): void;
-}
-
-const NavigationContext = createContext<NavigationContext>({});
-
 export interface NavigationProps {
-  user: User | null;
+  user: User | undefined;
 }
 
 export default function Navigation({ user }: NavigationProps) {
@@ -43,12 +30,9 @@ export default function Navigation({ user }: NavigationProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   return (
-    <AppBar position="static" ref={ref} sx={{ height: 48 }}>
+    <AppBar ref={ref} sx={{ height: 48 }}>
       <Toolbar variant="dense">
-        <Box sx={{ minWidth: 40 }}>
-          <BackButton />
-        </Box>
-        <Typography component="h1">Comiacapay</Typography>
+        <BreadcrumbsNavigation />
         <Box sx={{ flex: 1 }} />
         {user ? (
           <UserButton user={user} onClick={() => setOpen(true)} />
@@ -66,31 +50,25 @@ export default function Navigation({ user }: NavigationProps) {
   );
 }
 
-function BackButton() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const back = useMemo(() => {
-    const parts = location.pathname.split("/");
-    if (parts.length > 2) return parts.slice(0, -1).join("/");
-    if (parts[1]) return "/";
-    return null;
-  }, [location.pathname]);
+function BreadcrumbsNavigation() {
+  const breadcrumbs = useBreadcrumbs();
 
-  if (!back) return null;
   return (
-    <IconButton color="inherit" onClick={() => navigate(back)}>
-      <ArrowBack />
-    </IconButton>
+    <Breadcrumbs sx={{ color: "var(--AppBar-color)" }}>
+      {breadcrumbs.map(({ href, label }, index, { length }) =>
+        index === length - 1 ? (
+          <Typography key={href}>{label}</Typography>
+        ) : (
+          <ButtonBase key={href} LinkComponent={LinkComponent} href={href}>
+            {label}
+          </ButtonBase>
+        ),
+      )}
+    </Breadcrumbs>
   );
 }
 
-function UserButton({
-  user,
-  onClick,
-}: {
-  user: { name: string | null; username: string; picture: string | null };
-  onClick: () => void;
-}) {
+function UserButton({ user, onClick }: { user: User; onClick: () => void }) {
   const { name, username, picture } = user;
   return (
     <Button
@@ -128,7 +106,12 @@ function UserButton({
 function SigninButton() {
   const signinUrl = useUrlWithRedirectTo("/auth/signin");
   return (
-    <Button color="inherit" href={signinUrl}>
+    <Button
+      component={LinkComponent}
+      color="inherit"
+      href={signinUrl}
+      reloadDocument
+    >
       サインイン
     </Button>
   );
@@ -142,13 +125,8 @@ function ConnectivityStatus() {
 function MenuContent(props: Pick<MenuProps, "open" | "anchorEl" | "onClose">) {
   const { success, error } = useAlert();
   const refreshUrl = useUrlWithRedirectTo("/auth/refresh");
-  const location = useLocation();
-  const docs = useMemo(() => {
-    const parts = location.pathname.split("/");
-    if (parts.includes("register")) return "register";
-    if (parts.includes("receipts")) return "receipts";
-    return "index";
-  }, [location.pathname]);
+  const signoutUrl = useUrlWithRedirectTo("/auth/signout");
+  const locationType = useLocationType();
 
   return (
     <Menu
@@ -157,8 +135,8 @@ function MenuContent(props: Pick<MenuProps, "open" | "anchorEl" | "onClose">) {
       transformOrigin={{ vertical: "top", horizontal: "right" }}
     >
       <MenuLinkItem href={refreshUrl}>権限を更新</MenuLinkItem>
-      <MenuLinkItem href="/auth/signout">サインアウト</MenuLinkItem>
-      <MenuLinkItem href={`${DOCS}/${docs}.md`} target="_blank">
+      <MenuLinkItem href={signoutUrl}>サインアウト</MenuLinkItem>
+      <MenuLinkItem href={`${DOCS}/${locationType}.md`} target="_blank">
         マニュアル
       </MenuLinkItem>
       <MenuItem
@@ -179,12 +157,20 @@ function MenuContent(props: Pick<MenuProps, "open" | "anchorEl" | "onClose">) {
 function MenuLinkItem({
   children,
   ...props
-}: PropsWithChildren<ButtonBaseProps<"a"> & { href: string }>) {
+}: PropsWithChildren<{
+  href: string;
+  target?: string;
+}>) {
   return (
-    <MenuItem sx={{ padding: 0 }}>
+    <MenuItem sx={{ p: 0 }}>
       <ButtonBase
+        sx={{
+          px: "16px",
+          py: "6px",
+          width: "100%",
+          justifyContent: "flex-start",
+        }}
         {...props}
-        sx={{ px: 2, py: "6px", width: "100%", justifyContent: "left" }}
       >
         {children}
       </ButtonBase>
@@ -198,4 +184,15 @@ function useUrlWithRedirectTo(base: string) {
     const params = new URLSearchParams({ redirect_to: location.pathname });
     return `${base}?${params}`;
   }, [base, location]);
+}
+
+function useLocationType() {
+  const location = useLocation();
+
+  return useMemo(() => {
+    const parts = location.pathname.split("/");
+    if (parts.includes("register")) return "register";
+    if (parts.includes("receipts")) return "receipts";
+    return "index";
+  }, [location.pathname]);
 }

@@ -12,13 +12,11 @@ import {
   getCurrentUserGuilds,
 } from "./oauth2.server";
 import type { AccessTokenSet } from "./oauth2.server";
-import { initPrisma } from "./prisma.server";
+import { prisma } from "./prisma.server";
 
 export async function upsertUserAndMembers(
   tokenSet: AccessTokenSet,
 ): Promise<User> {
-  const prisma = await initPrisma();
-
   const currentUser = await getCurrentUser(tokenSet);
   const user = await prisma.user.upsert(toUserUpsert(currentUser));
 
@@ -48,8 +46,6 @@ export async function upsertGuildAndMember({
   guild,
   ...tokenResult
 }: AccessTokenSet & { guild: APIGuild }) {
-  const prisma = await initPrisma();
-
   const guildCreated = await prisma.guild.upsert(toGuildUpsert(guild));
 
   const member = await getCurrentUserGuildMember(tokenResult, guild.id);
@@ -59,8 +55,6 @@ export async function upsertGuildAndMember({
 }
 
 export async function upsertMember(tokenSet: AccessTokenSet, guildId: string) {
-  const prisma = await initPrisma();
-
   const guild = await prisma.guild.findUniqueOrThrow({
     where: { id: guildId },
   });

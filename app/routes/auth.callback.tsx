@@ -1,7 +1,5 @@
-import CircularProgress from "@mui/material/CircularProgress";
-import { useNavigate } from "@remix-run/react";
-import { json, redirect, type LoaderFunctionArgs } from "@vercel/remix";
-import { useEffect } from "react";
+import { redirect } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@vercel/remix";
 import { sidCookie, stateCookie } from "~/lib/cookie.server";
 import { OAuth2Error } from "~/lib/error";
 import { exchangeCode } from "~/lib/oauth2.server";
@@ -31,26 +29,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const session = await createSession(user, tokenResult);
 
     const setCookie = await sidCookie.serialize(session.sid);
-    return json(null, {
+    return redirect(url.searchParams.get("redirect_to") ?? "/", {
       headers: { "Set-Cookie": setCookie },
     });
   } catch (e) {
     const error = OAuth2Error.fromError(e);
-    const headers =
-      error.error === "server_error"
-        ? {}
-        : { "Set-Cookie": await stateCookie.serialize("", { maxAge: 0 }) };
-    return redirect(error.toRedirectLocation(), { headers });
+    return redirect(error.toRedirectLocation());
   }
-}
-
-export default function Page() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const redirectTo = sessionStorage.getItem("redirect_to") ?? "/";
-    setTimeout(() => navigate(redirectTo, { replace: true }));
-  }, [navigate]);
-
-  return <CircularProgress />;
 }

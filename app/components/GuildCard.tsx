@@ -1,34 +1,28 @@
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import type { MouseEventHandler } from "react";
-import BaseCard from "./BaseCard";
+import type { Guild, Member } from "@prisma/client";
+import ClickableCard, { type ClickableCardProps } from "./ClickableCard";
+
+const PERMISSIONS = ["register", "write"] as const;
 
 export default function GuildCard({
+  guild,
   member,
-  onClick,
-}: {
-  member: {
-    guild: { name: string };
-    register: boolean;
-    write: boolean;
-  };
-  onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
-}) {
-  const { guild, ...permissions } = member;
+  ...props
+}: ClickableCardProps & { guild: Guild; member: Member }) {
   return (
-    <BaseCard onClick={onClick}>
+    <ClickableCard {...props}>
       <CardContent sx={{ textAlign: "center", textTransform: "none" }}>
         <Typography sx={{ fontSize: "1.5em", fontWeight: "bold" }}>
           {guild.name}
         </Typography>
         <Typography>
           権限：
-          {Object.entries(permissions)
-            .filter(([, value]) => value === true)
-            .map(([key]) => key.toUpperCase())
+          {PERMISSIONS.filter((p) => member[p])
+            .map((p) => p.toUpperCase())
             .join(", ")}
         </Typography>
       </CardContent>
-    </BaseCard>
+    </ClickableCard>
   );
 }

@@ -5,14 +5,13 @@ import Grid from "@mui/material-pigment-css/Grid";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, useLoaderData, useNavigate } from "@remix-run/react";
 import GuildCard from "~/components/GuildCard";
-import { initPrisma } from "~/lib/prisma.server";
+import { prisma } from "~/lib/prisma.server";
 import { getSession } from "~/lib/session.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request);
   if (!session) throw json(null, 401);
 
-  const prisma = await initPrisma();
   const members = await prisma.member.findMany({
     where: { userId: session.userId },
     include: { guild: true },
@@ -30,24 +29,15 @@ export default function Page() {
         <Typography variant="h2" sx={{ fontSize: "2em" }}>
           サーバー
         </Typography>
-        <Button onClick={() => navigate("/guilds/initiate")}>
-          追加・設定変更
-        </Button>
+        <Button onClick={() => navigate("/setup/start")}>追加・設定変更</Button>
       </Box>
-      <Grid container spacing={2}>
-        {data.map((member) => (
-          <Grid key={member.guild.id}>
-            <GuildCard
-              member={member}
-              onClick={() => navigate(`/${member.guild.id}`)}
-            />
+      <Grid container spacing={16}>
+        {data.map(({ guild, ...member }) => (
+          <Grid key={guild.id}>
+            <GuildCard guild={guild} member={member} href={`/${guild.id}`} />
           </Grid>
         ))}
       </Grid>
     </>
   );
-}
-
-export function ErrorBoundary() {
-  return <Typography>サインインしてください</Typography>;
 }

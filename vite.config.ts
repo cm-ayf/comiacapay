@@ -2,7 +2,7 @@ import { createTheme } from "@mui/material/styles";
 import { pigment } from "@pigment-css/vite-plugin";
 import { remixPWA } from "@remix-pwa/dev";
 import { vitePlugin as remix } from "@remix-run/dev";
-import { vercelPreset } from "@vercel/remix/vite";
+// import { vercelPreset } from "@vercel/remix/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import bundleRootChunks from "./plugins/bundle-root-chunks";
@@ -13,9 +13,10 @@ export default defineConfig({
     pigment({
       theme: createTheme(),
       transformLibraries: ["@mui/material", "@mui/lab"],
+      displayName: process.env.NODE_ENV !== "production",
     }),
     remix({
-      presets: [vercelPreset()],
+      // presets: [vercelPreset()],
     }),
     tsconfigPaths(),
     remixPWA(),

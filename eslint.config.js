@@ -28,7 +28,7 @@ const reactHooksFlatConfigRecommended = {
 /** @type {Linter.Config} */
 const muiPathImportsMuiPathImports = {
   plugins: {
-    "mui-path-imports": muiPathImports,
+    "mui-path-imports": /** @type {any} */ (muiPathImports),
   },
   rules: {
     "mui-path-imports/mui-path-imports": "error",
@@ -58,6 +58,7 @@ export default tseslint.config(
         "error",
         { alphabetize: { order: "asc" }, "newlines-between": "never" },
       ],
+      "react/no-unknown-property": ["error", { ignore: ["sx"] }],
     },
   },
   jsxA11y.flatConfigs.recommended,
