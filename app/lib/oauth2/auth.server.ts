@@ -1,4 +1,3 @@
-import type { Session } from "@prisma/client";
 import {
   OAuth2Routes,
   OAuth2Scopes,
@@ -18,12 +17,6 @@ import type {
 import { env } from "../env.server";
 import { OAuth2Error } from "./error";
 import { oauth2Post, oauth2Url } from "./shared.server";
-
-export type AccessTokenSet = Pick<Session, "access_token" | "token_type">;
-export type RefreshTokenSet = Pick<
-  Session,
-  "refresh_token" | "expires_in" | "updatedAt"
->;
 
 const redirect_uri = new URL(
   "/auth/callback",
@@ -60,7 +53,7 @@ export async function exchangeCode(
 
 export async function refreshTokens({
   refresh_token,
-}: RefreshTokenSet): Promise<RESTPostOAuth2RefreshTokenResult> {
+}: RESTPostOAuth2AccessTokenResult): Promise<RESTPostOAuth2RefreshTokenResult> {
   return oauth2Post(OAuth2Routes.tokenURL, {
     client_id: env.DISCORD_CLIENT_ID,
     client_secret: env.DISCORD_CLIENT_SECRET,
@@ -74,7 +67,9 @@ export async function refreshTokens({
   });
 }
 
-export async function revokeToken({ access_token }: AccessTokenSet) {
+export async function revokeToken({
+  access_token,
+}: RESTPostOAuth2AccessTokenResult) {
   return oauth2Post(OAuth2Routes.tokenRevocationURL, {
     token: access_token,
   }).catch((e) => {
@@ -87,7 +82,7 @@ export async function revokeToken({ access_token }: AccessTokenSet) {
 
 async function oauth2Get<T>(
   route: string,
-  tokenSet: AccessTokenSet,
+  tokenSet: RESTPostOAuth2AccessTokenResult,
 ): Promise<T> {
   const response = await fetch(RouteBases.api + route, {
     headers: {
@@ -105,7 +100,9 @@ async function oauth2Get<T>(
   return await response.json();
 }
 
-export async function getCurrentUser(tokenSet: AccessTokenSet) {
+export async function getCurrentUser(
+  tokenSet: RESTPostOAuth2AccessTokenResult,
+) {
   return oauth2Get<APIUser>(Routes.user(), tokenSet).catch((e) => {
     throw OAuth2Error.fromError(e, {
       error_description: "Failed to get current user",
@@ -113,7 +110,9 @@ export async function getCurrentUser(tokenSet: AccessTokenSet) {
   });
 }
 
-export async function getCurrentUserGuilds(tokenSet: AccessTokenSet) {
+export async function getCurrentUserGuilds(
+  tokenSet: RESTPostOAuth2AccessTokenResult,
+) {
   return oauth2Get<APIGuild[]>(Routes.userGuilds(), tokenSet).catch((e) => {
     throw OAuth2Error.fromError(e, {
       error_description: "Failed to get current user guilds",
@@ -122,7 +121,7 @@ export async function getCurrentUserGuilds(tokenSet: AccessTokenSet) {
 }
 
 export async function getCurrentUserGuildMember(
-  tokenSet: AccessTokenSet,
+  tokenSet: RESTPostOAuth2AccessTokenResult,
   guildId: string,
 ) {
   return oauth2Get<APIGuildMember>(

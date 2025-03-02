@@ -1,12 +1,16 @@
-import { redirect } from "@vercel/remix";
+import { redirect, type LoaderFunctionArgs } from "@vercel/remix";
 import { base64url } from "jose";
 import { stateCookie } from "~/lib/cookie.server";
 import { authorizeUrl } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const state = base64url.encode(crypto.getRandomValues(new Uint8Array(32)));
+    const { searchParams } = new URL(request.url);
+    const h = base64url.encode(crypto.getRandomValues(new Uint8Array(32)));
+    searchParams.set("h", h);
+    const state = searchParams.toString();
+
     const url = authorizeUrl(state);
     const setCookie = await stateCookie.serialize(state);
     return redirect(url.toString(), {

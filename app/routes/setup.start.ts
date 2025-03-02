@@ -4,8 +4,9 @@ import { authorizeBotUrl } from "~/lib/oauth2/setup.server";
 import { getSession } from "~/lib/session.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const session = await getSession(request);
-  if (!session) {
+  const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId");
+  if (!userId) {
     const error = new OAuth2Error("invalid_request");
     return redirect(error.toRedirectLocation());
   }

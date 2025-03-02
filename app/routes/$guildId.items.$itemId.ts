@@ -3,36 +3,28 @@ import { useFetcher } from "@remix-run/react";
 import { json, type ActionFunctionArgs } from "@vercel/remix";
 import { useCallback } from "react";
 import { useRemixForm } from "remix-hook-form";
-import { getValidatedBody } from "~/lib/body.server";
+import {
+  getMemberOr4xx,
+  getSessionOr401,
+  getValidatedBodyOr400,
+  parseParamsOr400,
+} from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { UpdateItem, type UpdateItemOutput } from "~/lib/schema";
-import { getSession } from "~/lib/session.server";
-import { Snowflake } from "~/lib/snowflake";
+import { ItemParams, UpdateItem, type UpdateItemOutput } from "~/lib/schema";
 
 const resolver = valibotResolver(UpdateItem);
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  const session = await getSession(request);
-  if (!session) throw json(null, 401);
-
-  const guildId = Snowflake.parse(params["guildId"])?.toString();
-  const itemId = Snowflake.parse(params["itemId"])?.toString();
-  if (!guildId || !itemId) throw json(null, 400);
-
-  const member = await prisma.member.findUnique({
-    where: {
-      userId_guildId: { userId: session.userId, guildId },
-    },
-  });
-  if (!member?.write) throw json(null, 403);
+  const { userId } = await getSessionOr401(request);
+  const { guildId, itemId } = parseParamsOr400(ItemParams, params);
+  await getMemberOr4xx(userId, guildId, "write");
 
   switch (request.method) {
     case "PATCH": {
-      const { errors, data } = await getValidatedBody<UpdateItemOutput>(
+      const data = await getValidatedBodyOr400<UpdateItemOutput>(
         request,
         resolver,
       );
-      if (errors) throw json({ errors }, 400);
 
       const item = await prisma.item.update({
         where: { id: itemId, guildId },
@@ -41,6 +33,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       return json(item);
     }
     case "DELETE": {
+      await getMemberOr4xx(userId, guildId, "write");
       const item = await prisma.item.delete({
         where: { id: itemId, guildId },
       });

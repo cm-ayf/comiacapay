@@ -21,8 +21,9 @@ import { type PropsWithChildren } from "react";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
 import { useButtomComponent, type Handle } from "./lib/handle";
+import { useUrlWithRedirectTo } from "./lib/location";
+import { getSessionOr401 } from "./lib/middleware.server";
 import { prisma } from "./lib/prisma.server";
-import { getSession } from "./lib/session.server";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -38,11 +39,10 @@ export const links: LinksFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const session = await getSession(request);
-  if (!session) throw json(null, 401);
+  const { userId } = await getSessionOr401(request);
 
   const user = await prisma.user.findUnique({
-    where: { id: session.userId },
+    where: { id: userId },
   });
   if (!user) throw json(null, 404);
 
@@ -108,12 +108,13 @@ export default function App() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
+  const signinUrl = useUrlWithRedirectTo("/auth/signin");
 
   if (isRouteErrorResponse(error) && error.status === 401) {
     return (
       <AppLayout>
         <Typography>
-          <Link to="/auth/signin">サインイン</Link>してください
+          <Link to={signinUrl}>サインイン</Link>してください
         </Typography>
       </AppLayout>
     );

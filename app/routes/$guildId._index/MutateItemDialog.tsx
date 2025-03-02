@@ -38,7 +38,7 @@ export default function MutateItemDialog({
         issuedAt: getISODateString(item.issuedAt),
       }}
       submitConfig={{
-        method: "POST",
+        method: "PATCH",
         action: `/${guildId}/items/${item.id}`,
         navigate: false,
       }}

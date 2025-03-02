@@ -4,7 +4,7 @@ import type { FC } from "react";
 
 export interface Handle<AppData> {
   ButtomComponent?: FC;
-  breadcrumbLabel?: (data: SerializeFrom<AppData>) => string;
+  breadcrumbLabel?: (data?: SerializeFrom<AppData>) => string | undefined;
 }
 
 type Match<AppData> = UIMatch<AppData, Handle<AppData> | undefined>;

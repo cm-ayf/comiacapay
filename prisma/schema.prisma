@@ -32,17 +32,12 @@ model Session {
   id  String @id // snowflake
   sid String @unique // secure random string
 
-  updatedAt DateTime @updatedAt @map("updated_at")
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String? @map("user_id")
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @map("user_id")
-
-  // from token response
-  access_token  String
-  token_type    String
-  refresh_token String
-  expires_in    Int
-  scope         String
+  /// [TokenResult]
+  tokenResult Json?    @map("token_result")
+  expires     DateTime
 }
 
 model Guild {

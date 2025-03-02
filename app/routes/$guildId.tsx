@@ -1,38 +1,34 @@
 import { Outlet, useRouteLoaderData } from "@remix-run/react";
 import { json, type LoaderFunctionArgs } from "@vercel/remix";
 import type { Handle } from "~/lib/handle";
+import {
+  getMemberOr4xx,
+  getSessionOr401,
+  parseParamsOr400,
+} from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { getSession } from "~/lib/session.server";
-import { Snowflake } from "~/lib/snowflake";
+import { GuildParams } from "~/lib/schema";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const session = await getSession(request);
-  if (!session) throw json(null, 401);
+  const { userId } = await getSessionOr401(request);
+  const { guildId } = parseParamsOr400(GuildParams, params);
+  const member = await getMemberOr4xx(userId, guildId, "read");
 
-  const guildId = Snowflake.parse(params["guildId"])?.toString();
-  if (!guildId) throw json(null, 400);
-
-  const member = await prisma.member.findUnique({
-    where: {
-      userId_guildId: { userId: session.userId, guildId },
-    },
+  const guild = await prisma.guild.findUnique({
+    where: { id: guildId },
     include: {
-      guild: {
-        include: {
-          items: {
-            orderBy: { issuedAt: "desc" },
-          },
-        },
+      items: {
+        orderBy: { issuedAt: "desc" },
       },
     },
   });
-  if (!member?.read) throw json(null, 404);
 
-  return json(member);
+  if (!guild) throw json(null, 404);
+  return json({ member, guild });
 }
 
 export const handle: Handle<typeof loader> = {
-  breadcrumbLabel: ({ guild }) => guild.name,
+  breadcrumbLabel: (r) => r?.guild.name,
 };
 
 export function useGuild() {
@@ -41,8 +37,7 @@ export function useGuild() {
 }
 
 export function useMember() {
-  const { guild: _, ...member } =
-    useRouteLoaderData<typeof loader>("routes/$guildId")!;
+  const { member } = useRouteLoaderData<typeof loader>("routes/$guildId")!;
   return member;
 }
 

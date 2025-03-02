@@ -1,36 +1,30 @@
 import { Outlet, useRouteLoaderData } from "@remix-run/react";
 import { json, type LoaderFunctionArgs } from "@vercel/remix";
 import type { Handle } from "~/lib/handle";
+import {
+  getMemberOr4xx,
+  getSessionOr401,
+  parseParamsOr400,
+} from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { getSession } from "~/lib/session.server";
-import { Snowflake } from "~/lib/snowflake";
+import { EventParams } from "~/lib/schema";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const session = await getSession(request);
-  if (!session) throw json(null, 401);
+  const { userId } = await getSessionOr401(request);
+  const { guildId, eventId } = parseParamsOr400(EventParams, params);
+  await getMemberOr4xx(userId, guildId, "read");
 
-  const guildId = Snowflake.parse(params["guildId"])?.toString();
-  const eventId = Snowflake.parse(params["eventId"])?.toString();
-  if (!guildId || !eventId) throw json(null, 400);
+  const event = await prisma.event.findUnique({
+    where: { id: eventId, guildId },
+    include: { displays: true },
+  });
 
-  const [member, event] = await Promise.all([
-    prisma.member.findUnique({
-      where: {
-        userId_guildId: { userId: session.userId, guildId },
-      },
-    }),
-    prisma.event.findUnique({
-      where: { id: eventId, guildId },
-      include: { displays: true },
-    }),
-  ]);
-  if (!member?.read || !event) throw json(null, 404);
-
+  if (!event) throw json(null, 404);
   return json(event);
 }
 
 export const handle: Handle<typeof loader> = {
-  breadcrumbLabel: (event) => event.name,
+  breadcrumbLabel: (event) => event?.name,
 };
 
 export function useEvent() {

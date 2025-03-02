@@ -1,43 +1,22 @@
 import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import type { MouseEventHandler } from "react";
-import ClickableCard from "./ClickableCard";
-import DummyItemPicture from "./DummyItemPicture";
+import Typography from "@mui/material/Typography";
+import CardItemPicture from "./CardItemPicture";
+import ClickableCard, { type ClickableCardProps } from "./ClickableCard";
+import type { ClientItem } from "~/lib/schema";
 
 export default function ItemCard({
   item,
-  onClick,
-}: {
-  item: { name: string; picture: string | null };
-  onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
-}) {
+  ...props
+}: ClickableCardProps & { item: ClientItem }) {
   return (
-    <ClickableCard onClick={onClick}>
-      {item.picture ? (
-        <CardMedia
-          component="img"
-          image={item.picture}
-          alt={item.name}
-          sx={{ width: 200, m: 2 }}
-        />
-      ) : (
-        <DummyItemPicture
-          item={item}
-          sx={{ width: 200, height: 250, margin: 2 }}
-        />
-      )}
-
-      <CardContent
-        sx={{
-          pt: 0,
-          pb: 3,
-          textAlign: "center",
-          fontSize: "1.25rem",
-          fontWeight: "bold",
-          textTransform: "none",
-        }}
-      >
-        {item.name}
+    <ClickableCard {...props}>
+      <CardItemPicture item={item} />
+      <CardContent sx={{ width: "250px" }}>
+        <Typography
+          sx={{ textAlign: "center", fontSize: "1.25rem", fontWeight: "bold" }}
+        >
+          {item.name}
+        </Typography>
       </CardContent>
     </ClickableCard>
   );

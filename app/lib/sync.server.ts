@@ -5,17 +5,22 @@ import {
   PermissionFlagsBits,
   RouteBases,
 } from "discord-api-types/v10";
-import type { APIUser, APIGuildMember, APIGuild } from "discord-api-types/v10";
+import type {
+  APIUser,
+  APIGuildMember,
+  APIGuild,
+  RESTPostOAuth2AccessTokenWithBotAndGuildsScopeResult,
+  RESTPostOAuth2AccessTokenResult,
+} from "discord-api-types/v10";
 import {
   getCurrentUser,
   getCurrentUserGuildMember,
   getCurrentUserGuilds,
 } from "./oauth2/auth.server";
-import type { AccessTokenSet } from "./oauth2/auth.server";
 import { prisma } from "./prisma.server";
 
 export async function upsertUserAndMembers(
-  tokenSet: AccessTokenSet,
+  tokenSet: RESTPostOAuth2AccessTokenResult,
 ): Promise<User> {
   const currentUser = await getCurrentUser(tokenSet);
   const user = await prisma.user.upsert(toUserUpsert(currentUser));
@@ -45,7 +50,7 @@ export async function upsertUserAndMembers(
 export async function upsertGuildAndMember({
   guild,
   ...tokenResult
-}: AccessTokenSet & { guild: APIGuild }) {
+}: RESTPostOAuth2AccessTokenWithBotAndGuildsScopeResult) {
   const guildCreated = await prisma.guild.upsert(toGuildUpsert(guild));
 
   const member = await getCurrentUserGuildMember(tokenResult, guild.id);
@@ -54,7 +59,10 @@ export async function upsertGuildAndMember({
   return guildCreated;
 }
 
-export async function upsertMember(tokenSet: AccessTokenSet, guildId: string) {
+export async function upsertMember(
+  tokenSet: RESTPostOAuth2AccessTokenResult,
+  guildId: string,
+) {
   const guild = await prisma.guild.findUniqueOrThrow({
     where: { id: guildId },
   });

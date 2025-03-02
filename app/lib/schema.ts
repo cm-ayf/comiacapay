@@ -1,10 +1,13 @@
-import type { Event, Item } from "@prisma/client";
+import type { Display, Event, Item } from "@prisma/client";
 import type { Jsonify } from "@remix-run/server-runtime/dist/jsonify";
 import {
+  boolean,
   custom,
   date,
+  literal,
   nonEmpty,
   nullable,
+  number,
   object,
   partial,
   pipe,
@@ -46,6 +49,26 @@ export function dateLike() {
   ]) satisfies BaseSchema<string | Date, Date, BaseIssue<unknown>>;
 }
 
+export const GuildParams = object({
+  guildId: snowflake(),
+});
+
+export const ItemParams = object({
+  guildId: snowflake(),
+  itemId: snowflake(),
+});
+
+export const EventParams = object({
+  guildId: snowflake(),
+  eventId: snowflake(),
+});
+
+export const DisplayParams = object({
+  guildId: snowflake(),
+  eventId: snowflake(),
+  itemId: snowflake(),
+});
+
 export const UpdateGuild = object({
   readRoleId: nullable(snowflake()),
   writeRoleId: nullable(snowflake()),
@@ -57,7 +80,15 @@ export type UpdateGuildOutput = InferOutput<typeof UpdateGuild>;
 export type ClientItem = Jsonify<Item>;
 export const CreateItem = object({
   name: pipe(string(), nonEmpty("商品名を入力してください")),
-  picture: nullable(pipe(string(), url())),
+  picture: nullable(
+    union([
+      pipe(string(), url()),
+      pipe(
+        literal(""),
+        transform(() => null),
+      ),
+    ]),
+  ),
   issuedAt: dateLike(),
 });
 export type CreateItemInput = InferInput<typeof CreateItem>;
@@ -77,3 +108,12 @@ export type CreateEventOutput = InferOutput<typeof CreateEvent>;
 export const UpdateEvent = partial(CreateEvent);
 export type UpdateEventInput = InferInput<typeof UpdateEvent>;
 export type UpdateEventOutput = InferOutput<typeof UpdateEvent>;
+
+export type ClientDisplay = Jsonify<Display & { item: Item }>;
+export const UpsertDisplay = object({
+  price: number(),
+  internalPrice: nullable(number()),
+  dedication: boolean(),
+});
+export type UpsertDisplayInput = InferInput<typeof UpsertDisplay>;
+export type UpsertDisplayOutput = InferOutput<typeof UpsertDisplay>;

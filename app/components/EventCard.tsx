@@ -10,7 +10,9 @@ export default function EventCard({
   return (
     <ClickableCard {...props}>
       <CardContent sx={{ textAlign: "center", textTransform: "none" }}>
-        <Typography sx={{ fontWeight: "bold" }}>{event.name}</Typography>
+        <Typography sx={{ fontSize: "1.5em", fontWeight: "bold" }}>
+          {event.name}
+        </Typography>
         <Typography>
           {new Date(event.date).toLocaleDateString("ja-JP")}
         </Typography>

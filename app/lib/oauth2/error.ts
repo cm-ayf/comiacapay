@@ -1,36 +1,26 @@
-type OAuth2ErrorString =
-  | "invalid_request"
-  | "access_denied"
-  | "invalid_grant"
-  | "server_error";
+import {
+  enum_,
+  object,
+  optional,
+  safeParser,
+  string,
+  type InferOutput,
+} from "valibot";
 
-function isOAuth2ErrorString(error: unknown): error is OAuth2ErrorString {
-  return (
-    typeof error === "string" &&
-    [
-      "invalid_request",
-      "access_denied",
-      "invalid_grant",
-      "server_error",
-    ].includes(error)
-  );
-}
+const OAuth2ErrorString = enum_({
+  invalid_request: "invalid_request",
+  access_denied: "access_denied",
+  invalid_grant: "invalid_grant",
+  server_error: "server_error",
+});
+type OAuth2ErrorString = InferOutput<typeof OAuth2ErrorString>;
 
-interface OAuth2ErrorJson {
-  error: OAuth2ErrorString;
-  error_description?: string;
-}
-
-function isOAuth2ErrorJson(error: unknown): error is OAuth2ErrorJson {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "error" in error &&
-    isOAuth2ErrorString(error.error) &&
-    (!("error_description" in error) ||
-      typeof error.error_description === "string")
-  );
-}
+const OAuth2ErrorJson = object({
+  error: OAuth2ErrorString,
+  error_description: optional(string()),
+});
+type OAuth2ErrorJson = InferOutput<typeof OAuth2ErrorJson>;
+const parseOAuth2ErrorJson = safeParser(OAuth2ErrorJson);
 
 export class OAuth2Error extends Error {
   static fromError(e: unknown, defaults?: Partial<OAuth2ErrorJson>) {
@@ -45,18 +35,16 @@ export class OAuth2Error extends Error {
   }
 
   static fromSearchParams(searchParams: URLSearchParams) {
-    const error = searchParams.get("error");
-    const description = searchParams.get("error_description") ?? undefined;
-    if (isOAuth2ErrorString(error)) {
-      return new this(error, description);
-    } else {
-      return new this("server_error", description);
-    }
+    const json: { [key: string]: string } = {};
+    for (const [key, value] of searchParams) json[key] = value;
+    return this.fromJSON(json);
   }
 
   static fromJSON(e: unknown) {
-    if (isOAuth2ErrorJson(e)) {
-      return new this(e.error, e.error_description);
+    const result = parseOAuth2ErrorJson(e);
+    if (result.success) {
+      const { error, error_description } = result.output;
+      return new this(error, error_description);
     } else {
       return new this("server_error", String(e), { cause: e });
     }
@@ -70,16 +58,14 @@ export class OAuth2Error extends Error {
     super(error_description ?? error, options);
   }
 
-  get status() {
-    return this.error === "server_error" ? 500 : 400;
+  toJSON() {
+    const json: OAuth2ErrorJson = { error: this.error };
+    if (this.error_description) json.error_description = this.error_description;
+    return json;
   }
 
   toRedirectLocation(pathname = "/") {
-    const searchParams = new URLSearchParams();
-    searchParams.set("error", this.error);
-    if (this.error_description) {
-      searchParams.set("error_description", this.error_description);
-    }
+    const searchParams = new URLSearchParams(this.toJSON());
     return `${pathname}?${searchParams}`;
   }
 }

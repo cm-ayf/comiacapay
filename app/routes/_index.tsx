@@ -5,15 +5,14 @@ import Grid from "@mui/material-pigment-css/Grid";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, useLoaderData, useNavigate } from "@remix-run/react";
 import GuildCard from "~/components/GuildCard";
+import { getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { getSession } from "~/lib/session.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const session = await getSession(request);
-  if (!session) throw json(null, 401);
+  const { userId } = await getSessionOr401(request);
 
   const members = await prisma.member.findMany({
-    where: { userId: session.userId },
+    where: { userId },
     include: { guild: true },
   });
   return json(members);

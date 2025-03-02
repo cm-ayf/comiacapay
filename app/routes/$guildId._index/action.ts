@@ -1,35 +1,27 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { redirect } from "@remix-run/react";
-import { json, type ActionFunctionArgs } from "@vercel/remix";
-import { getValidatedBody } from "~/lib/body.server";
+import type { ActionFunctionArgs } from "@vercel/remix";
+import {
+  getMemberOr4xx,
+  getSessionOr401,
+  getValidatedBodyOr400,
+  parseParamsOr400,
+} from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { CreateEvent, type CreateEventOutput } from "~/lib/schema";
-import { getSession } from "~/lib/session.server";
+import { CreateEvent, GuildParams, type CreateEventOutput } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
 
 const resolver = valibotResolver(CreateEvent);
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  const session = await getSession(request);
-  if (!session) throw json(null, 401);
+  const { userId } = await getSessionOr401(request);
+  const { guildId } = parseParamsOr400(GuildParams, params);
+  await getMemberOr4xx(userId, guildId, "write");
 
-  const guildId = Snowflake.parse(params["guildId"])?.toString();
-  if (!guildId) throw json(null, 400);
-
-  const member = await prisma.member.findUnique({
-    where: {
-      userId_guildId: { userId: session.userId, guildId },
-    },
-  });
-  if (!member?.write) throw json(null, 404);
-
-  const { errors, data } = await getValidatedBody<CreateEventOutput>(
+  const { name, date, clone } = await getValidatedBodyOr400<CreateEventOutput>(
     request,
     resolver,
   );
-  if (errors) throw json({ errors }, 400);
-
-  const { name, date, clone } = data;
   const id = Snowflake.generate().toString();
   const event = await prisma.event.create({
     data: {

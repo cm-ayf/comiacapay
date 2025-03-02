@@ -21,23 +21,29 @@ import {
   useRemixForm,
   useRemixFormContext,
 } from "remix-hook-form";
-import { getValidatedBody } from "~/lib/body.server";
+import {
+  getMemberOr4xx,
+  getSessionOr401,
+  getValidatedBodyOr400,
+  parseParamsOr400,
+} from "~/lib/middleware.server";
 import { exchangeBotCode } from "~/lib/oauth2/setup.server";
 import { prisma } from "~/lib/prisma.server";
 import {
+  GuildParams,
   UpdateGuild,
   type UpdateGuildInput,
   type UpdateGuildOutput,
 } from "~/lib/schema";
 import { getSession } from "~/lib/session.server";
-import { Snowflake } from "~/lib/snowflake";
 import { upsertGuildAndMember } from "~/lib/sync.server";
 
 const resolver = valibotResolver(UpdateGuild);
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const session = await getSession(request);
-  if (!session) throw json(null, 401);
+  const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId");
+  if (!userId) throw redirect("/");
 
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
@@ -49,25 +55,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const session = await getSession(request);
-  if (!session) throw json(null, 401);
-
   const url = new URL(request.url);
-  const guildId = Snowflake.parse(url.searchParams.get("guild_id"))?.toString();
-  if (!guildId) throw json(null, 400);
+  const { userId } = await getSessionOr401(request);
+  const { guildId } = parseParamsOr400(GuildParams, {
+    guildId: url.searchParams.get("guild_id") ?? undefined,
+  });
+  await getMemberOr4xx(userId, guildId, "write");
 
-  const { errors, data } = await getValidatedBody<UpdateGuildOutput>(
+  const data = await getValidatedBodyOr400<UpdateGuildOutput>(
     request,
     resolver,
   );
-  if (errors) throw json({ errors }, 400);
-
-  const member = await prisma.member.findUnique({
-    where: {
-      userId_guildId: { userId: session.userId, guildId },
-    },
-  });
-  if (!member?.admin) return json(null, 403);
 
   await prisma.guild.update({
     where: { id: guildId },

@@ -53,13 +53,8 @@ export function RemixFormDialog<T extends FieldValues>({
 }
 
 export interface RemixFormDialogButtonsProps {
-  submitButton: {
-    label: string;
-  };
-  deleteButton?: {
-    label: string;
-    submitConfig: Required<Parameters<SubmitFunction>>[1];
-  };
+  submitButton: { label: string };
+  deleteButton?: DeleteButtonProps | undefined;
 }
 
 export function RemixFormDialogActions({
@@ -86,4 +81,9 @@ export function RemixFormDialogActions({
       )}
     </DialogActions>
   );
+}
+
+export interface DeleteButtonProps {
+  label: string;
+  submitConfig: Parameters<SubmitFunction>[1];
 }

@@ -1,9 +1,9 @@
 import { redirect } from "@remix-run/react";
 import type { LoaderFunctionArgs } from "@vercel/remix";
-import { sidCookie, stateCookie } from "~/lib/cookie.server";
+import { stateCookie } from "~/lib/cookie.server";
 import { exchangeCode } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";
-import { createSession } from "~/lib/session.server";
+import { getSession, commitSession } from "~/lib/session.server";
 import { upsertUserAndMembers } from "~/lib/sync.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -23,14 +23,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
     if (stateFromQuery !== stateFromCookie)
       throw new OAuth2Error("invalid_request", "state mismatch");
 
+    const session = await getSession(request.headers.get("Cookie"));
+
     const tokenResult = await exchangeCode(code);
+    session.set("tokenResult", tokenResult);
 
     const user = await upsertUserAndMembers(tokenResult);
-    const session = await createSession(user, tokenResult);
+    session.set("userId", user.id);
 
-    const setCookie = await sidCookie.serialize(session.sid);
-    return redirect(url.searchParams.get("redirect_to") ?? "/", {
-      headers: { "Set-Cookie": setCookie },
+    // new (init: string) does not throw
+    const searchParams = new URLSearchParams(stateFromQuery);
+    return redirect(searchParams.get("redirect_to") ?? "/", {
+      headers: {
+        "Set-Cookie": await commitSession(session, {
+          maxAge: tokenResult.expires_in,
+        }),
+      },
     });
   } catch (e) {
     const error = OAuth2Error.fromError(e);

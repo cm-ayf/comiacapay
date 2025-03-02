@@ -12,11 +12,11 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import type { User } from "@prisma/client";
 import { useNetworkConnectivity } from "@remix-pwa/client";
-import { useLocation } from "@remix-run/react";
-import { type PropsWithChildren, useRef, useState, useMemo } from "react";
+import { type PropsWithChildren, useRef, useState } from "react";
 import { useAlert } from "./Alert";
 import { LinkComponent } from "./LinkComponent";
 import { useBreadcrumbs } from "~/lib/handle";
+import { useLocationType, useUrlWithRedirectTo } from "~/lib/location";
 
 export const REPOSITORY: string = "https://github.com/cm-ayf/comiacapay";
 export const DOCS = REPOSITORY + "/blob/main/docs";
@@ -176,23 +176,4 @@ function MenuLinkItem({
       </ButtonBase>
     </MenuItem>
   );
-}
-
-function useUrlWithRedirectTo(base: string) {
-  const location = useLocation();
-  return useMemo(() => {
-    const params = new URLSearchParams({ redirect_to: location.pathname });
-    return `${base}?${params}`;
-  }, [base, location]);
-}
-
-function useLocationType() {
-  const location = useLocation();
-
-  return useMemo(() => {
-    const parts = location.pathname.split("/");
-    if (parts.includes("register")) return "register";
-    if (parts.includes("receipts")) return "receipts";
-    return "index";
-  }, [location.pathname]);
 }
