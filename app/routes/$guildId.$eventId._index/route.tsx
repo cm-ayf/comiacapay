@@ -6,7 +6,7 @@ import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useGuild, useMember } from "../$guildId";
 import { useEvent } from "../$guildId.$eventId";
 import MutateEventDialog from "./MutateEventDialog";
@@ -33,14 +33,14 @@ export default function Page() {
 function About() {
   const event = useEvent();
   const me = useMember();
-  const [open, setOpen] = useState(false);
+  const [edit, setEdit] = useSearchParamsState("edit");
 
   return (
     <>
       <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
         <EventCard
           event={event}
-          onClick={me.write ? () => setOpen(true) : undefined}
+          onClick={me.write ? () => setEdit("") : undefined}
         />
         <Button
           LinkComponent={LinkComponent}
@@ -60,8 +60,8 @@ function About() {
       </Box>
       {me.write && (
         <MutateEventDialog
-          open={open}
-          onClose={() => setOpen(false)}
+          open={edit !== null}
+          onClose={() => setEdit(null)}
           event={event}
         />
       )}
@@ -105,7 +105,7 @@ function Displays() {
       </Typography>
       <Grid container spacing={16}>
         {displays.map((display) => (
-          <Grid key={display.item.id} size={{ xs: 12, md: 6, lg: 4 }}>
+          <Grid key={display.item.id} size={{ xs: 12, lg: 6 }}>
             <DisplayCard display={display}>
               <Button
                 onClick={() => {
@@ -120,7 +120,7 @@ function Displays() {
           </Grid>
         ))}
         {me.write && itemsToAdd.length > 0 && (
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <CreateDisplaySelect
               items={itemsToAdd}
               select={(item) => setItemId(item.id)}

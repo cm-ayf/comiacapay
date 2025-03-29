@@ -26,7 +26,13 @@ export default function DisplayPanel({
           {display.dedication && <Typography>献本あり</Typography>}
         </CardContent>
         <Box sx={{ flex: 1 }} />
-        {children && <CardActions>{children}</CardActions>}
+        {children && (
+          <CardActions
+            sx={{ flexDirection: "column", alignItems: "flex-start" }}
+          >
+            {children}
+          </CardActions>
+        )}
       </Box>
     </Card>
   );

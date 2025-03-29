@@ -110,7 +110,7 @@ function RolesSelect({
       component={Form}
       method="post"
       onSubmit={handleSubmit}
-      sx={{ display: "flex", gap: 1 }}
+      sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}
     >
       <RemixFormProvider {...methods} handleSubmit={null} reset={null}>
         <RoleSelect
@@ -175,6 +175,7 @@ function RoleSubmitButton({ label }: { label: string }) {
   return (
     <LoadingButton
       type="submit"
+      size="large"
       variant="contained"
       color="primary"
       loading={formState.isLoading}

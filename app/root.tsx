@@ -16,11 +16,19 @@ import {
   useLoaderData,
   useRouteError,
 } from "@remix-run/react";
-import type { LinksFunction, LoaderFunctionArgs } from "@vercel/remix";
+import type {
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@vercel/remix";
 import { type PropsWithChildren } from "react";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
-import { useButtomComponent, type Handle } from "./lib/handle";
+import {
+  useButtomComponent,
+  useContainerMaxWidth,
+  type Handle,
+} from "./lib/handle";
 import { useUrlWithRedirectTo } from "./lib/location";
 import { getSessionOr401 } from "./lib/middleware.server";
 import { prisma } from "./lib/prisma.server";
@@ -37,6 +45,8 @@ export const links: LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
 ];
+
+export const meta: MetaFunction = (_) => [];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { userId } = await getSessionOr401(request);
@@ -73,6 +83,7 @@ export function Layout({ children }: PropsWithChildren) {
 
 function AppLayout({ children, user }: PropsWithChildren<{ user?: User }>) {
   const ButtomComponent = useButtomComponent();
+  const maxWidth = useContainerMaxWidth();
 
   return (
     <>
@@ -80,8 +91,10 @@ function AppLayout({ children, user }: PropsWithChildren<{ user?: User }>) {
       <Toolbar variant="dense" />
       <AlertProvider>
         <Container
+          maxWidth={maxWidth}
           component="main"
           sx={{
+            flex: 1,
             padding: "16px 24px",
             display: "flex",
             flexDirection: "column",

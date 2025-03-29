@@ -1,8 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { redirect, useFetcher } from "@remix-run/react";
+import { redirect } from "@remix-run/react";
 import { json, type ActionFunctionArgs } from "@vercel/remix";
-import { useCallback } from "react";
-import { useRemixForm } from "remix-hook-form";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -41,32 +39,4 @@ export async function action({ request, params }: ActionFunctionArgs) {
     default:
       throw json(null, 405);
   }
-}
-
-export function useUpdateItemForm(
-  guildId: string,
-  itemId: string,
-  defaultValues: UpdateItemOutput,
-) {
-  return useRemixForm<UpdateItemOutput>({
-    resolver,
-    defaultValues,
-    submitConfig: {
-      method: "PATCH",
-      action: `/${guildId}/items/${itemId}`,
-    },
-  });
-}
-
-export function useDeleteItemFetcher(guildId: string, itemId: string) {
-  const fetcher = useFetcher();
-  return {
-    handleSubmit: useCallback(() => {
-      fetcher.submit(null, {
-        method: "DELETE",
-        action: `/${guildId}/items/${itemId}`,
-      });
-    }, [fetcher, guildId, itemId]),
-    formState: { isLoading: fetcher.state !== "idle" },
-  };
 }

@@ -1,5 +1,4 @@
 html {
-  height: 100%;
   font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -16,6 +15,9 @@ html {
 
 body {
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 * {

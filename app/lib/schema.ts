@@ -1,13 +1,13 @@
 import type { Display, Event, Item } from "@prisma/client";
 import type { Jsonify } from "@remix-run/server-runtime/dist/jsonify";
 import {
+  array,
   boolean,
   custom,
   date,
   literal,
   nonEmpty,
   nullable,
-  number,
   object,
   partial,
   pipe,
@@ -23,6 +23,8 @@ import { Snowflake } from "./snowflake";
 export type Discount = SetDiscount;
 
 export interface SetDiscount {
+  // was originated from GraphQL
+  __typename: "SetDiscount";
   itemIds: string[];
   amount: number;
 }
@@ -47,6 +49,13 @@ export function dateLike() {
       transform((input) => new Date(input)),
     ),
   ]) satisfies BaseSchema<string | Date, Date, BaseIssue<unknown>>;
+}
+
+export function uint() {
+  return custom<number>(
+    (input) =>
+      typeof input === "number" && Number.isInteger(input) && input >= 0,
+  );
 }
 
 export const GuildParams = object({
@@ -111,9 +120,28 @@ export type UpdateEventOutput = InferOutput<typeof UpdateEvent>;
 
 export type ClientDisplay = Jsonify<Display & { item: Item }>;
 export const UpsertDisplay = object({
-  price: number(),
-  internalPrice: nullable(number()),
+  price: uint(),
+  internalPrice: nullable(uint()),
   dedication: boolean(),
 });
 export type UpsertDisplayInput = InferInput<typeof UpsertDisplay>;
 export type UpsertDisplayOutput = InferOutput<typeof UpsertDisplay>;
+
+export const CreateRecord = object({
+  itemId: snowflake(),
+  count: uint(),
+  internal: boolean(),
+  dedication: boolean(),
+});
+export type CreateRecordInput = InferInput<typeof CreateRecord>;
+export type CreateRecordOutput = InferOutput<typeof CreateRecord>;
+export const CreateReceipt = object({
+  id: snowflake(),
+  total: uint(),
+  records: array(CreateRecord),
+});
+export type CreateReceiptInput = InferInput<typeof CreateReceipt>;
+export type CreateReceiptOutput = InferOutput<typeof CreateReceipt>;
+export const CreateReceipts = array(CreateReceipt);
+export type CreateReceiptsInput = InferInput<typeof CreateReceipts>;
+export type CreateReceiptsOutput = InferOutput<typeof CreateReceipts>;

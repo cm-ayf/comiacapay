@@ -1,4 +1,8 @@
-import { Outlet, useRouteLoaderData } from "@remix-run/react";
+import {
+  Outlet,
+  useRouteLoaderData,
+  type ShouldRevalidateFunctionArgs,
+} from "@remix-run/react";
 import { json, type LoaderFunctionArgs } from "@vercel/remix";
 import type { Handle } from "~/lib/handle";
 import {
@@ -33,4 +37,11 @@ export function useEvent() {
 
 export default function Page() {
   return <Outlet />;
+}
+
+export function shouldRevalidate({
+  actionResult,
+  defaultShouldRevalidate,
+}: ShouldRevalidateFunctionArgs) {
+  return !actionResult?.__neverRevalidate && defaultShouldRevalidate;
 }

@@ -3,8 +3,9 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, useLoaderData, useNavigate } from "@remix-run/react";
+import { json, useLoaderData } from "@remix-run/react";
 import GuildCard from "~/components/GuildCard";
+import { LinkComponent } from "~/components/LinkComponent";
 import { getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
 
@@ -20,7 +21,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Page() {
   const data = useLoaderData<typeof loader>();
-  const navigate = useNavigate();
 
   return (
     <>
@@ -28,7 +28,9 @@ export default function Page() {
         <Typography variant="h2" sx={{ fontSize: "2em" }}>
           サーバー
         </Typography>
-        <Button onClick={() => navigate("/setup/start")}>追加・設定変更</Button>
+        <Button LinkComponent={LinkComponent} href="/setup/start">
+          追加・設定変更
+        </Button>
       </Box>
       <Grid container spacing={16}>
         {data.map(({ guild, ...member }) => (

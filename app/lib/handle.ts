@@ -1,13 +1,21 @@
+import type { Breakpoint } from "@pigment-css/react";
 import { useMatches, type UIMatch } from "@remix-run/react";
 import type { SerializeFrom } from "@vercel/remix";
 import type { FC } from "react";
 
 export interface Handle<AppData> {
+  containerMaxWidth?: Breakpoint | false;
   ButtomComponent?: FC;
   breadcrumbLabel?: (data?: SerializeFrom<AppData>) => string | undefined;
 }
 
 type Match<AppData> = UIMatch<AppData, Handle<AppData> | undefined>;
+
+export function useContainerMaxWidth() {
+  const matches = useMatches() as Match<unknown>[];
+  const match = matches.at(-1)!;
+  return match.handle?.containerMaxWidth ?? "lg";
+}
 
 export function useButtomComponent() {
   const matches = useMatches() as Match<unknown>[];

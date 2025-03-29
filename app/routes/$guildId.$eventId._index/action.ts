@@ -24,11 +24,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
       );
       if ("clone" in data) throw json(null, 400);
 
-      const event = await prisma.event.update({
+      await prisma.event.update({
         where: { id: eventId, guildId },
         data,
       });
-      return json(event);
+      return redirect(`/${guildId}/${eventId}`);
     }
     case "DELETE": {
       await prisma.event.delete({
