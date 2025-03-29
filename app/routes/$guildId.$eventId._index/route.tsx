@@ -108,10 +108,7 @@ function Displays() {
           <Grid key={display.item.id} size={{ xs: 12, lg: 6 }}>
             <DisplayCard display={display}>
               <Button
-                onClick={() => {
-                  console.log("click", display.item);
-                  setItemId(display.item.id);
-                }}
+                onClick={() => setItemId(display.item.id)}
                 disabled={!me.write}
               >
                 編集

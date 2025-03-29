@@ -53,6 +53,5 @@ export function shouldRevalidate({
   actionResult,
   defaultShouldRevalidate,
 }: ShouldRevalidateFunctionArgs) {
-  console.log(actionResult);
   return !actionResult?.__neverRevalidate && defaultShouldRevalidate;
 }
