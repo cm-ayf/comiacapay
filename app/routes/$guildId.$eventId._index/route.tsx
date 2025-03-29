@@ -17,6 +17,7 @@ import DisplayCard from "~/components/DisplayPanel";
 import EventCard from "~/components/EventCard";
 import { LinkComponent } from "~/components/LinkComponent";
 import type { ClientDisplay, ClientItem } from "~/lib/schema";
+import { useSearchParamsState } from "~/lib/search";
 
 export { action } from "./action";
 
@@ -87,7 +88,15 @@ function Displays() {
     return { displays, itemsToAdd };
   }, [items, event.displays]);
 
-  const [display, setDisplay] = useState<UpsertDisplayDialogInput>();
+  const [itemId, setItemId] = useSearchParamsState("itemId");
+  const display = useMemo<UpsertDisplayDialogInput | undefined>(() => {
+    const item = items.find((item) => item.id === itemId);
+    if (!item) return;
+
+    const display = displays.find((display) => display.itemId === itemId);
+    if (display) return { ...display, item };
+    else return { item, create: true };
+  }, [items, itemId, displays]);
 
   return (
     <>
@@ -98,7 +107,13 @@ function Displays() {
         {displays.map((display) => (
           <Grid key={display.item.id} size={{ xs: 12, md: 6, lg: 4 }}>
             <DisplayCard display={display}>
-              <Button onClick={() => setDisplay(display)} disabled={!me.write}>
+              <Button
+                onClick={() => {
+                  console.log("click", display.item);
+                  setItemId(display.item.id);
+                }}
+                disabled={!me.write}
+              >
                 編集
               </Button>
             </DisplayCard>
@@ -108,7 +123,7 @@ function Displays() {
           <Grid size={{ xs: 12, md: 6, lg: 4 }}>
             <CreateDisplaySelect
               items={itemsToAdd}
-              select={(item) => setDisplay({ item, create: true })}
+              select={(item) => setItemId(item.id)}
             />
           </Grid>
         )}
@@ -116,7 +131,7 @@ function Displays() {
       {me.write && (
         <UpsertDisplayDialog
           display={display}
-          onClose={() => setDisplay(undefined)}
+          onClose={() => setItemId(null)}
         />
       )}
     </>
@@ -133,7 +148,7 @@ function CreateDisplaySelect({
   return (
     <FormControl sx={{ width: "100%" }}>
       <InputLabel>追加</InputLabel>
-      <Select label="追加">
+      <Select label="追加" value="">
         {items.map((item) => (
           <MenuItem key={item.id} value={item.id} onClick={() => select(item)}>
             {item.name}

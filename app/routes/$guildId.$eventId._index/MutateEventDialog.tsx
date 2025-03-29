@@ -34,10 +34,7 @@ export default function MutateEventDialog({
       <EventDialogContent />
       <RemixFormDialogActions
         submitButton={{ label: "保存" }}
-        deleteButton={{
-          label: "削除",
-          submitConfig: { method: "DELETE", navigate: true },
-        }}
+        deleteButton={{ label: "削除" }}
       />
     </RemixFormDialog>
   );

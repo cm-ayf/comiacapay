@@ -8,7 +8,12 @@ import {
   type SubmitFunction,
   type SubmitOptions,
 } from "@remix-run/react";
-import type { PropsWithChildren } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  type PropsWithChildren,
+} from "react";
 import type { DefaultValues, FieldValues, Resolver } from "react-hook-form";
 import {
   RemixFormProvider,
@@ -26,14 +31,29 @@ export interface RemixFormDialogProps<T extends FieldValues> {
   submitConfig?: SubmitOptions;
 }
 
+const HandleDeleteContext = createContext<() => void>(() => {});
+
 export function RemixFormDialog<T extends FieldValues>({
   children,
   open,
   onClose,
   title,
-  ...args
+  resolver,
+  defaultValues,
+  submitConfig = {},
 }: PropsWithChildren<RemixFormDialogProps<T>>) {
-  const { reset, handleSubmit, ...methods } = useRemixForm<T>(args);
+  const fetcher = useFetcher();
+  const { reset, handleSubmit, ...methods } = useRemixForm<T>({
+    resolver,
+    defaultValues,
+    fetcher,
+    submitConfig,
+  });
+
+  const handleDelete = useCallback(
+    () => fetcher.submit(null, { ...submitConfig, method: "DELETE" }),
+    [fetcher, submitConfig],
+  );
 
   return (
     <Dialog
@@ -46,7 +66,9 @@ export function RemixFormDialog<T extends FieldValues>({
     >
       <RemixFormProvider {...methods} handleSubmit={null} reset={null}>
         <DialogTitle>{title}</DialogTitle>
-        {children}
+        <HandleDeleteContext.Provider value={handleDelete}>
+          {children}
+        </HandleDeleteContext.Provider>
       </RemixFormProvider>
     </Dialog>
   );
@@ -54,7 +76,7 @@ export function RemixFormDialog<T extends FieldValues>({
 
 export interface RemixFormDialogButtonsProps {
   submitButton: { label: string };
-  deleteButton?: DeleteButtonProps | undefined;
+  deleteButton?: { label: string } | undefined;
 }
 
 export function RemixFormDialogActions({
@@ -62,19 +84,22 @@ export function RemixFormDialogActions({
   deleteButton,
 }: RemixFormDialogButtonsProps) {
   const { formState } = useRemixFormContext();
-  const fetcher = useFetcher();
-  const loading = formState.isLoading || fetcher.state !== "idle";
+  const handleDelete = useContext(HandleDeleteContext);
 
   return (
     <DialogActions>
-      <LoadingButton type="submit" color="primary" loading={loading}>
+      <LoadingButton
+        type="submit"
+        color="primary"
+        loading={formState.isLoading}
+      >
         {submitButton.label}
       </LoadingButton>
       {deleteButton && (
         <LoadingButton
           color="error"
-          onClick={() => fetcher.submit(null, deleteButton.submitConfig)}
-          loading={loading}
+          onClick={handleDelete}
+          loading={formState.isLoading}
         >
           {deleteButton.label}
         </LoadingButton>

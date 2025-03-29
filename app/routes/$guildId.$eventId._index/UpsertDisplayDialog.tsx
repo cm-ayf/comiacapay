@@ -54,18 +54,7 @@ export default function UpsertDisplayDialog({
       <DisplayDialogContent />
       <RemixFormDialogActions
         submitButton={{ label: "保存" }}
-        deleteButton={
-          display.create
-            ? undefined
-            : {
-                label: "削除",
-                submitConfig: {
-                  method: "DELETE",
-                  action: `/${guildId}/${eventId}/displays/${display.item.id}`,
-                  navigate: false,
-                },
-              }
-        }
+        deleteButton={display.create ? undefined : { label: "削除" }}
       />
     </RemixFormDialog>
   );

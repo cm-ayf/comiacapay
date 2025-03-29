@@ -1,6 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import type { ActionFunctionArgs } from "@vercel/remix";
-import { json } from "@vercel/remix";
+import { json, redirect } from "@vercel/remix";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -28,7 +28,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
         resolver,
       );
 
-      const display = await prisma.display.upsert({
+      await prisma.display.upsert({
         where: {
           eventId_itemId: { eventId, itemId },
           event: { guildId },
@@ -37,17 +37,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
         create: { eventId, itemId, ...data },
         update: data,
       });
-      return json(display);
+      return redirect(`/${guildId}/${eventId}`);
     }
     case "DELETE": {
-      const display = await prisma.display.delete({
+      await prisma.display.delete({
         where: {
           eventId_itemId: { eventId, itemId },
           event: { guildId },
           item: { guildId },
         },
       });
-      return json(display);
+      return redirect(`/${guildId}/${eventId}`);
     }
     default:
       throw json(null, 405);

@@ -46,14 +46,7 @@ export default function MutateItemDialog({
       <ItemDialogContent />
       <RemixFormDialogActions
         submitButton={{ label: "保存" }}
-        deleteButton={{
-          label: "削除",
-          submitConfig: {
-            method: "DELETE",
-            action: `/${guildId}/items/${item.id}`,
-            navigate: false,
-          },
-        }}
+        deleteButton={{ label: "削除" }}
       />
     </RemixFormDialog>
   );
