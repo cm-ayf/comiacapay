@@ -19,7 +19,7 @@ export default function ItemDialogContent() {
       }}
     >
       <TextField
-        {...register("name")}
+        {...register("name", { required: true })}
         {...(errors.name && {
           error: true,
           helperText: errors.name.message,
@@ -29,7 +29,7 @@ export default function ItemDialogContent() {
         fullWidth
       />
       <TextField
-        {...register("picture")}
+        {...register("picture", { required: true })}
         {...(errors.picture && {
           error: true,
           helperText: errors.picture.message,
@@ -40,7 +40,7 @@ export default function ItemDialogContent() {
         fullWidth
       />
       <TextField
-        {...register("issuedAt")}
+        {...register("issuedAt", { required: true, valueAsDate: true })}
         {...(errors.issuedAt && {
           error: true,
           helperText: errors.issuedAt.message,

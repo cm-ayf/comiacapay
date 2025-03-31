@@ -1,12 +1,22 @@
 import { PrismaClient } from "@prisma/client";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
-import * as Schema from "./schema";
+
+// union of one
+type Discount = SetDiscount;
+
+interface SetDiscount {
+  // was originated from GraphQL
+  __typename: "SetDiscount";
+  id: string;
+  itemIds: string[];
+  amount: number;
+}
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace PrismaJson {
     type TokenResult = RESTPostOAuth2AccessTokenResult;
-    type Discounts = Schema.Discount[];
+    type Discounts = Discount[];
   }
 }
 

@@ -19,16 +19,6 @@ import {
 import type { BaseIssue, BaseSchema, InferInput, InferOutput } from "valibot";
 import { Snowflake } from "./snowflake";
 
-// union of one
-export type Discount = SetDiscount;
-
-export interface SetDiscount {
-  // was originated from GraphQL
-  __typename: "SetDiscount";
-  itemIds: string[];
-  amount: number;
-}
-
 export function snowflake() {
   return custom<string>(
     (input) => typeof input === "string" && !!Snowflake.parse(input),
@@ -78,6 +68,12 @@ export const DisplayParams = object({
   itemId: snowflake(),
 });
 
+export const DiscountParams = object({
+  guildId: snowflake(),
+  eventId: snowflake(),
+  discountId: snowflake(),
+});
+
 export const UpdateGuild = object({
   readRoleId: nullable(snowflake()),
   writeRoleId: nullable(snowflake()),
@@ -117,6 +113,17 @@ export type CreateEventOutput = InferOutput<typeof CreateEvent>;
 export const UpdateEvent = partial(CreateEvent);
 export type UpdateEventInput = InferInput<typeof UpdateEvent>;
 export type UpdateEventOutput = InferOutput<typeof UpdateEvent>;
+
+export const CreateSetDiscount = object({
+  __typename: literal("SetDiscount"),
+  itemIds: array(snowflake()),
+  amount: uint(),
+});
+export type CreateSetDiscountInput = InferInput<typeof CreateSetDiscount>;
+export type CreateSetDiscountOutput = InferOutput<typeof CreateSetDiscount>;
+export const CreateDiscount = union([CreateSetDiscount]);
+export type CreateDiscountInput = InferInput<typeof CreateDiscount>;
+export type CreateDiscountOutput = InferOutput<typeof CreateDiscount>;
 
 export type ClientDisplay = Jsonify<Display & { item: Item }>;
 export const UpsertDisplay = object({

@@ -1,4 +1,8 @@
+import LoadingButton from "@mui/lab/LoadingButton";
 import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -6,9 +10,11 @@ import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
-import { useMemo } from "react";
-import { useGuild, useMember } from "../$guildId";
-import { useEvent } from "../$guildId.$eventId";
+import { useFetcher, useParams } from "@remix-run/react";
+import { useCallback, useMemo, type ReactNode } from "react";
+import { useMember } from "../$guildId";
+import { useDisplays, useEvent } from "../$guildId.$eventId";
+import CreateSetDiscountDialog from "./CreateSetDiscountDialog";
 import MutateEventDialog from "./MutateEventDialog";
 import UpsertDisplayDialog, {
   type UpsertDisplayDialogInput,
@@ -16,7 +22,7 @@ import UpsertDisplayDialog, {
 import DisplayCard from "~/components/DisplayPanel";
 import EventCard from "~/components/EventCard";
 import { LinkComponent } from "~/components/LinkComponent";
-import type { ClientDisplay, ClientItem } from "~/lib/schema";
+import type { ClientEvent, ClientItem } from "~/lib/schema";
 import { useSearchParamsState } from "~/lib/search";
 
 export { action } from "./action";
@@ -26,6 +32,7 @@ export default function Page() {
     <>
       <About />
       <Displays />
+      <Discounts />
     </>
   );
 }
@@ -70,33 +77,19 @@ function About() {
 }
 
 function Displays() {
-  const { items } = useGuild();
-  const event = useEvent();
   const me = useMember();
-
-  const { displays, itemsToAdd } = useMemo(() => {
-    const displaysMap = new Map(
-      event.displays.map((display) => [display.itemId, display]),
-    );
-    const displays: ClientDisplay[] = [];
-    const itemsToAdd: ClientItem[] = [];
-    for (const item of items) {
-      const display = displaysMap.get(item.id);
-      if (display) displays.push({ ...display, item });
-      else itemsToAdd.push(item);
-    }
-    return { displays, itemsToAdd };
-  }, [items, event.displays]);
+  const { displays, remainingItems } = useDisplays();
 
   const [itemId, setItemId] = useSearchParamsState("itemId");
   const display = useMemo<UpsertDisplayDialogInput | undefined>(() => {
-    const item = items.find((item) => item.id === itemId);
-    if (!item) return;
-
     const display = displays.find((display) => display.itemId === itemId);
-    if (display) return { ...display, item };
-    else return { item, create: true };
-  }, [items, itemId, displays]);
+    if (display) return display;
+
+    const item = remainingItems.find((item) => item.id === itemId);
+    if (item) return { item, create: true };
+
+    return undefined;
+  }, [remainingItems, itemId, displays]);
 
   return (
     <>
@@ -116,12 +109,9 @@ function Displays() {
             </DisplayCard>
           </Grid>
         ))}
-        {me.write && itemsToAdd.length > 0 && (
+        {me.write && remainingItems.length > 0 && (
           <Grid size={{ xs: 12, lg: 6 }}>
-            <CreateDisplaySelect
-              items={itemsToAdd}
-              select={(item) => setItemId(item.id)}
-            />
+            <CreateDisplaySelect items={remainingItems} select={setItemId} />
           </Grid>
         )}
       </Grid>
@@ -140,18 +130,155 @@ function CreateDisplaySelect({
   select,
 }: {
   items: ClientItem[];
-  select: (item: ClientItem) => void;
+  select: (itemId: string) => void;
 }) {
   return (
     <FormControl sx={{ width: "100%" }}>
       <InputLabel>追加</InputLabel>
       <Select label="追加" value="">
         {items.map((item) => (
-          <MenuItem key={item.id} value={item.id} onClick={() => select(item)}>
+          <MenuItem
+            key={item.id}
+            value={item.id}
+            onClick={() => select(item.id)}
+          >
             {item.name}
           </MenuItem>
         ))}
       </Select>
     </FormControl>
+  );
+}
+
+function Discounts() {
+  const event = useEvent();
+  const { displays } = useDisplays();
+  const me = useMember();
+  const [create, setCreate] = useSearchParamsState("create");
+
+  return (
+    <>
+      <Typography variant="h2" sx={{ fontSize: "2em" }}>
+        割引等
+      </Typography>
+      <Grid container spacing={16}>
+        {event.discounts.map((discount) => (
+          <Grid key={discount.id} size={{ xs: 12, lg: 6 }}>
+            <DiscountCard discount={discount} />
+          </Grid>
+        ))}
+        {me.write && (
+          <Grid size={{ xs: 12, lg: 6 }}>
+            <CreateDiscountSelect
+              select={(typename) => {
+                if (typename) {
+                  setCreate(typename);
+                }
+              }}
+            />
+          </Grid>
+        )}
+      </Grid>
+      {me.write && (
+        <CreateSetDiscountDialog
+          open={create === "SetDiscount"}
+          onClose={() => setCreate(null)}
+          displays={displays}
+        />
+      )}
+    </>
+  );
+}
+
+function CreateDiscountSelect({
+  select,
+}: {
+  select: (__typename: string) => void;
+}) {
+  return (
+    <FormControl sx={{ width: "100%" }}>
+      <InputLabel>追加</InputLabel>
+      <Select<string>
+        label="追加"
+        value=""
+        onChange={(e) => select(e.target.value)}
+      >
+        <MenuItem value="SetDiscount" onClick={() => select("SetDiscount")}>
+          セット割引
+        </MenuItem>
+      </Select>
+    </FormControl>
+  );
+}
+
+type Discount = ClientEvent["discounts"][number];
+
+function DiscountCard({ discount }: { discount: Discount }): ReactNode & {} {
+  switch (discount.__typename) {
+    case "SetDiscount":
+      return <SetDiscountCard discount={discount} />;
+  }
+}
+
+function SetDiscountCard({
+  discount,
+}: {
+  discount: Extract<Discount, { __typename: "SetDiscount" }>;
+}) {
+  const { displays } = useDisplays();
+
+  const summary = useMemo<string>(() => {
+    const targetDisplays = discount.itemIds.map((itemId) =>
+      displays.find((display) => display.itemId === itemId),
+    );
+
+    const itemSummaries = targetDisplays.map((display) =>
+      display ? `${display.item.name} (¥${display.price})` : "不明 (¥0)",
+    );
+    const price = targetDisplays.reduce(
+      (acc, display) => (display ? acc + display.price : acc),
+      -discount.amount,
+    );
+    return `${itemSummaries.join(" + ")} - ¥${discount.amount} = ¥${price}`;
+  }, [displays, discount]);
+
+  return (
+    <Card>
+      <CardContent>
+        <Typography variant="body1" sx={{ flex: 1 }}>
+          セット割引
+        </Typography>
+        <Typography variant="body1" sx={{ flex: 1 }}>
+          {summary}
+        </Typography>
+      </CardContent>
+      <CardActions>
+        <DeleteDiscountButton discountId={discount.id} />
+      </CardActions>
+    </Card>
+  );
+}
+
+function DeleteDiscountButton({ discountId }: { discountId: string }) {
+  const { guildId, eventId } = useParams();
+  const fetcher = useFetcher();
+  const me = useMember();
+
+  const handleDelete = useCallback(() => {
+    fetcher.submit(null, {
+      method: "DELETE",
+      action: `/${guildId}/${eventId}/discounts/${discountId}`,
+    });
+  }, [fetcher, guildId, eventId, discountId]);
+
+  return (
+    <LoadingButton
+      color="error"
+      onClick={handleDelete}
+      loading={fetcher.state !== "idle"}
+      disabled={!me.write}
+    >
+      割引を削除
+    </LoadingButton>
   );
 }

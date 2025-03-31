@@ -27,7 +27,7 @@ export default function EventDialogContent({
       }}
     >
       <TextField
-        {...register("name")}
+        {...register("name", { required: true })}
         {...(errors.name && {
           error: true,
           helperText: errors.name.message,
@@ -37,7 +37,7 @@ export default function EventDialogContent({
         fullWidth
       />
       <TextField
-        {...register("date")}
+        {...register("date", { required: true, valueAsDate: true })}
         {...(errors.date && {
           error: true,
           helperText: errors.date.message,

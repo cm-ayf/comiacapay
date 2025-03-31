@@ -27,7 +27,7 @@ export interface RemixFormDialogProps<T extends FieldValues> {
   title: string;
 
   resolver: Resolver<T>;
-  defaultValues: DefaultValues<T>;
+  defaultValues: DefaultValues<NoInfer<T>>;
   submitConfig?: SubmitOptions;
 }
 

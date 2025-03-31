@@ -38,8 +38,8 @@ function calculate(event: CalculateInput) {
       case "SetDiscount": {
         const setCount = discount.itemIds.reduce((acc, itemId) => {
           const record = state.get(itemId);
-          if (record) return Math.min(acc, record.count);
-          else return 0;
+          if (!record || record.dedication || record.internal) return 0;
+          return Math.min(acc, record.count);
         }, Infinity);
         return acc + setCount * discount.amount;
       }
