@@ -13,7 +13,7 @@ export default function Register() {
   return (
     <Grid container spacing={16}>
       {displays.map((display) => (
-        <Grid size={{ xs: 12, md: 6, xl: 4 }} key={display.itemId}>
+        <Grid size={{ xs: 12, lg: 6 }} key={display.itemId}>
           <RegisterDisplayPanel display={display} />
         </Grid>
       ))}
