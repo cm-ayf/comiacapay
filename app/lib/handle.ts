@@ -1,26 +1,26 @@
 import type { Breakpoint } from "@pigment-css/react";
 import { useMatches, type UIMatch } from "@remix-run/react";
 import type { SerializeFrom } from "@vercel/remix";
-import type { FC } from "react";
+import { useMemo, type FC, type PropsWithChildren } from "react";
 
 export interface Handle<AppData> {
   containerMaxWidth?: Breakpoint | false;
+  PageContextProvider?: FC<PropsWithChildren>;
+  TopComponent?: FC;
   ButtomComponent?: FC;
   breadcrumbLabel?: (data?: SerializeFrom<AppData>) => string | undefined;
 }
 
 type Match<AppData> = UIMatch<AppData, Handle<AppData> | undefined>;
 
-export function useContainerMaxWidth() {
+export function useHandleValue<K extends keyof Handle<unknown>>(
+  key: K,
+  fallback: Handle<unknown>[K] & {},
+): Handle<unknown>[K] & {} {
   const matches = useMatches() as Match<unknown>[];
   const match = matches.at(-1)!;
-  return match.handle?.containerMaxWidth ?? "lg";
-}
-
-export function useButtomComponent() {
-  const matches = useMatches() as Match<unknown>[];
-  const match = matches.at(-1)!;
-  return match.handle?.ButtomComponent;
+  const value = match.handle?.[key];
+  return useMemo(() => value ?? fallback, [value, fallback]);
 }
 
 export function useBreadcrumbs() {

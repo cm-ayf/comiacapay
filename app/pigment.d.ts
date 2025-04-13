@@ -3,7 +3,7 @@ import type { SxProp } from "@pigment-css/react";
 declare global {
   namespace React {
     interface Attributes {
-      sx?: SxProp | undefined;
+      sx?: SxProp | null | undefined;
     }
   }
 }

@@ -21,14 +21,10 @@ import type {
   LoaderFunctionArgs,
   MetaFunction,
 } from "@vercel/remix";
-import { type PropsWithChildren } from "react";
+import { Fragment, type PropsWithChildren } from "react";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
-import {
-  useButtomComponent,
-  useContainerMaxWidth,
-  type Handle,
-} from "./lib/handle";
+import { useHandleValue, type Handle } from "./lib/handle";
 import { useUrlWithRedirectTo } from "./lib/location";
 import { getSessionOr401 } from "./lib/middleware.server";
 import { prisma } from "./lib/prisma.server";
@@ -69,9 +65,9 @@ export function Layout({ children }: PropsWithChildren) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="emotion-insertion-point" content="" />
         <Meta />
         <Links />
-        <meta name="emotion-insertion-point" content="" />
       </head>
       <body>
         {children}
@@ -83,29 +79,34 @@ export function Layout({ children }: PropsWithChildren) {
 }
 
 function AppLayout({ children, user }: PropsWithChildren<{ user?: User }>) {
-  const ButtomComponent = useButtomComponent();
-  const maxWidth = useContainerMaxWidth();
+  const PageContextProvider = useHandleValue("PageContextProvider", Fragment);
+  const TopComponent = useHandleValue("TopComponent", Fragment);
+  const ButtomComponent = useHandleValue("ButtomComponent", Fragment);
+  const maxWidth = useHandleValue("containerMaxWidth", "lg");
 
   return (
     <>
       <Navigation user={user} />
       <Toolbar variant="dense" />
-      <AlertProvider>
-        <Container
-          maxWidth={maxWidth}
-          component="main"
-          sx={{
-            flex: 1,
-            padding: "16px 24px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "16px",
-          }}
-        >
-          {children}
-        </Container>
-      </AlertProvider>
-      {ButtomComponent && <ButtomComponent />}
+      <PageContextProvider>
+        <TopComponent />
+        <AlertProvider>
+          <Container
+            maxWidth={maxWidth ?? "lg"}
+            component="main"
+            sx={{
+              flex: 1,
+              padding: "16px 24px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "16px",
+            }}
+          >
+            {children}
+          </Container>
+        </AlertProvider>
+        <ButtomComponent />
+      </PageContextProvider>
     </>
   );
 }

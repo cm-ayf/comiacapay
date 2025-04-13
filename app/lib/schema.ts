@@ -1,4 +1,4 @@
-import type { Display, Event, Item } from "@prisma/client";
+import type { Display, Event, Item, Receipt, Record } from "@prisma/client";
 import type { Jsonify } from "@remix-run/server-runtime/dist/jsonify";
 import {
   array,
@@ -155,3 +155,5 @@ export type CreateReceiptOutput = InferOutput<typeof CreateReceipt>;
 export const CreateReceipts = array(CreateReceipt);
 export type CreateReceiptsInput = InferInput<typeof CreateReceipts>;
 export type CreateReceiptsOutput = InferOutput<typeof CreateReceipts>;
+
+export type ClientReceipt = Jsonify<Receipt & { records: Record[] }>;

@@ -12,7 +12,8 @@ export default defineConfig({
   plugins: [
     pigment({
       theme: createTheme(),
-      transformLibraries: ["@mui/material"],
+      // TODO: get rid of emotion from @mui/lab and transform
+      transformLibraries: ["@mui/material", "@mui/x-data-grid"],
       displayName: process.env.NODE_ENV !== "production",
     }),
     remix({
@@ -23,6 +24,11 @@ export default defineConfig({
     surpressNodeModulesWarning(),
     bundleRootChunks(),
   ],
+  resolve: {
+    alias: {
+      "@mui/x-internals": "@mui/x-internals/esm",
+    },
+  },
   ssr: {
     noExternal: [/^@mui\//, "@pigment-css/react", "@remix-run/react"],
   },

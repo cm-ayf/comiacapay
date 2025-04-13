@@ -30,7 +30,11 @@ export class Snowflake {
 
   readonly source: bigint;
 
-  readonly timestamp: number;
+  readonly #timestampOffset: number;
+  get timestamp() {
+    return this.#timestampOffset + Snowflake.epoch;
+  }
+
   readonly pid: number;
   readonly increment: number;
 
@@ -40,15 +44,15 @@ export class Snowflake {
     switch (args.length) {
       case 1:
         this.source = args[0];
-        [this.increment, this.pid, this.timestamp] = split(args[0]);
+        [this.increment, this.pid, this.#timestampOffset] = split(args[0]);
         break;
       case 3:
         this.source = build(...args);
-        [this.increment, this.pid, this.timestamp] = args;
+        [this.increment, this.pid, this.#timestampOffset] = args;
         break;
     }
 
-    if (this.timestamp === 0)
+    if (this.#timestampOffset === 0)
       throw new Error(
         "Timestamp is 0, which means it is not likely a snowflake",
       );
