@@ -1,4 +1,4 @@
-import { redirect, type LoaderFunctionArgs } from "@vercel/remix";
+import { redirect, type LoaderFunctionArgs } from "react-router";
 import { revokeToken } from "~/lib/oauth2/auth.server";
 import { destroySession, getSession } from "~/lib/session.server";
 

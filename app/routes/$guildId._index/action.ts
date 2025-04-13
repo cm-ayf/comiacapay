@@ -1,5 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { json, type ActionFunctionArgs } from "@vercel/remix";
+import { data, type ActionFunctionArgs } from "react-router";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -55,5 +55,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
     });
   }
 
-  return json(event, 201);
+  return data(event, 201);
 }

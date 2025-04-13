@@ -1,8 +1,8 @@
-import type { WebAppManifest } from "@remix-pwa/dev";
-import { json } from "@vercel/remix";
+import type { WebAppManifest } from "@remix-pwa/manifest";
+import { data } from "react-router";
 
 export const loader = () => {
-  return json(
+  return data(
     {
       lang: "ja",
       theme_color: "#1976d2",

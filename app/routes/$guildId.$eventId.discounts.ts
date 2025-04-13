@@ -1,6 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import type { ActionFunctionArgs } from "@vercel/remix";
-import { json } from "@vercel/remix";
+import type { ActionFunctionArgs } from "react-router";
+import { data } from "react-router";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -24,7 +24,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   switch (request.method) {
     case "POST": {
-      const data = await getValidatedBodyOr400<CreateDiscountInput>(
+      const body = await getValidatedBodyOr400<CreateDiscountInput>(
         request,
         resolver,
       );
@@ -35,7 +35,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
           select: { discounts: true },
         });
         const id = Snowflake.generate().toString();
-        const discount = { id, ...data };
+        const discount = { id, ...body };
         await prisma.event.update({
           where: { id: eventId },
           data: {
@@ -44,9 +44,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
         });
         return discount;
       });
-      return json(discount, 201);
+      return data(discount, 201);
     }
     default:
-      throw json(null, 405);
+      throw data(null, 405);
   }
 }

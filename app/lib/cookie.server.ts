@@ -1,4 +1,4 @@
-import { createCookie } from "@vercel/remix";
+import { createCookie } from "react-router";
 import { env } from "./env.server";
 
 const secure = env.DISCORD_OAUTH2_ORIGIN.startsWith("https:");

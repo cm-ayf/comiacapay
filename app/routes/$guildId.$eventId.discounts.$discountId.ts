@@ -1,5 +1,4 @@
-import type { ActionFunctionArgs } from "@vercel/remix";
-import { json } from "@vercel/remix";
+import { data, type ActionFunctionArgs } from "react-router";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -31,9 +30,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
         });
         return discounts.find((d) => d.id === discountId);
       });
-      return json(discount);
+      return data(discount);
     }
     default:
-      throw json(null, 405);
+      throw data(null, 405);
   }
 }

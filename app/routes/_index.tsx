@@ -2,8 +2,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
-import { useLoaderData } from "@remix-run/react";
-import { json, type LoaderFunctionArgs } from "@vercel/remix";
+import { data, type LoaderFunctionArgs } from "react-router";
+import { useLoaderData } from "react-router";
 import GuildCard from "~/components/GuildCard";
 import { LinkComponent } from "~/components/LinkComponent";
 import { getSessionOr401 } from "~/lib/middleware.server";
@@ -16,7 +16,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     where: { userId },
     include: { guild: true },
   });
-  return json(members);
+  return data(members);
 }
 
 export default function Page() {

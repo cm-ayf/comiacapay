@@ -1,5 +1,5 @@
 import type { Display, Event, Item, Receipt, Record } from "@prisma/client";
-import type { Jsonify } from "@remix-run/server-runtime/dist/jsonify";
+import type { useLoaderData } from "react-router";
 import {
   array,
   boolean,
@@ -18,6 +18,8 @@ import {
 } from "valibot";
 import type { BaseIssue, BaseSchema, InferInput, InferOutput } from "valibot";
 import { Snowflake } from "./snowflake";
+
+type SerializeFrom<AppData> = ReturnType<typeof useLoaderData<AppData>>;
 
 export function snowflake() {
   return custom<string>(
@@ -82,7 +84,7 @@ export const UpdateGuild = object({
 export type UpdateGuildInput = InferInput<typeof UpdateGuild>;
 export type UpdateGuildOutput = InferOutput<typeof UpdateGuild>;
 
-export type ClientItem = Jsonify<Item>;
+export type ClientItem = SerializeFrom<Item>;
 export const CreateItem = object({
   name: pipe(string(), nonEmpty("商品名を入力してください")),
   picture: nullable(
@@ -102,7 +104,7 @@ export const UpdateItem = partial(CreateItem);
 export type UpdateItemInput = InferInput<typeof UpdateItem>;
 export type UpdateItemOutput = InferOutput<typeof UpdateItem>;
 
-export type ClientEvent = Jsonify<Event>;
+export type ClientEvent = SerializeFrom<Event>;
 export const CreateEvent = object({
   name: pipe(string(), nonEmpty("イベント名を入力してください")),
   date: dateLike(),
@@ -128,7 +130,7 @@ export const CreateDiscount = union([CreateSetDiscount]);
 export type CreateDiscountInput = InferInput<typeof CreateDiscount>;
 export type CreateDiscountOutput = InferOutput<typeof CreateDiscount>;
 
-export type ClientDisplay = Jsonify<Display & { item: Item }>;
+export type ClientDisplay = SerializeFrom<Display & { item: Item }>;
 export const UpsertDisplay = object({
   price: uint(),
   internalPrice: nullable(uint()),
@@ -156,4 +158,4 @@ export const CreateReceipts = array(CreateReceipt);
 export type CreateReceiptsInput = InferInput<typeof CreateReceipts>;
 export type CreateReceiptsOutput = InferOutput<typeof CreateReceipts>;
 
-export type ClientReceipt = Jsonify<Receipt & { records: Record[] }>;
+export type ClientReceipt = SerializeFrom<Receipt & { records: Record[] }>;

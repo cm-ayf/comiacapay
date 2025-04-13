@@ -1,5 +1,5 @@
-import { redirect } from "@remix-run/react";
-import type { LoaderFunctionArgs } from "@vercel/remix";
+import type { LoaderFunctionArgs } from "react-router";
+import { redirect } from "react-router";
 import { stateCookie } from "~/lib/cookie.server";
 import { exchangeCode } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";

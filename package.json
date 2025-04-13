@@ -5,10 +5,12 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "postinstall": "prisma generate",
+    "postinstall": "run-p postinstall:*",
+    "postinstall:patch-package": "patch-package",
+    "postinstall:prisma-generate": "prisma generate",
     "prepare": "node .husky/install.js",
-    "build": "remix vite:build",
-    "dev": "remix vite:dev",
+    "build": "react-router build",
+    "dev": "react-router dev",
     "check:prettier": "prettier --cache --check .",
     "check:eslint": "eslint --cache --cache-location ./node_modules/.cache/eslint/ .",
     "check:tsc": "tsc",
@@ -16,7 +18,7 @@
     "fix:prettier": "prettier --cache --write .",
     "fix:eslint": "eslint --cache --cache-location ./node_modules/.cache/eslint/ --fix .",
     "fix": "run-s fix:*",
-    "start": "PORT=5173 remix-serve ./build/server/index.js"
+    "start": "PORT=5173 react-router-serve ./build/server/index.js"
   },
   "dependencies": {
     "@hookform/resolvers": "3.9.1",
@@ -27,35 +29,36 @@
     "@mui/x-data-grid": "7.28.3",
     "@pigment-css/react": "0.0.30",
     "@prisma/client": "5.20.0",
-    "@remix-pwa/client": "3.0.7",
-    "@remix-pwa/worker-runtime": "2.1.4",
-    "@remix-run/react": "2.12.0",
-    "@remix-run/serve": "2.12.0",
+    "@react-router/fs-routes": "7.5.0",
+    "@react-router/serve": "7.5.0",
+    "@remix-pwa/client": "3.0.8-dev.1",
+    "@remix-pwa/manifest": "3.0.1-dev.2",
+    "@remix-pwa/sw": "4.0.0-dev.3",
+    "@remix-pwa/worker-runtime": "3.0.0-dev.1",
     "discord-api-types": "^0.37.101",
-    "isbot": "4.1.0",
     "jose": "5.9.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-hook-form": "7.53.2",
-    "remix-hook-form": "5.1.1",
+    "react-hook-form": "7.55.0",
+    "react-router": "7.5.0",
+    "remix-hook-form": "7.0.1",
     "valibot": "1.0.0-beta.3"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.0",
     "@eslint/js": "^9.12.0",
     "@pigment-css/vite-plugin": "0.0.30",
-    "@remix-pwa/dev": "3.1.0",
-    "@remix-run/dev": "2.12.0",
+    "@react-router/dev": "7.5.0",
+    "@remix-pwa/dev": "4.0.0-dev.3",
     "@tsconfig/node20": "20.1.4",
-    "@tsconfig/remix": "^2.0.5",
     "@tsconfig/strictest": "2.0.5",
     "@types/node": "20.14.8",
     "@types/react": "18.3.11",
     "@types/react-dom": "18.3.0",
     "@types/serviceworker": "0.0.98",
-    "@vercel/remix": "2.12.0",
+    "@vercel/react-router": "1.1.0",
     "eslint": "9.12.0",
-    "eslint-config-prettier": "9.1.0",
+    "eslint-config-prettier": "10.1.2",
     "eslint-import-resolver-typescript": "3.6.3",
     "eslint-plugin-import-x": "4.3.1",
     "eslint-plugin-jsx-a11y": "6.10.0",
@@ -66,6 +69,7 @@
     "husky": "9.1.6",
     "lint-staged": "15.2.10",
     "npm-run-all2": "6.2.3",
+    "patch-package": "8.0.0",
     "prettier": "3.3.3",
     "prisma": "5.20.0",
     "prisma-json-types-generator": "3.0.4",
@@ -78,6 +82,12 @@
     "@pigment-css/react": {
       "@mui/system": "^7",
       "@mui/utils": "^7"
+    },
+    "@remix-pwa/manifest": {
+      "@remix-run/react": "npm:react-router"
+    },
+    "@remix-pwa/worker-runtime": {
+      "@remix-run/router": "npm:react-router"
     },
     "eslint-plugin-react-hooks": {
       "eslint": "^9"

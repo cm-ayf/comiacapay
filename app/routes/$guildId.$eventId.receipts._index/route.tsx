@@ -5,7 +5,6 @@ import Button from "@mui/material/Button";
 import Tab from "@mui/material/Tab";
 import Box from "@pigment-css/react/Box";
 import Container from "@pigment-css/react/Container";
-import { useFetcher, useParams, useRevalidator } from "@remix-run/react";
 import {
   createContext,
   useCallback,
@@ -13,6 +12,7 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
+import { useFetcher, useParams, useRevalidator } from "react-router";
 import Summary from "./Summary";
 import Table from "./Table";
 import type { Handle } from "~/lib/handle";

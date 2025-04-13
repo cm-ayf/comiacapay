@@ -81,6 +81,9 @@ export default tseslint.config(
   muiPigmentCss,
   includeIgnoreFile(new URL(import.meta.resolve("./.gitignore")).pathname),
   {
+    ignores: [".react-router/types"],
+  },
+  {
     rules: {
       "@typescript-eslint/no-unused-vars": [
         "error",

@@ -1,10 +1,10 @@
+import { useMemo } from "react";
+import { data, type LoaderFunctionArgs } from "react-router";
 import {
   Outlet,
   useRouteLoaderData,
   type ShouldRevalidateFunctionArgs,
-} from "@remix-run/react";
-import { json, type LoaderFunctionArgs } from "@vercel/remix";
-import { useMemo } from "react";
+} from "react-router";
 import { useGuild } from "./$guildId";
 import type { Handle } from "~/lib/handle";
 import {
@@ -25,8 +25,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     include: { displays: true },
   });
 
-  if (!event) throw json(null, 404);
-  return json(event);
+  if (!event) throw data(null, 404);
+  return data(event);
 }
 
 export const handle: Handle<typeof loader> = {

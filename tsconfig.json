@@ -1,17 +1,24 @@
 {
-  "extends": ["@tsconfig/strictest", "@tsconfig/remix"],
+  "extends": ["@tsconfig/strictest"],
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "**/.server/**/*.ts",
     "**/.server/**/*.tsx",
     "**/.client/**/*.ts",
-    "**/.client/**/*.tsx"
+    "**/.client/**/*.tsx",
+    ".react-router/types/**/*"
   ],
   "compilerOptions": {
-    "lib": ["ES2022"],
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": ["vite/client"],
+    "rootDirs": [".", "./.react-router/types"],
     "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
     "composite": true,

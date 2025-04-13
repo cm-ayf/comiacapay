@@ -1,9 +1,10 @@
 import {
+  data,
   Outlet,
   useRouteLoaderData,
+  type LoaderFunctionArgs,
   type ShouldRevalidateFunctionArgs,
-} from "@remix-run/react";
-import { json, type LoaderFunctionArgs } from "@vercel/remix";
+} from "react-router";
 import type { Handle } from "~/lib/handle";
 import {
   getMemberOr4xx,
@@ -27,8 +28,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     },
   });
 
-  if (!guild) throw json(null, 404);
-  return json({ member, guild });
+  if (!guild) throw data(null, 404);
+  return data({ member, guild });
 }
 
 export const handle: Handle<typeof loader> = {

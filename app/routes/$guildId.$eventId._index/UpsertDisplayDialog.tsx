@@ -1,5 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { useParams } from "@remix-run/react";
+import { useParams } from "react-router";
 import DisplayDialogContent from "~/components/DisplayDialogContent";
 import {
   RemixFormDialog,

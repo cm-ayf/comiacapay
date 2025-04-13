@@ -5,4 +5,5 @@ node_modules
 .env
 
 /.vercel
+/.react-router
 /public/entry.worker.js

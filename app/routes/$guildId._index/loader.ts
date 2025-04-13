@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs } from "@vercel/remix";
+import { data, type LoaderFunctionArgs } from "react-router";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -17,5 +17,5 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     orderBy: { date: "desc" },
   });
 
-  return json(events);
+  return data(events);
 }

@@ -4,8 +4,8 @@ import {
   GridToolbar,
   type GridColDef,
 } from "@mui/x-data-grid";
-import { useLoaderData, useRevalidator } from "@remix-run/react";
 import { useMemo } from "react";
+import { useLoaderData, useRevalidator } from "react-router";
 import { useMember } from "../$guildId";
 import { useDisplays } from "../$guildId.$eventId";
 import type { loader } from "./loader";

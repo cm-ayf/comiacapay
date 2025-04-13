@@ -1,5 +1,5 @@
-import { redirect, type LoaderFunctionArgs } from "@vercel/remix";
 import { base64url } from "jose";
+import { redirect, type LoaderFunctionArgs } from "react-router";
 import { stateCookie } from "~/lib/cookie.server";
 import { authorizeUrl } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";

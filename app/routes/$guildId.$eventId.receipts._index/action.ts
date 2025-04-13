@@ -1,6 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import type { Prisma } from "@prisma/client";
-import { json, type ActionFunctionArgs } from "@vercel/remix";
+import { data, type ActionFunctionArgs } from "react-router";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -23,26 +23,26 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   switch (request.method) {
     case "POST": {
-      const data = await getValidatedBodyOr400<CreateReceiptsOutput>(
+      const body = await getValidatedBodyOr400<CreateReceiptsOutput>(
         request,
         resolver,
       );
 
       await prisma.$transaction([
         prisma.receipt.createMany({
-          data: data.map(({ id, total }) => ({ id, eventId, userId, total })),
+          data: body.map(({ id, total }) => ({ id, eventId, userId, total })),
         }),
         prisma.record.createMany({
-          data: Array.from(records(eventId, data)),
+          data: Array.from(records(eventId, body)),
         }),
       ]);
 
-      return json({ __neverRevalidate: true }, 201);
+      return data({ __neverRevalidate: true }, 201);
     }
     case "DELETE": {
       const url = new URL(request.url);
       const targetIds = url.searchParams.getAll("id");
-      if (targetIds.length === 0) throw json(null, 400);
+      if (targetIds.length === 0) throw data(null, 400);
 
       await prisma.$transaction([
         prisma.record.deleteMany({
@@ -57,10 +57,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
         }),
       ]);
 
-      return json(null, 200);
+      return data(null, 200);
     }
     default:
-      throw json(null, 405);
+      throw data(null, 405);
   }
 }
 

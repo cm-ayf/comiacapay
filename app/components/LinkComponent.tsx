@@ -1,8 +1,7 @@
-import { Link } from "@remix-run/react";
-import type { RemixLinkProps } from "@remix-run/react/dist/components";
 import { forwardRef, type PropsWithChildren } from "react";
+import { Link, type LinkProps } from "react-router";
 
-export interface LinkComponentProps extends Omit<RemixLinkProps, "to"> {
+export interface LinkComponentProps extends Omit<LinkProps, "to"> {
   href: string;
 }
 

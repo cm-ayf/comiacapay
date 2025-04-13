@@ -1,4 +1,4 @@
-import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
+import { redirect, type LoaderFunctionArgs } from "react-router";
 import { OAuth2Error } from "~/lib/oauth2/error";
 import { authorizeBotUrl } from "~/lib/oauth2/setup.server";
 import { getSession } from "~/lib/session.server";

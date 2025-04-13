@@ -7,15 +7,15 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
-import { Form, useLoaderData, useRouteError } from "@remix-run/react";
+import type { APIRole } from "discord-api-types/v10";
+import { useId } from "react";
 import {
-  json,
+  data,
   redirect,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
-} from "@vercel/remix";
-import type { APIRole } from "discord-api-types/v10";
-import { useId } from "react";
+} from "react-router";
+import { Form, useLoaderData, useRouteError } from "react-router";
 import {
   RemixFormProvider,
   useRemixForm,
@@ -51,7 +51,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const tokenResult = await exchangeBotCode(code);
   const guild = await upsertGuildAndMember(tokenResult);
-  return json({ guild, roles: tokenResult.guild.roles });
+  return data({ guild, roles: tokenResult.guild.roles });
 }
 
 export async function action({ request }: ActionFunctionArgs) {

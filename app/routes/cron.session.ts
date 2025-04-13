@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "@vercel/remix";
+import type { LoaderFunctionArgs } from "react-router";
 import { isVercelCronRequest } from "~/lib/cron.server";
 import { refreshTokens } from "~/lib/oauth2/auth.server";
 import { prisma } from "~/lib/prisma.server";

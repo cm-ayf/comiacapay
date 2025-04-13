@@ -1,7 +1,8 @@
 import type { Breakpoint } from "@pigment-css/react";
-import { useMatches, type UIMatch } from "@remix-run/react";
-import type { SerializeFrom } from "@vercel/remix";
 import { useMemo, type FC, type PropsWithChildren } from "react";
+import { useLoaderData, useMatches, type UIMatch } from "react-router";
+
+type SerializeFrom<AppData> = ReturnType<typeof useLoaderData<AppData>>;
 
 export interface Handle<AppData> {
   containerMaxWidth?: Breakpoint | false;
@@ -11,7 +12,10 @@ export interface Handle<AppData> {
   breadcrumbLabel?: (data?: SerializeFrom<AppData>) => string | undefined;
 }
 
-type Match<AppData> = UIMatch<AppData, Handle<AppData> | undefined>;
+type Match<AppData> = UIMatch<
+  SerializeFrom<AppData>,
+  Handle<AppData> | undefined
+>;
 
 export function useHandleValue<K extends keyof Handle<unknown>>(
   key: K,

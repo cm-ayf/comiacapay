@@ -1,5 +1,5 @@
-import { useLoaderData } from "@remix-run/react";
-import { json, type LoaderFunctionArgs } from "@vercel/remix";
+import { data, type LoaderFunctionArgs } from "react-router";
+import { useLoaderData } from "react-router";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -18,7 +18,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     include: { records: true },
   });
 
-  return json(receipts);
+  return data(receipts);
 }
 
 export function useReceipts() {

@@ -1,5 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { useNavigate, useParams } from "@remix-run/react";
+import { useNavigate, useParams } from "react-router";
 import type { action } from "./action";
 import EventDialogContent from "~/components/EventDialogContent";
 import {

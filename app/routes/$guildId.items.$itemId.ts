@@ -1,5 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { json, type ActionFunctionArgs } from "@vercel/remix";
+import { data, type ActionFunctionArgs } from "react-router";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -18,24 +18,24 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   switch (request.method) {
     case "PATCH": {
-      const data = await getValidatedBodyOr400<UpdateItemOutput>(
+      const body = await getValidatedBodyOr400<UpdateItemOutput>(
         request,
         resolver,
       );
 
       const item = await prisma.item.update({
         where: { id: itemId, guildId },
-        data,
+        data: body,
       });
-      return json(item);
+      return data(item);
     }
     case "DELETE": {
       const item = await prisma.item.delete({
         where: { id: itemId, guildId },
       });
-      return json(item);
+      return data(item);
     }
     default:
-      throw json(null, 405);
+      throw data(null, 405);
   }
 }

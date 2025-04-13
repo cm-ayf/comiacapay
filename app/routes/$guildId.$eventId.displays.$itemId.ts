@@ -1,6 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import type { ActionFunctionArgs } from "@vercel/remix";
-import { json } from "@vercel/remix";
+import type { ActionFunctionArgs } from "react-router";
+import { data } from "react-router";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -23,7 +23,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   switch (request.method) {
     case "PUT": {
-      const data = await getValidatedBodyOr400<UpsertDisplayInput>(
+      const body = await getValidatedBodyOr400<UpsertDisplayInput>(
         request,
         resolver,
       );
@@ -34,11 +34,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
           event: { guildId },
           item: { guildId },
         },
-        create: { eventId, itemId, ...data },
-        update: data,
+        create: { eventId, itemId, ...body },
+        update: body,
       });
 
-      return json(display, 201);
+      return data(display, 201);
     }
     case "DELETE": {
       const display = await prisma.display.delete({
@@ -48,9 +48,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
           item: { guildId },
         },
       });
-      return json(display);
+      return data(display);
     }
     default:
-      throw json(null, 405);
+      throw data(null, 405);
   }
 }

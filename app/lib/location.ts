@@ -1,5 +1,5 @@
-import { useLocation } from "@remix-run/react";
 import { useMemo } from "react";
+import { useLocation } from "react-router";
 
 export function useUrlWithRedirectTo(base: string) {
   const location = useLocation();

@@ -1,5 +1,5 @@
-import type { Fetcher } from "@remix-run/react";
 import { useEffect, useRef } from "react";
+import type { Fetcher } from "react-router";
 
 export function useOnSubmitComplete<TData>(
   fetcher: Fetcher<TData>,

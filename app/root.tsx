@@ -4,9 +4,15 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material-pigment-css/Container";
 import type { User } from "@prisma/client";
+import { Fragment, type PropsWithChildren } from "react";
+import type {
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "react-router";
 import {
   isRouteErrorResponse,
-  json,
+  data,
   Link,
   Links,
   Meta,
@@ -15,13 +21,7 @@ import {
   ScrollRestoration,
   useLoaderData,
   useRouteError,
-} from "@remix-run/react";
-import type {
-  LinksFunction,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from "@vercel/remix";
-import { Fragment, type PropsWithChildren } from "react";
+} from "react-router";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
 import { useHandleValue, type Handle } from "./lib/handle";
@@ -50,9 +50,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });
-  if (!user) throw json(null, 404);
+  if (!user) throw data(null, 404);
 
-  return json(user);
+  return data(user);
 }
 
 export const handle: Handle<typeof loader> = {

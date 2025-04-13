@@ -1,5 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { json, type ActionFunctionArgs } from "@vercel/remix";
+import { data, type ActionFunctionArgs } from "react-router";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -18,26 +18,26 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   switch (request.method) {
     case "PATCH": {
-      const data = await getValidatedBodyOr400<UpdateEventOutput>(
+      const body = await getValidatedBodyOr400<UpdateEventOutput>(
         request,
         resolver,
       );
-      if ("clone" in data) throw json(null, 400);
+      if ("clone" in body) throw data(null, 400);
 
       const event = await prisma.event.update({
         where: { id: eventId, guildId },
-        data,
+        data: body,
       });
-      return json(event);
+      return data(event);
     }
     case "DELETE": {
       const event = await prisma.event.delete({
         where: { id: eventId, guildId },
       });
       Object.assign(event, { delete: true, __neverRevalidate: true });
-      return json(event);
+      return data(event);
     }
     default:
-      throw json(null, 405);
+      throw data(null, 405);
   }
 }

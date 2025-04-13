@@ -3,12 +3,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
-  useFetcher,
-  type SubmitFunction,
-  type SubmitOptions,
-} from "@remix-run/react";
-import type { SerializeFrom } from "@vercel/remix";
-import {
   createContext,
   useCallback,
   useContext,
@@ -16,11 +10,19 @@ import {
 } from "react";
 import type { DefaultValues, FieldValues, Resolver } from "react-hook-form";
 import {
+  useFetcher,
+  type useLoaderData,
+  type SubmitFunction,
+  type SubmitOptions,
+} from "react-router";
+import {
   RemixFormProvider,
   useRemixForm,
   useRemixFormContext,
 } from "remix-hook-form";
 import { useOnSubmitComplete } from "~/lib/fetcher";
+
+type SerializeFrom<AppData> = ReturnType<typeof useLoaderData<AppData>>;
 
 export interface RemixFormDialogProps<T extends FieldValues, U> {
   open: boolean;

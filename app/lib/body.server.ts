@@ -4,7 +4,7 @@ import { getValidatedFormData, validateFormData } from "remix-hook-form";
 export async function getValidatedBody<T extends FieldValues>(
   request: Request,
   resolver: Resolver<T>,
-): ReturnType<typeof validateFormData<T>> {
+): ReturnType<typeof validateFormData<T, unknown>> {
   switch (request.headers.get("Content-Type")?.split(";")[0]) {
     case "application/x-www-form-urlencoded":
     case "multipart/form-data":

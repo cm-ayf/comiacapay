@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
-import { createSessionStorage } from "@vercel/remix";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { base64url } from "jose";
+import { createSessionStorage } from "react-router";
 import { sidCookie } from "./cookie.server";
 import { prisma } from "./prisma.server";
 import { Snowflake } from "./snowflake";
