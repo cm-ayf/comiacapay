@@ -1,5 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { json, redirect, type ActionFunctionArgs } from "@vercel/remix";
+import { json, type ActionFunctionArgs } from "@vercel/remix";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -24,17 +24,18 @@ export async function action({ request, params }: ActionFunctionArgs) {
       );
       if ("clone" in data) throw json(null, 400);
 
-      await prisma.event.update({
+      const event = await prisma.event.update({
         where: { id: eventId, guildId },
         data,
       });
-      return redirect(`/${guildId}/${eventId}`);
+      return json(event);
     }
     case "DELETE": {
-      await prisma.event.delete({
+      const event = await prisma.event.delete({
         where: { id: eventId, guildId },
       });
-      return redirect(`/${guildId}`);
+      Object.assign(event, { delete: true, __neverRevalidate: true });
+      return json(event);
     }
     default:
       throw json(null, 405);

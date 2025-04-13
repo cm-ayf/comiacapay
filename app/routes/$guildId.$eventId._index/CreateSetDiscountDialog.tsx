@@ -34,7 +34,6 @@ export default function CreateSetDiscountDialog({
         method: "POST",
         action: `/${guildId}/${eventId}/discounts`,
         encType: "application/json",
-        navigate: false,
       }}
     >
       <SetDiscountDialogContent displays={displays} />

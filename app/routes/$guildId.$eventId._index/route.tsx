@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
 import { useFetcher, useParams } from "@remix-run/react";
-import { useCallback, useMemo, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { useMember } from "../$guildId";
 import { useDisplays, useEvent } from "../$guildId.$eventId";
 import CreateSetDiscountDialog from "./CreateSetDiscountDialog";
@@ -23,7 +23,6 @@ import DisplayCard from "~/components/DisplayPanel";
 import EventCard from "~/components/EventCard";
 import { LinkComponent } from "~/components/LinkComponent";
 import type { ClientEvent, ClientItem } from "~/lib/schema";
-import { useSearchParamsState } from "~/lib/search";
 
 export { action } from "./action";
 
@@ -40,14 +39,14 @@ export default function Page() {
 function About() {
   const event = useEvent();
   const me = useMember();
-  const [edit, setEdit] = useSearchParamsState("edit");
+  const [open, setOpen] = useState(false);
 
   return (
     <>
       <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
         <EventCard
           event={event}
-          onClick={me.write ? () => setEdit("") : undefined}
+          onClick={me.write ? () => setOpen(true) : undefined}
         />
         <Button
           LinkComponent={LinkComponent}
@@ -67,8 +66,8 @@ function About() {
       </Box>
       {me.write && (
         <MutateEventDialog
-          open={edit !== null}
-          onClose={() => setEdit(null)}
+          open={open}
+          onClose={() => setOpen(false)}
           event={event}
         />
       )}
@@ -79,17 +78,7 @@ function About() {
 function Displays() {
   const me = useMember();
   const { displays, remainingItems } = useDisplays();
-
-  const [itemId, setItemId] = useSearchParamsState("itemId");
-  const display = useMemo<UpsertDisplayDialogInput | undefined>(() => {
-    const display = displays.find((display) => display.itemId === itemId);
-    if (display) return display;
-
-    const item = remainingItems.find((item) => item.id === itemId);
-    if (item) return { item, create: true };
-
-    return undefined;
-  }, [remainingItems, itemId, displays]);
+  const [display, setDisplay] = useState<UpsertDisplayDialogInput>();
 
   return (
     <>
@@ -100,10 +89,7 @@ function Displays() {
         {displays.map((display) => (
           <Grid key={display.item.id} size={{ xs: 12, lg: 6 }}>
             <DisplayCard display={display}>
-              <Button
-                onClick={() => setItemId(display.item.id)}
-                disabled={!me.write}
-              >
+              <Button onClick={() => setDisplay(display)} disabled={!me.write}>
                 編集
               </Button>
             </DisplayCard>
@@ -111,14 +97,17 @@ function Displays() {
         ))}
         {me.write && remainingItems.length > 0 && (
           <Grid size={{ xs: 12, lg: 6 }}>
-            <CreateDisplaySelect items={remainingItems} select={setItemId} />
+            <CreateDisplaySelect
+              items={remainingItems}
+              setDisplay={setDisplay}
+            />
           </Grid>
         )}
       </Grid>
       {me.write && (
         <UpsertDisplayDialog
           display={display}
-          onClose={() => setItemId(null)}
+          onClose={() => setDisplay(undefined)}
         />
       )}
     </>
@@ -127,10 +116,10 @@ function Displays() {
 
 function CreateDisplaySelect({
   items,
-  select,
+  setDisplay,
 }: {
   items: ClientItem[];
-  select: (itemId: string) => void;
+  setDisplay: (display: { item: ClientItem; create: true }) => void;
 }) {
   return (
     <FormControl sx={{ width: "100%" }}>
@@ -140,7 +129,7 @@ function CreateDisplaySelect({
           <MenuItem
             key={item.id}
             value={item.id}
-            onClick={() => select(item.id)}
+            onClick={() => setDisplay({ item, create: true })}
           >
             {item.name}
           </MenuItem>
@@ -154,7 +143,7 @@ function Discounts() {
   const event = useEvent();
   const { displays } = useDisplays();
   const me = useMember();
-  const [create, setCreate] = useSearchParamsState("create");
+  const [type, setType] = useState<string>();
 
   return (
     <>
@@ -169,20 +158,14 @@ function Discounts() {
         ))}
         {me.write && (
           <Grid size={{ xs: 12, lg: 6 }}>
-            <CreateDiscountSelect
-              select={(typename) => {
-                if (typename) {
-                  setCreate(typename);
-                }
-              }}
-            />
+            <CreateDiscountSelect setType={setType} />
           </Grid>
         )}
       </Grid>
       {me.write && (
         <CreateSetDiscountDialog
-          open={create === "SetDiscount"}
-          onClose={() => setCreate(null)}
+          open={type === "SetDiscount"}
+          onClose={() => setType(undefined)}
           displays={displays}
         />
       )}
@@ -191,19 +174,15 @@ function Discounts() {
 }
 
 function CreateDiscountSelect({
-  select,
+  setType,
 }: {
-  select: (__typename: string) => void;
+  setType: (typename: string) => void;
 }) {
   return (
     <FormControl sx={{ width: "100%" }}>
       <InputLabel>追加</InputLabel>
-      <Select<string>
-        label="追加"
-        value=""
-        onChange={(e) => select(e.target.value)}
-      >
-        <MenuItem value="SetDiscount" onClick={() => select("SetDiscount")}>
+      <Select<string> label="追加" value="">
+        <MenuItem value="SetDiscount" onClick={() => setType("SetDiscount")}>
           セット割引
         </MenuItem>
       </Select>

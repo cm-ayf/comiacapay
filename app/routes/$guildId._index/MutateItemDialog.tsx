@@ -37,11 +37,7 @@ export default function MutateItemDialog({
         picture: item.picture,
         issuedAt: getISODateString(item.issuedAt),
       }}
-      submitConfig={{
-        method: "PATCH",
-        action: `/${guildId}/items/${item.id}`,
-        navigate: false,
-      }}
+      submitConfig={{ method: "PATCH", action: `/${guildId}/items/${item.id}` }}
     >
       <ItemDialogContent />
       <RemixFormDialogActions

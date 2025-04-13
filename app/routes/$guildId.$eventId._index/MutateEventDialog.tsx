@@ -1,4 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
+import { useNavigate, useParams } from "@remix-run/react";
+import type { action } from "./action";
 import EventDialogContent from "~/components/EventDialogContent";
 import {
   RemixFormDialog,
@@ -23,13 +25,19 @@ export default function MutateEventDialog({
   event,
   ...props
 }: MutateEventDialogProps) {
+  const { guildId } = useParams();
+  const navigate = useNavigate();
+
   return (
-    <RemixFormDialog<UpdateEventInput>
+    <RemixFormDialog<UpdateEventInput, typeof action>
       {...props}
       title="イベントを編集"
       resolver={resolver}
       defaultValues={{ name: event.name, date: getISODateString(event.date) }}
-      submitConfig={{ method: "PATCH", navigate: false }}
+      submitConfig={{ method: "PATCH" }}
+      onSubmitComplete={(data) =>
+        data && "delete" in data && navigate(`/${guildId}`)
+      }
     >
       <EventDialogContent />
       <RemixFormDialogActions

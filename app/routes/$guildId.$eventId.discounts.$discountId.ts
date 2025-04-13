@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs } from "@vercel/remix";
-import { json, redirect } from "@vercel/remix";
+import { json } from "@vercel/remix";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -18,7 +18,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   switch (request.method) {
     case "DELETE": {
-      await prisma.$transaction(async (prisma) => {
+      const discount = await prisma.$transaction(async (prisma) => {
         const { discounts } = await prisma.event.findUniqueOrThrow({
           where: { id: eventId, guildId },
           select: { discounts: true },
@@ -29,8 +29,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
             discounts: discounts.filter((d) => d.id !== discountId),
           },
         });
+        return discounts.find((d) => d.id === discountId);
       });
-      return redirect(`/${guildId}/${eventId}`);
+      return json(discount);
     }
     default:
       throw json(null, 405);

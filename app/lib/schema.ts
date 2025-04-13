@@ -106,7 +106,10 @@ export type ClientEvent = Jsonify<Event>;
 export const CreateEvent = object({
   name: pipe(string(), nonEmpty("イベント名を入力してください")),
   date: dateLike(),
-  clone: nullable(snowflake()),
+  clone: pipe(
+    nullable(snowflake()),
+    transform((input) => input || null),
+  ),
 });
 export type CreateEventInput = InferInput<typeof CreateEvent>;
 export type CreateEventOutput = InferOutput<typeof CreateEvent>;

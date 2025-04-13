@@ -1,4 +1,5 @@
-import { json, type Params } from "@remix-run/react";
+import type { Params } from "@remix-run/react";
+import { json } from "@vercel/remix";
 import type { FieldValues, Resolver } from "react-hook-form";
 import { safeParse, type BaseIssue, type BaseSchema } from "valibot";
 import { getValidatedBody } from "./body.server";

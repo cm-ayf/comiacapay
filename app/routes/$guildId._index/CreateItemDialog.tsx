@@ -24,11 +24,7 @@ export default function CreateItemDialog(props: ItemDialogContentProps) {
       title="商品を追加"
       resolver={resolver}
       defaultValues={{ picture: null, issuedAt: getISODateString(new Date()) }}
-      submitConfig={{
-        method: "POST",
-        action: `/${guildId}/items`,
-        navigate: false,
-      }}
+      submitConfig={{ method: "POST", action: `/${guildId}/items` }}
     >
       <ItemDialogContent />
       <RemixFormDialogActions submitButton={{ label: "保存" }} />

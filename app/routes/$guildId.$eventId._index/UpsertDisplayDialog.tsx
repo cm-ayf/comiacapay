@@ -48,7 +48,6 @@ export default function UpsertDisplayDialog({
       submitConfig={{
         method: "PUT",
         action: `/${guildId}/${eventId}/displays/${display.item.id}`,
-        navigate: false,
       }}
     >
       <DisplayDialogContent />

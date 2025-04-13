@@ -3,11 +3,11 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
-  Form,
   useFetcher,
   type SubmitFunction,
   type SubmitOptions,
 } from "@remix-run/react";
+import type { SerializeFrom } from "@vercel/remix";
 import {
   createContext,
   useCallback,
@@ -20,8 +20,9 @@ import {
   useRemixForm,
   useRemixFormContext,
 } from "remix-hook-form";
+import { useOnSubmitComplete } from "~/lib/fetcher";
 
-export interface RemixFormDialogProps<T extends FieldValues> {
+export interface RemixFormDialogProps<T extends FieldValues, U> {
   open: boolean;
   onClose: () => void;
   title: string;
@@ -29,11 +30,13 @@ export interface RemixFormDialogProps<T extends FieldValues> {
   resolver: Resolver<T>;
   defaultValues: DefaultValues<NoInfer<T>>;
   submitConfig?: SubmitOptions;
+
+  onSubmitComplete?: (data: SerializeFrom<U> | undefined) => void;
 }
 
 const HandleDeleteContext = createContext<() => void>(() => {});
 
-export function RemixFormDialog<T extends FieldValues>({
+export function RemixFormDialog<T extends FieldValues, U = unknown>({
   children,
   open,
   onClose,
@@ -41,13 +44,20 @@ export function RemixFormDialog<T extends FieldValues>({
   resolver,
   defaultValues,
   submitConfig = {},
-}: PropsWithChildren<RemixFormDialogProps<T>>) {
-  const fetcher = useFetcher();
+  onSubmitComplete,
+}: PropsWithChildren<RemixFormDialogProps<T, U>>) {
+  const fetcher = useFetcher<U>();
   const { reset, handleSubmit, ...methods } = useRemixForm<T>({
     resolver,
     defaultValues,
     fetcher,
     submitConfig,
+  });
+
+  useOnSubmitComplete(fetcher, (data) => {
+    onClose();
+    reset();
+    onSubmitComplete?.(data);
   });
 
   const handleDelete = useCallback(
@@ -62,7 +72,7 @@ export function RemixFormDialog<T extends FieldValues>({
         onClose();
         reset();
       }}
-      PaperProps={{ component: Form, onSubmit: handleSubmit }}
+      PaperProps={{ component: fetcher.Form, onSubmit: handleSubmit }}
     >
       <RemixFormProvider {...methods} handleSubmit={null} reset={null}>
         <DialogTitle>{title}</DialogTitle>

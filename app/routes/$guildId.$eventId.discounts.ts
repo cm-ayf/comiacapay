@@ -1,6 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import type { ActionFunctionArgs } from "@vercel/remix";
-import { json, redirect } from "@vercel/remix";
+import { json } from "@vercel/remix";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -29,20 +29,22 @@ export async function action({ request, params }: ActionFunctionArgs) {
         resolver,
       );
 
-      await prisma.$transaction(async (prisma) => {
+      const discount = await prisma.$transaction(async (prisma) => {
         const { discounts } = await prisma.event.findUniqueOrThrow({
           where: { id: eventId, guildId },
           select: { discounts: true },
         });
         const id = Snowflake.generate().toString();
+        const discount = { id, ...data };
         await prisma.event.update({
           where: { id: eventId },
           data: {
-            discounts: [...discounts, { id, ...data }],
+            discounts: [...discounts, discount],
           },
         });
+        return discount;
       });
-      return redirect(`/${guildId}/${eventId}`);
+      return json(discount, 201);
     }
     default:
       throw json(null, 405);

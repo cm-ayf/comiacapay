@@ -50,7 +50,10 @@ export default function EventDialogContent({
       {events && (
         <FormControl sx={{ mt: 2 }}>
           <InputLabel>お品書きをコピー</InputLabel>
-          <Select {...register("clone")}>
+          <Select
+            label="お品書きをコピー"
+            {...register("clone", { setValueAs: (v) => v || null })}
+          >
             {events.map((event) => (
               <MenuItem key={event.id} value={event.id}>
                 {event.name}

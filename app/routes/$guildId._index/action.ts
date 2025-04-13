@@ -1,6 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { redirect } from "@remix-run/react";
-import type { ActionFunctionArgs } from "@vercel/remix";
+import { json, type ActionFunctionArgs } from "@vercel/remix";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -56,5 +55,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
     });
   }
 
-  return redirect(`/${guildId}/${event.id}`);
+  return json(event, 201);
 }

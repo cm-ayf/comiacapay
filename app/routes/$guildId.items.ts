@@ -1,5 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { json, redirect, type ActionFunctionArgs } from "@vercel/remix";
+import { json, type ActionFunctionArgs } from "@vercel/remix";
 import {
   getMemberOr4xx,
   getSessionOr401,
@@ -18,11 +18,18 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { guildId } = parseParamsOr400(GuildParams, params);
   await getMemberOr4xx(userId, guildId, "write");
 
-  const data = await getValidatedBodyOr400<CreateItemOutput>(request, resolver);
+  switch (request.method) {
+    case "POST": {
+      const data = await getValidatedBodyOr400<CreateItemOutput>(
+        request,
+        resolver,
+      );
 
-  const id = Snowflake.generate().toString();
-  await prisma.item.create({
-    data: { id, guildId, ...data },
-  });
-  return redirect(`/${guildId}`);
+      const id = Snowflake.generate().toString();
+      const item = await prisma.item.create({
+        data: { id, guildId, ...data },
+      });
+      return json(item, { status: 201 });
+    }
+  }
 }

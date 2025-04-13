@@ -1,5 +1,4 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { redirect } from "@remix-run/react";
 import { json, type ActionFunctionArgs } from "@vercel/remix";
 import {
   getMemberOr4xx,
@@ -24,17 +23,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
         resolver,
       );
 
-      await prisma.item.update({
+      const item = await prisma.item.update({
         where: { id: itemId, guildId },
         data,
       });
-      return redirect(`/${guildId}`);
+      return json(item);
     }
     case "DELETE": {
-      await prisma.item.delete({
+      const item = await prisma.item.delete({
         where: { id: itemId, guildId },
       });
-      return redirect(`/${guildId}`);
+      return json(item);
     }
     default:
       throw json(null, 405);

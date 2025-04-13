@@ -1,4 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
+import { useNavigate, useParams } from "@remix-run/react";
+import type { action } from "./action";
 import EventDialogContent from "~/components/EventDialogContent";
 import {
   RemixFormDialog,
@@ -23,13 +25,17 @@ export default function CreateEventDialog({
   events,
   ...props
 }: CreateEventDialogProps) {
+  const { guildId } = useParams();
+  const navigate = useNavigate();
+
   return (
-    <RemixFormDialog<CreateEventInput>
+    <RemixFormDialog<CreateEventInput, typeof action>
       {...props}
       title="イベントを追加"
       resolver={resolver}
-      defaultValues={{ date: getISODateString(new Date()), clone: null }}
-      submitConfig={{ method: "POST", navigate: false }}
+      defaultValues={{ date: getISODateString(new Date()), clone: "" }}
+      submitConfig={{ method: "POST" }}
+      onSubmitComplete={(data) => data && navigate(`/${guildId}/${data.id}`)}
     >
       <EventDialogContent events={events} />
       <RemixFormDialogActions submitButton={{ label: "保存" }} />

@@ -2,9 +2,9 @@ import { PrismaClient } from "@prisma/client";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 
 // union of one
-type Discount = SetDiscount;
+export type Discount = SetDiscount;
 
-interface SetDiscount {
+export interface SetDiscount {
   // was originated from GraphQL
   __typename: "SetDiscount";
   id: string;

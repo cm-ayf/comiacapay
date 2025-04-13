@@ -13,7 +13,7 @@ import type { loader } from "./loader";
 import EventCard from "~/components/EventCard";
 import GuildCard from "~/components/GuildCard";
 import ItemCard from "~/components/ItemCard";
-import { useSearchParamsState } from "~/lib/search";
+import type { ClientItem } from "~/lib/schema";
 
 export { loader } from "./loader";
 export { action } from "./action";
@@ -79,8 +79,8 @@ function Events() {
 function Items() {
   const guild = useGuild();
   const me = useMember();
-  const [itemId, setItemId] = useSearchParamsState("itemId");
-  const item = guild.items.find((item) => item.id === itemId);
+  const [open, setOpen] = useState(false);
+  const [item, setItem] = useState<ClientItem>();
 
   return (
     <>
@@ -90,7 +90,7 @@ function Items() {
         </Typography>
         <IconButton
           color="primary"
-          onClick={() => setItemId("")}
+          onClick={() => setOpen(true)}
           disabled={!me.write}
         >
           <Add />
@@ -101,19 +101,16 @@ function Items() {
           <Grid key={item.id}>
             <ItemCard
               item={item}
-              onClick={me.write ? () => setItemId(item.id) : undefined}
+              onClick={me.write ? () => setItem(item) : undefined}
             />
           </Grid>
         ))}
       </Grid>
       {me.write && (
-        <CreateItemDialog
-          open={itemId === ""}
-          onClose={() => setItemId(null)}
-        />
+        <CreateItemDialog open={open} onClose={() => setOpen(false)} />
       )}
       {me.write && (
-        <MutateItemDialog item={item} onClose={() => setItemId(null)} />
+        <MutateItemDialog item={item} onClose={() => setItem(undefined)} />
       )}
     </>
   );
