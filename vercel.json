@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "remix",
+  "framework": "react-router",
   "crons": [
     {
       "path": "/cron/session",
