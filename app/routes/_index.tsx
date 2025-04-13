@@ -2,14 +2,15 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
-import { data, type LoaderFunctionArgs } from "react-router";
+import { data } from "react-router";
 import { useLoaderData } from "react-router";
+import type { Route } from "./+types/_index";
 import GuildCard from "~/components/GuildCard";
 import { LinkComponent } from "~/components/LinkComponent";
 import { getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const { userId } = await getSessionOr401(request);
 
   const members = await prisma.member.findMany({

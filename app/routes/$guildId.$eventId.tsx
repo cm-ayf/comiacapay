@@ -1,23 +1,20 @@
 import { useMemo } from "react";
-import { data, type LoaderFunctionArgs } from "react-router";
+import { data } from "react-router";
 import {
   Outlet,
   useRouteLoaderData,
   type ShouldRevalidateFunctionArgs,
 } from "react-router";
 import { useGuild } from "./$guildId";
+import type { Route } from "./+types/$guildId.$eventId";
 import type { Handle } from "~/lib/handle";
-import {
-  getMemberOr4xx,
-  getSessionOr401,
-  parseParamsOr400,
-} from "~/lib/middleware.server";
+import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { EventParams, type ClientDisplay, type ClientItem } from "~/lib/schema";
+import { type ClientDisplay, type ClientItem } from "~/lib/schema";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   const { userId } = await getSessionOr401(request);
-  const { guildId, eventId } = parseParamsOr400(EventParams, params);
+  const { guildId, eventId } = params;
   await getMemberOr4xx(userId, guildId, "read");
 
   const event = await prisma.event.findUnique({

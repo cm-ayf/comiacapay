@@ -1,7 +1,8 @@
 import type { WebAppManifest } from "@remix-pwa/manifest";
 import { data } from "react-router";
+import type { Route } from "./+types/manifest[.webmanifest]";
 
-export const loader = () => {
+export function loader({}: Route.LoaderArgs) {
   return data(
     {
       lang: "ja",
@@ -22,4 +23,4 @@ export const loader = () => {
       },
     },
   );
-};
+}

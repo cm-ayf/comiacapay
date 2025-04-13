@@ -1,10 +1,11 @@
 import { base64url } from "jose";
-import { redirect, type LoaderFunctionArgs } from "react-router";
+import { redirect } from "react-router";
+import type { Route } from "./+types/auth.signin";
 import { stateCookie } from "~/lib/cookie.server";
 import { authorizeUrl } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
     const { searchParams } = new URL(request.url);
     const h = base64url.encode(crypto.getRandomValues(new Uint8Array(32)));

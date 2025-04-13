@@ -1,6 +1,5 @@
 import type { FieldValues, Resolver } from "react-hook-form";
-import { data, type Params } from "react-router";
-import { safeParse, type BaseIssue, type BaseSchema } from "valibot";
+import { data } from "react-router";
 import { getValidatedBody } from "./body.server";
 import { prisma } from "./prisma.server";
 import { getSession } from "./session.server";
@@ -11,14 +10,6 @@ export async function getSessionOr401(request: Request) {
   const tokenResult = session.get("tokenResult");
   if (!userId) throw data(null, 401);
   return { userId, tokenResult };
-}
-
-export function parseParamsOr400<
-  TSchema extends BaseSchema<unknown, unknown, BaseIssue<unknown>>,
->(schema: TSchema, params: Params) {
-  const { success, output, issues } = safeParse(schema, params);
-  if (!success) throw data(issues, 400);
-  return output;
 }
 
 export async function getMemberOr4xx(

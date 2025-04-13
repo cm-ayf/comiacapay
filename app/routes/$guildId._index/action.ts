@@ -1,20 +1,20 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { data, type ActionFunctionArgs } from "react-router";
+import { data } from "react-router";
+import type { Route } from "./+types/route";
 import {
   getMemberOr4xx,
   getSessionOr401,
   getValidatedBodyOr400,
-  parseParamsOr400,
 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { CreateEvent, GuildParams, type CreateEventOutput } from "~/lib/schema";
+import { CreateEvent, type CreateEventOutput } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
 
 const resolver = valibotResolver(CreateEvent);
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   const { userId } = await getSessionOr401(request);
-  const { guildId } = parseParamsOr400(GuildParams, params);
+  const { guildId } = params;
   await getMemberOr4xx(userId, guildId, "write");
 
   const { name, date, clone } = await getValidatedBodyOr400<CreateEventOutput>(

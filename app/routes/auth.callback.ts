@@ -1,12 +1,12 @@
-import type { LoaderFunctionArgs } from "react-router";
 import { redirect } from "react-router";
+import type { Route } from "./+types/auth.callback";
 import { stateCookie } from "~/lib/cookie.server";
 import { exchangeCode } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";
 import { getSession, commitSession } from "~/lib/session.server";
 import { upsertUserAndMembers } from "~/lib/sync.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   try {
     const url = new URL(request.url);
     const code = url.searchParams.get("code");

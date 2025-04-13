@@ -50,32 +50,6 @@ export function uint() {
   );
 }
 
-export const GuildParams = object({
-  guildId: snowflake(),
-});
-
-export const ItemParams = object({
-  guildId: snowflake(),
-  itemId: snowflake(),
-});
-
-export const EventParams = object({
-  guildId: snowflake(),
-  eventId: snowflake(),
-});
-
-export const DisplayParams = object({
-  guildId: snowflake(),
-  eventId: snowflake(),
-  itemId: snowflake(),
-});
-
-export const DiscountParams = object({
-  guildId: snowflake(),
-  eventId: snowflake(),
-  discountId: snowflake(),
-});
-
 export const UpdateGuild = object({
   readRoleId: nullable(snowflake()),
   writeRoleId: nullable(snowflake()),

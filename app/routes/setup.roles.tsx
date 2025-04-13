@@ -9,28 +9,22 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import type { APIRole } from "discord-api-types/v10";
 import { useId } from "react";
-import {
-  data,
-  redirect,
-  type ActionFunctionArgs,
-  type LoaderFunctionArgs,
-} from "react-router";
+import { data, redirect } from "react-router";
 import { Form, useLoaderData, useRouteError } from "react-router";
 import {
   RemixFormProvider,
   useRemixForm,
   useRemixFormContext,
 } from "remix-hook-form";
+import type { Route } from "./+types/setup.roles";
 import {
   getMemberOr4xx,
   getSessionOr401,
   getValidatedBodyOr400,
-  parseParamsOr400,
 } from "~/lib/middleware.server";
 import { exchangeBotCode } from "~/lib/oauth2/setup.server";
 import { prisma } from "~/lib/prisma.server";
 import {
-  GuildParams,
   UpdateGuild,
   type UpdateGuildInput,
   type UpdateGuildOutput,
@@ -40,7 +34,7 @@ import { upsertGuildAndMember } from "~/lib/sync.server";
 
 const resolver = valibotResolver(UpdateGuild);
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId");
   if (!userId) throw redirect("/");
@@ -54,12 +48,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return data({ guild, roles: tokenResult.guild.roles });
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const url = new URL(request.url);
   const { userId } = await getSessionOr401(request);
-  const { guildId } = parseParamsOr400(GuildParams, {
-    guildId: url.searchParams.get("guild_id") ?? undefined,
-  });
+  const guildId = url.searchParams.get("guild_id");
+  if (!guildId) throw redirect("/");
   await getMemberOr4xx(userId, guildId, "write");
 
   const data = await getValidatedBodyOr400<UpdateGuildOutput>(

@@ -1,15 +1,11 @@
-import { data, type LoaderFunctionArgs } from "react-router";
-import {
-  getMemberOr4xx,
-  getSessionOr401,
-  parseParamsOr400,
-} from "~/lib/middleware.server";
+import { data } from "react-router";
+import type { Route } from "./+types/route";
+import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { GuildParams } from "~/lib/schema";
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
   const { userId } = await getSessionOr401(request);
-  const { guildId } = parseParamsOr400(GuildParams, params);
+  const { guildId } = params;
   await getMemberOr4xx(userId, guildId, "read");
 
   const events = await prisma.event.findMany({

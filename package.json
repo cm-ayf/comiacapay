@@ -13,7 +13,7 @@
     "dev": "react-router dev",
     "check:prettier": "prettier --cache --check .",
     "check:eslint": "eslint --cache --cache-location ./node_modules/.cache/eslint/ .",
-    "check:tsc": "tsc",
+    "check:tsc": "react-router typegen && tsc",
     "check": "run-p check:*",
     "fix:prettier": "prettier --cache --write .",
     "fix:eslint": "eslint --cache --cache-location ./node_modules/.cache/eslint/ --fix .",

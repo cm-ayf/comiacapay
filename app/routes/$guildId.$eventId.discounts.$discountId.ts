@@ -1,18 +1,11 @@
-import { data, type ActionFunctionArgs } from "react-router";
-import {
-  getMemberOr4xx,
-  getSessionOr401,
-  parseParamsOr400,
-} from "~/lib/middleware.server";
+import { data } from "react-router";
+import type { Route } from "./+types/$guildId.$eventId.discounts.$discountId";
+import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { DiscountParams } from "~/lib/schema";
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   const { userId } = await getSessionOr401(request);
-  const { guildId, eventId, discountId } = parseParamsOr400(
-    DiscountParams,
-    params,
-  );
+  const { guildId, eventId, discountId } = params;
   await getMemberOr4xx(userId, guildId, "write");
 
   switch (request.method) {

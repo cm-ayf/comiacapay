@@ -1,10 +1,10 @@
-import type { LoaderFunctionArgs } from "react-router";
+import type { Route } from "./+types/cron.session";
 import { isVercelCronRequest } from "~/lib/cron.server";
 import { refreshTokens } from "~/lib/oauth2/auth.server";
 import { prisma } from "~/lib/prisma.server";
 import { upsertUserAndMembers } from "~/lib/sync.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   if (!isVercelCronRequest(request))
     return new Response("Unauthorized", { status: 401 });
 

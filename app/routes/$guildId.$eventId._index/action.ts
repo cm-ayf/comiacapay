@@ -1,19 +1,19 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { data, type ActionFunctionArgs } from "react-router";
+import { data } from "react-router";
+import type { Route } from "./+types/route";
 import {
   getMemberOr4xx,
   getSessionOr401,
   getValidatedBodyOr400,
-  parseParamsOr400,
 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { EventParams, UpdateEvent, type UpdateEventOutput } from "~/lib/schema";
+import { UpdateEvent, type UpdateEventOutput } from "~/lib/schema";
 
 const resolver = valibotResolver(UpdateEvent);
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params }: Route.ActionArgs) {
   const { userId } = await getSessionOr401(request);
-  const { guildId, eventId } = parseParamsOr400(EventParams, params);
+  const { guildId, eventId } = params;
   await getMemberOr4xx(userId, guildId, "write");
 
   switch (request.method) {

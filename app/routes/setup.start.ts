@@ -1,9 +1,10 @@
-import { redirect, type LoaderFunctionArgs } from "react-router";
+import { redirect } from "react-router";
+import type { Route } from "./+types/setup.start";
 import { OAuth2Error } from "~/lib/oauth2/error";
 import { authorizeBotUrl } from "~/lib/oauth2/setup.server";
 import { getSession } from "~/lib/session.server";
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId");
   if (!userId) {
