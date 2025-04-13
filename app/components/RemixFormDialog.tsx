@@ -1,4 +1,4 @@
-import LoadingButton from "@mui/lab/LoadingButton";
+import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -98,21 +98,17 @@ export function RemixFormDialogActions({
 
   return (
     <DialogActions>
-      <LoadingButton
-        type="submit"
-        color="primary"
-        loading={formState.isLoading}
-      >
+      <Button type="submit" color="primary" loading={formState.isLoading}>
         {submitButton.label}
-      </LoadingButton>
+      </Button>
       {deleteButton && (
-        <LoadingButton
+        <Button
           color="error"
           onClick={handleDelete}
           loading={formState.isLoading}
         >
           {deleteButton.label}
-        </LoadingButton>
+        </Button>
       )}
     </DialogActions>
   );

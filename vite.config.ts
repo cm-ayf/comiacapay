@@ -12,7 +12,7 @@ export default defineConfig({
   plugins: [
     pigment({
       theme: createTheme(),
-      transformLibraries: ["@mui/material", "@mui/lab"],
+      transformLibraries: ["@mui/material"],
       displayName: process.env.NODE_ENV !== "production",
     }),
     remix({

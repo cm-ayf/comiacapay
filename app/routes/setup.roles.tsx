@@ -1,5 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import LoadingButton from "@mui/lab/LoadingButton";
+import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import InputLabel from "@mui/material/InputLabel";
@@ -173,7 +173,7 @@ function RoleSelect({
 function RoleSubmitButton({ label }: { label: string }) {
   const { formState } = useRemixFormContext();
   return (
-    <LoadingButton
+    <Button
       type="submit"
       size="large"
       variant="contained"
@@ -181,7 +181,7 @@ function RoleSubmitButton({ label }: { label: string }) {
       loading={formState.isLoading}
     >
       {label}
-    </LoadingButton>
+    </Button>
   );
 }
 

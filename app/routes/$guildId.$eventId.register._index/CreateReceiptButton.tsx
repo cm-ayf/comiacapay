@@ -1,4 +1,4 @@
-import LoadingButton from "@mui/lab/LoadingButton";
+import Button from "@mui/material/Button";
 import { useFetcher, useParams } from "@remix-run/react";
 import { useCallback } from "react";
 import { useOnSubmitComplete } from "~/lib/fetcher";
@@ -25,7 +25,7 @@ export function CreateReceiptButton() {
   useOnSubmitComplete(fetcher, clearRecords);
 
   return (
-    <LoadingButton
+    <Button
       size="large"
       variant="contained"
       loading={fetcher.state !== "idle"}
@@ -33,6 +33,6 @@ export function CreateReceiptButton() {
       onClick={submit}
     >
       登録
-    </LoadingButton>
+    </Button>
   );
 }

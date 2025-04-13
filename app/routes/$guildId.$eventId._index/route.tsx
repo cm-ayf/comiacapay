@@ -1,4 +1,3 @@
-import LoadingButton from "@mui/lab/LoadingButton";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -251,13 +250,13 @@ function DeleteDiscountButton({ discountId }: { discountId: string }) {
   }, [fetcher, guildId, eventId, discountId]);
 
   return (
-    <LoadingButton
+    <Button
       color="error"
       onClick={handleDelete}
       loading={fetcher.state !== "idle"}
       disabled={!me.write}
     >
       割引を削除
-    </LoadingButton>
+    </Button>
   );
 }

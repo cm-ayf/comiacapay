@@ -71,6 +71,7 @@ export function Layout({ children }: PropsWithChildren) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <meta name="emotion-insertion-point" content="" />
       </head>
       <body>
         {children}
