@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
-import { base64url } from "jose";
 import { createSessionStorage } from "react-router";
 import { sidCookie } from "./cookie.server";
 import { prisma } from "./prisma.server";
@@ -17,7 +16,9 @@ export const { getSession, commitSession, destroySession } =
     async createData({ userId = null, tokenResult = Prisma.DbNull }, expires) {
       if (!expires) return "";
       const id = Snowflake.generate().toString();
-      const sid = base64url.encode(crypto.getRandomValues(new Uint8Array(32)));
+      const sid = crypto
+        .getRandomValues(Buffer.alloc(32))
+        .toString("base64url");
       await prisma.session.create({
         data: { id, sid, expires, tokenResult, userId },
       });
