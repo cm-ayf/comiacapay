@@ -1,6 +1,5 @@
 import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
-import { isRouteErrorResponse } from "react-router";
 import {
   Outlet,
   useRouteLoaderData,
@@ -8,7 +7,7 @@ import {
 } from "react-router";
 import { useGuild } from "./$guildId";
 import type { Route } from "./+types/$guildId.$eventId";
-import { UnknownError } from "~/components/UnknownError";
+import createErrorBoundary from "~/components/createErrorBoundary";
 import type { Handle } from "~/lib/handle";
 import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
@@ -56,15 +55,13 @@ export default function Page() {
   return <Outlet />;
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  if (isRouteErrorResponse(error) && error.status === 404) {
-    return (
-      <Typography variant="body1">イベントが見つかりませんでした</Typography>
-    );
-  }
-
-  return <UnknownError error={error} />;
+function EventNotFound() {
+  return (
+    <Typography variant="body1">イベントが見つかりませんでした</Typography>
+  );
 }
+
+export const ErrorBoundary = createErrorBoundary({ 404: EventNotFound });
 
 export function shouldRevalidate({
   actionResult,

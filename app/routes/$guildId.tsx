@@ -1,12 +1,11 @@
 import Typography from "@mui/material/Typography";
 import {
-  isRouteErrorResponse,
   Outlet,
   useRouteLoaderData,
   type ShouldRevalidateFunctionArgs,
 } from "react-router";
 import type { Route } from "./+types/$guildId";
-import { UnknownError } from "~/components/UnknownError";
+import createErrorBoundary from "~/components/createErrorBoundary";
 import type { Handle } from "~/lib/handle";
 import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
@@ -48,15 +47,13 @@ export default function Page() {
   return <Outlet />;
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  if (isRouteErrorResponse(error) && error.status === 404) {
-    return (
-      <Typography variant="body1">サーバーが見つかりませんでした</Typography>
-    );
-  }
-
-  return <UnknownError error={error} />;
+function GuildNotFound() {
+  return (
+    <Typography variant="body1">サーバーが見つかりませんでした</Typography>
+  );
 }
+
+export const ErrorBoundary = createErrorBoundary({ 404: GuildNotFound });
 
 export function shouldRevalidate({
   actionResult,

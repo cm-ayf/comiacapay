@@ -1,34 +1,20 @@
 import "./global.css";
 import "@pigment-css/react/styles.css";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import Container from "@mui/material-pigment-css/Container";
 import type { User } from "@prisma/client";
 import { Fragment, type PropsWithChildren } from "react";
-import type {
-  LinksFunction,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from "react-router";
-import {
-  isRouteErrorResponse,
-  Link,
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  useLoaderData,
-  useRouteError,
-} from "react-router";
+import type { MetaFunction } from "react-router";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import type { Route } from "./+types/root";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
+import createErrorBoundary from "./components/createErrorBoundary";
 import { useHandleValue, type Handle } from "./lib/handle";
-import { useUrlWithRedirectTo } from "./lib/location";
 import { getSessionOr401 } from "./lib/middleware.server";
 import { prisma } from "./lib/prisma.server";
 
-export const links: LinksFunction = () => [
+export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -43,7 +29,7 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = (_) => [];
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
   const { userId } = await getSessionOr401(request);
 
   return await prisma.user.findUniqueOrThrow({
@@ -74,7 +60,10 @@ export function Layout({ children }: PropsWithChildren) {
   );
 }
 
-function AppLayout({ children, user }: PropsWithChildren<{ user?: User }>) {
+function AppLayout({
+  children,
+  user,
+}: PropsWithChildren<{ user: User | undefined }>) {
   const PageContextProvider = useHandleValue("PageContextProvider", Fragment);
   const TopComponent = useHandleValue("TopComponent", Fragment);
   const ButtomComponent = useHandleValue("ButtomComponent", Fragment);
@@ -107,36 +96,19 @@ function AppLayout({ children, user }: PropsWithChildren<{ user?: User }>) {
   );
 }
 
-export default function App() {
-  const data = useLoaderData<typeof loader>();
-
+export default function App({ loaderData }: Route.ComponentProps) {
   return (
-    <AppLayout user={data}>
+    <AppLayout user={loaderData}>
       <Outlet />
     </AppLayout>
   );
 }
 
-export function ErrorBoundary() {
-  const error = useRouteError();
-  const signinUrl = useUrlWithRedirectTo("/auth/signin");
-
-  if (isRouteErrorResponse(error) && error.status === 401) {
-    return (
-      <AppLayout>
-        <Typography>
-          <Link to={signinUrl}>サインイン</Link>してください
-        </Typography>
-      </AppLayout>
-    );
-  }
-
+const ErrorBoundaryInner = createErrorBoundary();
+export function ErrorBoundary({ error, loaderData }: Route.ErrorBoundaryProps) {
   return (
-    <AppLayout>
-      <Typography>エラーが発生しました</Typography>
-      <pre>
-        <code>{JSON.stringify(error, null, 2)}</code>
-      </pre>
+    <AppLayout user={loaderData}>
+      <ErrorBoundaryInner error={error} />
     </AppLayout>
   );
 }
