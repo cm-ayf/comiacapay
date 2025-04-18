@@ -29,7 +29,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       const item = await prisma.item.create({
         data: { id, guildId, ...body },
       });
-      return data(item, { status: 201 });
+      return data(item, 201);
     }
   }
 }

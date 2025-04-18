@@ -42,7 +42,11 @@ export default function MutateEventDialog({
       <EventDialogContent />
       <RemixFormDialogActions
         submitButton={{ label: "保存" }}
-        deleteButton={{ label: "削除" }}
+        deleteButton={{
+          label: "削除",
+          disabled: event._count.receipts > 0,
+          disabledMessage: "購入履歴があるため削除できません",
+        }}
       />
     </RemixFormDialog>
   );

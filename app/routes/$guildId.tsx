@@ -1,10 +1,12 @@
+import Typography from "@mui/material/Typography";
 import {
-  data,
+  isRouteErrorResponse,
   Outlet,
   useRouteLoaderData,
   type ShouldRevalidateFunctionArgs,
 } from "react-router";
 import type { Route } from "./+types/$guildId";
+import { UnknownError } from "~/components/UnknownError";
 import type { Handle } from "~/lib/handle";
 import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
@@ -14,35 +16,46 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const { guildId } = params;
   const member = await getMemberOr4xx(userId, guildId, "read");
 
-  const guild = await prisma.guild.findUnique({
+  const guild = await prisma.guild.findUniqueOrThrow({
     where: { id: guildId },
     include: {
       items: {
         orderBy: { issuedAt: "desc" },
+        include: { _count: true },
       },
     },
   });
 
-  if (!guild) throw data(null, 404);
-  return data({ member, guild });
+  return { ...guild, members: [member] as const };
 }
 
 export const handle: Handle<typeof loader> = {
-  breadcrumbLabel: (r) => r?.guild.name,
+  breadcrumbLabel: (r) => r?.name,
 };
 
 export function useGuild() {
-  const { guild } = useRouteLoaderData<typeof loader>("routes/$guildId")!;
-  return guild;
+  return useRouteLoaderData<typeof loader>("routes/$guildId")!;
 }
 
 export function useMember() {
-  const { member } = useRouteLoaderData<typeof loader>("routes/$guildId")!;
+  const {
+    members: [member],
+  } = useRouteLoaderData<typeof loader>("routes/$guildId")!;
   return member;
 }
 
 export default function Page() {
   return <Outlet />;
+}
+
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  if (isRouteErrorResponse(error) && error.status === 404) {
+    return (
+      <Typography variant="body1">サーバーが見つかりませんでした</Typography>
+    );
+  }
+
+  return <UnknownError error={error} />;
 }
 
 export function shouldRevalidate({

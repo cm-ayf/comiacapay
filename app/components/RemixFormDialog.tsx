@@ -2,6 +2,7 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
+import Tooltip from "@mui/material/Tooltip";
 import {
   createContext,
   useCallback,
@@ -12,7 +13,6 @@ import type { DefaultValues, FieldValues, Resolver } from "react-hook-form";
 import {
   useFetcher,
   type useLoaderData,
-  type SubmitFunction,
   type SubmitOptions,
 } from "react-router";
 import {
@@ -88,7 +88,9 @@ export function RemixFormDialog<T extends FieldValues, U = unknown>({
 
 export interface RemixFormDialogButtonsProps {
   submitButton: { label: string };
-  deleteButton?: { label: string } | undefined;
+  deleteButton?:
+    | { label: string; disabled: boolean; disabledMessage: string }
+    | undefined;
 }
 
 export function RemixFormDialogActions({
@@ -104,19 +106,34 @@ export function RemixFormDialogActions({
         {submitButton.label}
       </Button>
       {deleteButton && (
-        <Button
-          color="error"
-          onClick={handleDelete}
-          loading={formState.isLoading}
+        <OptionalTooltip
+          title={deleteButton.disabledMessage}
+          enabled={deleteButton.disabled}
         >
-          {deleteButton.label}
-        </Button>
+          <Button
+            color="error"
+            onClick={handleDelete}
+            loading={formState.isLoading}
+            disabled={deleteButton.disabled}
+          >
+            {deleteButton.label}
+          </Button>
+        </OptionalTooltip>
       )}
     </DialogActions>
   );
 }
 
-export interface DeleteButtonProps {
-  label: string;
-  submitConfig: Parameters<SubmitFunction>[1];
+function OptionalTooltip({
+  title,
+  enabled,
+  children,
+}: PropsWithChildren<{ title: string; enabled: boolean }>) {
+  if (enabled)
+    return (
+      <Tooltip title={title}>
+        <span>{children}</span>
+      </Tooltip>
+    );
+  else return children;
 }

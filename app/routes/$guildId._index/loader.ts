@@ -1,4 +1,3 @@
-import { data } from "react-router";
 import type { Route } from "./+types/route";
 import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
@@ -8,10 +7,8 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const { guildId } = params;
   await getMemberOr4xx(userId, guildId, "read");
 
-  const events = await prisma.event.findMany({
+  return await prisma.event.findMany({
     where: { guildId },
     orderBy: { date: "desc" },
   });
-
-  return data(events);
 }

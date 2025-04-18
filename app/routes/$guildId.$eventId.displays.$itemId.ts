@@ -43,7 +43,8 @@ export async function action({ request, params }: Route.ActionArgs) {
           item: { guildId },
         },
       });
-      return data(display);
+      Object.assign(display, { delete: true });
+      return display;
     }
     default:
       throw data(null, 405);

@@ -32,9 +32,10 @@ export function useBreadcrumbs() {
   const matches = useMatches() as Match<any>[];
   const breadcrumbs = matches
     .map(<AppData>(match: Match<AppData>) => {
-      const label = match.handle?.breadcrumbLabel?.(match.data);
-      if (label) return { href: match.pathname, label };
-      else return null;
+      if (match.handle?.breadcrumbLabel) {
+        const label = match.handle.breadcrumbLabel(match.data) ?? "…";
+        return { href: match.pathname, label };
+      } else return null;
     })
     .filter((breadcrumb) => !!breadcrumb);
   return breadcrumbs;

@@ -24,16 +24,17 @@ export async function action({ request, params }: Route.ActionArgs) {
         resolver,
       );
 
-      await prisma.$transaction([
+      const [receipt, records] = await prisma.$transaction([
         prisma.receipt.createMany({
           data: body.map(({ id, total }) => ({ id, eventId, userId, total })),
         }),
         prisma.record.createMany({
-          data: Array.from(records(eventId, body)),
+          data: Array.from(flatRecords(eventId, body)),
         }),
       ]);
 
-      return data({ __neverRevalidate: true }, 201);
+      Object.assign(receipt, { __neverRevalidate: true });
+      return data({ ...receipt, records }, 201);
     }
     case "DELETE": {
       const url = new URL(request.url);
@@ -52,15 +53,14 @@ export async function action({ request, params }: Route.ActionArgs) {
           },
         }),
       ]);
-
-      return data(null, 200);
+      return { delete: true };
     }
     default:
       throw data(null, 405);
   }
 }
 
-function* records(
+function* flatRecords(
   eventId: string,
   data: CreateReceiptsOutput,
 ): Generator<Prisma.RecordCreateManyInput> {

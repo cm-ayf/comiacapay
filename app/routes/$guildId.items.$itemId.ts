@@ -23,17 +23,17 @@ export async function action({ request, params }: Route.ActionArgs) {
         resolver,
       );
 
-      const item = await prisma.item.update({
+      return await prisma.item.update({
         where: { id: itemId, guildId },
         data: body,
       });
-      return data(item);
     }
     case "DELETE": {
       const item = await prisma.item.delete({
         where: { id: itemId, guildId },
       });
-      return data(item);
+      Object.assign(item, { delete: true });
+      return item;
     }
     default:
       throw data(null, 405);

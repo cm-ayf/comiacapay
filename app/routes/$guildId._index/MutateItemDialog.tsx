@@ -42,7 +42,11 @@ export default function MutateItemDialog({
       <ItemDialogContent />
       <RemixFormDialogActions
         submitButton={{ label: "保存" }}
-        deleteButton={{ label: "削除" }}
+        deleteButton={{
+          label: "削除",
+          disabled: item._count.displays > 0,
+          disabledMessage: "お品書きがあるため削除できません",
+        }}
       />
     </RemixFormDialog>
   );

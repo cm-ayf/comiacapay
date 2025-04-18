@@ -1,4 +1,3 @@
-import { data } from "react-router";
 import { useLoaderData } from "react-router";
 import type { Route } from "./+types/route";
 import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
@@ -9,12 +8,10 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const { guildId, eventId } = params;
   await getMemberOr4xx(userId, guildId, "read");
 
-  const receipts = await prisma.receipt.findMany({
+  return await prisma.receipt.findMany({
     where: { eventId },
     include: { records: true },
   });
-
-  return data(receipts);
 }
 
 export function useReceipts() {

@@ -1,5 +1,6 @@
+import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
-import { data } from "react-router";
+import { isRouteErrorResponse } from "react-router";
 import {
   Outlet,
   useRouteLoaderData,
@@ -7,6 +8,7 @@ import {
 } from "react-router";
 import { useGuild } from "./$guildId";
 import type { Route } from "./+types/$guildId.$eventId";
+import { UnknownError } from "~/components/UnknownError";
 import type { Handle } from "~/lib/handle";
 import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
@@ -17,13 +19,10 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const { guildId, eventId } = params;
   await getMemberOr4xx(userId, guildId, "read");
 
-  const event = await prisma.event.findUnique({
+  return await prisma.event.findUniqueOrThrow({
     where: { id: eventId, guildId },
-    include: { displays: true },
+    include: { displays: true, _count: true },
   });
-
-  if (!event) throw data(null, 404);
-  return data(event);
 }
 
 export const handle: Handle<typeof loader> = {
@@ -55,6 +54,16 @@ export function useDisplays() {
 
 export default function Page() {
   return <Outlet />;
+}
+
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  if (isRouteErrorResponse(error) && error.status === 404) {
+    return (
+      <Typography variant="body1">イベントが見つかりませんでした</Typography>
+    );
+  }
+
+  return <UnknownError error={error} />;
 }
 
 export function shouldRevalidate({

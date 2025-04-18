@@ -12,7 +12,6 @@ import type {
 } from "react-router";
 import {
   isRouteErrorResponse,
-  data,
   Link,
   Links,
   Meta,
@@ -47,12 +46,9 @@ export const meta: MetaFunction = (_) => [];
 export async function loader({ request }: LoaderFunctionArgs) {
   const { userId } = await getSessionOr401(request);
 
-  const user = await prisma.user.findUnique({
+  return await prisma.user.findUniqueOrThrow({
     where: { id: userId },
   });
-  if (!user) throw data(null, 404);
-
-  return data(user);
 }
 
 export const handle: Handle<typeof loader> = {

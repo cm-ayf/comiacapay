@@ -17,12 +17,12 @@ export async function getMemberOr4xx(
   guildId: string,
   permission: "read" | "write" | "register",
 ) {
-  const member = await prisma.member.findUnique({
+  const member = await prisma.member.findUniqueOrThrow({
     where: {
       userId_guildId: { userId, guildId },
+      read: true,
     },
   });
-  if (!member?.read) throw data(null, 404);
   if (!member[permission]) throw data(null, 403);
   return member;
 }

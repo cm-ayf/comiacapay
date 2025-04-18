@@ -15,15 +15,19 @@ export async function action({ request, params }: Route.ActionArgs) {
           where: { id: eventId, guildId },
           select: { discounts: true },
         });
+        const discount = discounts.find((d) => d.id === discountId);
+        if (!discount) throw data(null, 404);
+
         await prisma.event.update({
           where: { id: eventId },
           data: {
             discounts: discounts.filter((d) => d.id !== discountId),
           },
         });
-        return discounts.find((d) => d.id === discountId);
+        return discount;
       });
-      return data(discount);
+      Object.assign(discount, { delete: true });
+      return discount;
     }
     default:
       throw data(null, 405);

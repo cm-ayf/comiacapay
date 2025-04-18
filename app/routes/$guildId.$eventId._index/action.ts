@@ -24,18 +24,23 @@ export async function action({ request, params }: Route.ActionArgs) {
       );
       if ("clone" in body) throw data(null, 400);
 
-      const event = await prisma.event.update({
+      return await prisma.event.update({
         where: { id: eventId, guildId },
         data: body,
+        include: { displays: true },
       });
-      return data(event);
     }
     case "DELETE": {
-      const event = await prisma.event.delete({
-        where: { id: eventId, guildId },
-      });
+      const [displays, event] = await prisma.$transaction([
+        prisma.display.deleteMany({
+          where: { eventId },
+        }),
+        prisma.event.delete({
+          where: { id: eventId, guildId },
+        }),
+      ]);
       Object.assign(event, { delete: true, __neverRevalidate: true });
-      return data(event);
+      return { ...event, displays };
     }
     default:
       throw data(null, 405);

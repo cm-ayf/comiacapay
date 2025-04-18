@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import type { APIRole } from "discord-api-types/v10";
 import { useId } from "react";
-import { data, redirect } from "react-router";
+import { redirect } from "react-router";
 import { Form, useLoaderData, useRouteError } from "react-router";
 import {
   RemixFormProvider,
@@ -45,7 +45,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const tokenResult = await exchangeBotCode(code);
   const guild = await upsertGuildAndMember(tokenResult);
-  return data({ guild, roles: tokenResult.guild.roles });
+  return { guild, roles: tokenResult.guild.roles };
 }
 
 export async function action({ request }: Route.ActionArgs) {
