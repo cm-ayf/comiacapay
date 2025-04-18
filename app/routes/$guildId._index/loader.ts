@@ -10,5 +10,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   return await prisma.event.findMany({
     where: { guildId },
     orderBy: { date: "desc" },
+    include: { _count: true },
   });
 }
