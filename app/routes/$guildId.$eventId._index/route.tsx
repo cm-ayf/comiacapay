@@ -23,6 +23,7 @@ import EventCard from "~/components/EventCard";
 import { LinkComponent } from "~/components/LinkComponent";
 import type { ClientEvent, ClientItem } from "~/lib/schema";
 
+export { loader } from "./loader";
 export { action } from "./action";
 
 export default function Page() {

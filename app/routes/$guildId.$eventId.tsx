@@ -20,7 +20,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
   return await prisma.event.findUniqueOrThrow({
     where: { id: eventId, guildId },
-    include: { displays: true, _count: true },
+    include: { displays: true },
   });
 }
 

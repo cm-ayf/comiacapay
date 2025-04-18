@@ -77,8 +77,8 @@ function Events() {
 }
 
 function Items() {
-  const guild = useGuild();
   const me = useMember();
+  const guild = useGuild();
   const [open, setOpen] = useState(false);
   const [item, setItem] = useState<ClientItem>();
 

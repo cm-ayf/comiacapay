@@ -1,5 +1,7 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { useParams } from "react-router";
+import { useMemo } from "react";
+import { useLoaderData, useParams } from "react-router";
+import type { loader } from "./loader";
 import ItemDialogContent from "~/components/ItemDialogContent";
 import {
   RemixFormDialog,
@@ -8,6 +10,7 @@ import {
 import { getISODateString } from "~/lib/date";
 import {
   UpdateItem,
+  type ClientEvent,
   type ClientItem,
   type UpdateItemInput,
 } from "~/lib/schema";
@@ -24,6 +27,8 @@ export default function MutateItemDialog({
   onClose,
 }: MutateItemDialogProps) {
   const { guildId } = useParams();
+  const events = useLoaderData<typeof loader>();
+  const usedItemIds = useMemo(() => new Set(flatItemIds(events)), [events]);
   if (!item) return null;
 
   return (
@@ -44,10 +49,18 @@ export default function MutateItemDialog({
         submitButton={{ label: "保存" }}
         deleteButton={{
           label: "削除",
-          disabled: item._count.displays > 0,
+          disabled: usedItemIds.has(item.id),
           disabledMessage: "お品書きがあるため削除できません",
         }}
       />
     </RemixFormDialog>
   );
+}
+
+function* flatItemIds(events: ClientEvent[]) {
+  for (const event of events) {
+    for (const { itemId } of event.displays) {
+      yield itemId;
+    }
+  }
 }

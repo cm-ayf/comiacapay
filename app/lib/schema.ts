@@ -58,7 +58,7 @@ export const UpdateGuild = object({
 export type UpdateGuildInput = InferInput<typeof UpdateGuild>;
 export type UpdateGuildOutput = InferOutput<typeof UpdateGuild>;
 
-export type ClientItem = SerializeFrom<Item & { _count: { displays: number } }>;
+export type ClientItem = SerializeFrom<Item>;
 export const CreateItem = object({
   name: pipe(string(), nonEmpty("商品名を入力してください")),
   picture: nullable(
@@ -78,9 +78,7 @@ export const UpdateItem = partial(CreateItem);
 export type UpdateItemInput = InferInput<typeof UpdateItem>;
 export type UpdateItemOutput = InferOutput<typeof UpdateItem>;
 
-export type ClientEvent = SerializeFrom<
-  Event & { _count: { receipts: number } }
->;
+export type ClientEvent = SerializeFrom<Event & { displays: Display[] }>;
 export const CreateEvent = object({
   name: pipe(string(), nonEmpty("イベント名を入力してください")),
   date: dateLike(),

@@ -1,6 +1,7 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { useNavigate, useParams } from "react-router";
+import { useLoaderData, useNavigate, useParams } from "react-router";
 import type { action } from "./action";
+import type { loader } from "./loader";
 import EventDialogContent from "~/components/EventDialogContent";
 import {
   RemixFormDialog,
@@ -27,6 +28,7 @@ export default function MutateEventDialog({
 }: MutateEventDialogProps) {
   const { guildId } = useParams();
   const navigate = useNavigate();
+  const { hasReceipt } = useLoaderData<typeof loader>();
 
   return (
     <RemixFormDialog<UpdateEventInput, typeof action>
@@ -44,7 +46,7 @@ export default function MutateEventDialog({
         submitButton={{ label: "保存" }}
         deleteButton={{
           label: "削除",
-          disabled: event._count.receipts > 0,
+          disabled: hasReceipt,
           disabledMessage: "購入履歴があるため削除できません",
         }}
       />

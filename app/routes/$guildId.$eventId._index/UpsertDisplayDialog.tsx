@@ -1,6 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { useParams } from "react-router";
-import { useEvent } from "../$guildId.$eventId";
+import { useLoaderData, useParams } from "react-router";
+import type { loader } from "./loader";
 import DisplayDialogContent from "~/components/DisplayDialogContent";
 import {
   RemixFormDialog,
@@ -29,7 +29,7 @@ export default function UpsertDisplayDialog({
   onClose,
 }: UpsertDisplayDialogProps) {
   const { guildId, eventId } = useParams();
-  const event = useEvent();
+  const { hasReceipt } = useLoaderData<typeof loader>();
   if (!display) return null;
 
   return (
@@ -60,7 +60,7 @@ export default function UpsertDisplayDialog({
             ? undefined
             : {
                 label: "削除",
-                disabled: event._count.receipts > 0,
+                disabled: hasReceipt,
                 disabledMessage: "購入履歴があるため削除できません",
               }
         }

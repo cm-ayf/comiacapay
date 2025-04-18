@@ -20,7 +20,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     include: {
       items: {
         orderBy: { issuedAt: "desc" },
-        include: { _count: true },
       },
     },
   });
