@@ -85,9 +85,6 @@
     "@remix-pwa/manifest": {
       "@remix-run/react": "npm:react-router"
     },
-    "@remix-pwa/worker-runtime": {
-      "@remix-run/router": "npm:react-router"
-    },
     "eslint-plugin-react-hooks": {
       "eslint": "^9"
     }
