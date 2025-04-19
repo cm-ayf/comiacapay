@@ -1,4 +1,9 @@
 import Add from "@mui/icons-material/Add";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
@@ -13,6 +18,7 @@ import type { loader } from "./loader";
 import EventCard from "~/components/EventCard";
 import GuildCard from "~/components/GuildCard";
 import ItemCard from "~/components/ItemCard";
+import { LinkComponent } from "~/components/LinkComponent";
 import type { ClientItem } from "~/lib/schema";
 
 export { loader } from "./loader";
@@ -31,11 +37,54 @@ export default function Page() {
 function GuildCardWrapper() {
   const guild = useGuild();
   const member = useMember();
+  const [open, setOpen] = useState(false);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row" }}>
-      <GuildCard guild={guild} member={member} />
-    </Box>
+    <>
+      <Box sx={{ display: "flex", flexDirection: "row" }}>
+        <GuildCard
+          guild={guild}
+          member={member}
+          onClick={member.admin ? () => setOpen(true) : undefined}
+        />
+      </Box>
+      {member.admin && (
+        <UpdateGuildDialog
+          open={open}
+          onClose={() => setOpen(false)}
+          guildId={guild.id}
+        />
+      )}
+    </>
+  );
+}
+
+function UpdateGuildDialog({
+  open,
+  onClose,
+  guildId,
+}: {
+  open: boolean;
+  onClose: () => void;
+  guildId: string;
+}) {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>サーバーの設定変更</DialogTitle>
+      <DialogContent>
+        <Typography variant="body1">
+          サーバーの設定変更には認証が必要です。
+        </Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          LinkComponent={LinkComponent}
+          href={`/setup/start?guild_id=${guildId}`}
+        >
+          認証
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
