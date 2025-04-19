@@ -3,6 +3,7 @@ import "@pigment-css/react/styles.css";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material-pigment-css/Container";
 import type { User } from "@prisma/client";
+import { installPWAGlobals } from "@remix-pwa/sw/install-pwa-globals";
 import { Fragment, type PropsWithChildren } from "react";
 import type { MetaFunction } from "react-router";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
@@ -42,6 +43,7 @@ export const handle: Handle<typeof loader> = {
 };
 
 export function Layout({ children }: PropsWithChildren) {
+  installPWAGlobals();
   return (
     <html lang="ja">
       <head>

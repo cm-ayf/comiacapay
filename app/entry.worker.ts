@@ -1,13 +1,21 @@
-/// <reference lib="WebWorker" types="serviceworker" />
-import { CacheFirst, NetworkFirst } from "@remix-pwa/sw/cache";
+/// <reference lib="WebWorker" types="serviceworker" types="@remix-pwa/worker-runtime" />
+import { EnhancedCache } from "@remix-pwa/sw/enhanced-cache";
 import type { DefaultFetchHandlerArgs } from "@remix-pwa/sw/types";
-import "@remix-pwa/worker-runtime";
 
-const registerDataCache = new NetworkFirst("registerDataCache", {
-  networkTimeoutInSeconds: 5,
+declare const self: ServiceWorkerGlobalScope;
+
+const registerDataCache = new EnhancedCache("registerDataCache", {
+  strategy: "NetworkFirst",
+  strategyOptions: { networkTimeoutInSeconds: 5 },
 });
-const assetCache = new CacheFirst("assetCache");
-const manifestCache = new CacheFirst("manifestCache");
+const assetCache = new EnhancedCache("assetCache", {
+  strategy: "CacheFirst",
+  strategyOptions: {},
+});
+const manifestCache = new EnhancedCache("manifestCache", {
+  strategy: "NetworkFirst",
+  strategyOptions: { networkTimeoutInSeconds: 5 },
+});
 
 export async function defaultFetchHandler({
   request,
@@ -37,7 +45,7 @@ export async function defaultFetchHandler({
 self.addEventListener<"install">("install", (event) => {
   console.log("Service worker installed");
 
-  event.waitUntil(self.skipWaiting());
+  event.waitUntil(assetCache.preCacheUrls(self.__workerManifest.assets));
 });
 
 self.addEventListener<"activate">("activate", (event) => {

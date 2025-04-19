@@ -1,4 +1,11 @@
-import type { Display, Event, Item, Receipt, Record } from "@prisma/client";
+import type {
+  Display,
+  Event,
+  Guild,
+  Item,
+  Receipt,
+  Record,
+} from "@prisma/client";
 import type { useLoaderData } from "react-router";
 import {
   array,
@@ -50,6 +57,7 @@ export function uint() {
   );
 }
 
+export type ClientGuild = SerializeFrom<Guild>;
 export const UpdateGuild = object({
   readRoleId: nullable(snowflake()),
   writeRoleId: nullable(snowflake()),

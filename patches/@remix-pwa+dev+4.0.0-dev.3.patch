@@ -1,0 +1,13 @@
+diff --git a/node_modules/@remix-pwa/dev/dist/src/plugins/virtual-sw.js b/node_modules/@remix-pwa/dev/dist/src/plugins/virtual-sw.js
+index 184a8ca..8081b57 100644
+--- a/node_modules/@remix-pwa/dev/dist/src/plugins/virtual-sw.js
++++ b/node_modules/@remix-pwa/dev/dist/src/plugins/virtual-sw.js
+@@ -92,7 +92,7 @@ export function VirtualSWPlugins(ctx) {
+                 if (id === emptyFileName ||
+                     id.match(/@remix-run\/(deno|cloudflare|node|react|server-runtime)(\/.*)/g) ||
+                     id.match(/react(-dom)?(\/.*)?$/g) ||
+-                    id.match(/react-router(-dom|-native)?(\/.*)?$/g) ||
++                    id.match(/react-router(-dom|-native)(\/.*)?$/g) ||
+                     id.match(/\.server/g) ||
+                     id.match(/web-push?$/g)) {
+                     return 'module.exports = {};';

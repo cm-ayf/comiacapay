@@ -1,0 +1,12 @@
+diff --git a/node_modules/@remix-pwa/sw/package.json b/node_modules/@remix-pwa/sw/package.json
+index 70db7de..678d80c 100644
+--- a/node_modules/@remix-pwa/sw/package.json
++++ b/node_modules/@remix-pwa/sw/package.json
+@@ -45,6 +45,7 @@
+       "types": "./dist/src/utils/installPWAGlobals.d.ts"
+     },
+     "./types": {
++      "default": "./dist/src/types.js",
+       "types": "./dist/src/types.d.ts"
+     }
+   },
