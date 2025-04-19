@@ -15,7 +15,7 @@ export async function getSessionOr401(request: Request) {
 export async function getMemberOr4xx(
   userId: string,
   guildId: string,
-  permission: "read" | "write" | "register",
+  permission: "read" | "write" | "register" | "admin",
 ) {
   const member = await prisma.member.findUniqueOrThrow({
     where: {

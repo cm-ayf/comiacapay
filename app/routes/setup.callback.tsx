@@ -9,26 +9,25 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import type { APIRole } from "discord-api-types/v10";
 import { useId } from "react";
-import { redirect } from "react-router";
-import { Form, useLoaderData, useRouteError } from "react-router";
+import {
+  redirect,
+  useFetcher,
+  useLoaderData,
+  useNavigate,
+  type SubmitOptions,
+} from "react-router";
 import {
   RemixFormProvider,
   useRemixForm,
   useRemixFormContext,
 } from "remix-hook-form";
-import type { Route } from "./+types/setup.roles";
-import {
-  getMemberOr4xx,
-  getSessionOr401,
-  getValidatedBodyOr400,
-} from "~/lib/middleware.server";
+import type { action } from "./$guildId";
+import type { Route } from "./+types/setup.callback";
+import { useAlert } from "~/components/Alert";
+import createErrorBoundary from "~/components/createErrorBoundary";
+import { useOnSubmitComplete } from "~/lib/fetcher";
 import { exchangeBotCode } from "~/lib/oauth2/setup.server";
-import { prisma } from "~/lib/prisma.server";
-import {
-  UpdateGuild,
-  type UpdateGuildInput,
-  type UpdateGuildOutput,
-} from "~/lib/schema";
+import { UpdateGuild, type UpdateGuildInput } from "~/lib/schema";
 import { getSession } from "~/lib/session.server";
 import { upsertGuildAndMember } from "~/lib/sync.server";
 
@@ -48,26 +47,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   return { guild, roles: tokenResult.guild.roles };
 }
 
-export async function action({ request }: Route.ActionArgs) {
-  const url = new URL(request.url);
-  const { userId } = await getSessionOr401(request);
-  const guildId = url.searchParams.get("guild_id");
-  if (!guildId) throw redirect("/");
-  await getMemberOr4xx(userId, guildId, "write");
-
-  const data = await getValidatedBodyOr400<UpdateGuildOutput>(
-    request,
-    resolver,
-  );
-
-  await prisma.guild.update({
-    where: { id: guildId },
-    data,
-  });
-
-  return redirect(`/${guildId}`);
-}
-
 export default function Page() {
   const { guild, roles } = useLoaderData<typeof loader>();
   const { name, readRoleId, writeRoleId, registerRoleId } = guild;
@@ -80,6 +59,10 @@ export default function Page() {
       <RolesSelect
         roles={roles}
         defaultValues={{ readRoleId, writeRoleId, registerRoleId }}
+        submitConfig={{
+          method: "PATCH",
+          action: `/${guild.id}`,
+        }}
       />
     </>
   );
@@ -88,20 +71,29 @@ export default function Page() {
 function RolesSelect({
   roles,
   defaultValues,
+  submitConfig,
 }: {
   roles: APIRole[];
   defaultValues: UpdateGuildInput;
+  submitConfig: SubmitOptions;
 }) {
+  const fetcher = useFetcher<typeof action>();
   const {
     handleSubmit,
     reset: _,
     ...methods
-  } = useRemixForm({ defaultValues, resolver });
+  } = useRemixForm({ defaultValues, resolver, submitConfig, fetcher });
+  const { success } = useAlert();
+  const navigate = useNavigate();
+  useOnSubmitComplete(fetcher, (data) => {
+    if (!data) return;
+    success("設定を保存しました");
+    navigate(`/${data.id}`);
+  });
 
   return (
     <Box
-      component={Form}
-      method="post"
+      component={fetcher.Form}
       onSubmit={handleSubmit}
       sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}
     >
@@ -178,14 +170,7 @@ function RoleSubmitButton({ label }: { label: string }) {
   );
 }
 
-export function ErrorBoundary() {
-  const error = useRouteError();
-  return (
-    <pre>
-      <code>{JSON.stringify(error, null, 2)}</code>
-    </pre>
-  );
-}
+export const ErrorBoundary = createErrorBoundary();
 
 export function shouldRevalidate() {
   // code can only be used once

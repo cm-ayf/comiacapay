@@ -1,3 +1,4 @@
+import { valibotResolver } from "@hookform/resolvers/valibot";
 import Typography from "@mui/material/Typography";
 import {
   Outlet,
@@ -7,8 +8,13 @@ import {
 import type { Route } from "./+types/$guildId";
 import createErrorBoundary from "~/components/createErrorBoundary";
 import type { Handle } from "~/lib/handle";
-import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
+import {
+  getMemberOr4xx,
+  getSessionOr401,
+  getValidatedBodyOr400,
+} from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
+import { UpdateGuild, type UpdateGuildOutput } from "~/lib/schema";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const { userId } = await getSessionOr401(request);
@@ -25,6 +31,24 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   });
 
   return { ...guild, members: [member] as const };
+}
+
+const resolver = valibotResolver(UpdateGuild);
+
+export async function action({ request, params }: Route.ActionArgs) {
+  const { guildId } = params;
+  const { userId } = await getSessionOr401(request);
+  await getMemberOr4xx(userId, guildId, "admin");
+
+  const data = await getValidatedBodyOr400<UpdateGuildOutput>(
+    request,
+    resolver,
+  );
+
+  return await prisma.guild.update({
+    where: { id: guildId },
+    data,
+  });
 }
 
 export const handle: Handle<typeof loader> = {

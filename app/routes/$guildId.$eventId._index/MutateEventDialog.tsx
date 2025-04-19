@@ -1,6 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useLoaderData, useNavigate, useParams } from "react-router";
-import type { action } from "./action";
+import type { action } from "../$guildId.$eventId";
 import type { loader } from "./loader";
 import { useAlert } from "~/components/Alert";
 import EventDialogContent from "~/components/EventDialogContent";
@@ -38,7 +38,10 @@ export default function MutateEventDialog({
       title="イベントを編集"
       resolver={resolver}
       defaultValues={{ name: event.name, date: getISODateString(event.date) }}
-      submitConfig={{ method: "PATCH" }}
+      submitConfig={{
+        method: "PATCH",
+        action: `/${guildId}/${event.id}`,
+      }}
       onSubmitComplete={(data) => {
         if (!data) return;
         if ("delete" in data) {
