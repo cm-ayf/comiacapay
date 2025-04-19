@@ -26,6 +26,9 @@ export default defineConfig({
       "@mui/x-internals": "@mui/x-internals/esm",
     },
   },
+  build: {
+    target: "es2022",
+  },
   ssr: {
     noExternal: [/^@mui\//, "@pigment-css/react", "@remix-run/react"],
   },
