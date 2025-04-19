@@ -10,6 +10,7 @@ function check<T extends string>(
 
 check(process.env, [
   "DISCORD_OAUTH2_ORIGIN",
+  "DISCORD_OAUTH2_TRAMPOLINE_KEY",
   "DISCORD_CLIENT_ID",
   "DISCORD_CLIENT_SECRET",
 ]);

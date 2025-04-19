@@ -6,10 +6,10 @@ import { OAuth2Error } from "~/lib/oauth2/error";
 
 export async function loader({ request }: Route.LoaderArgs) {
   try {
-    const { searchParams } = new URL(request.url);
+    const stateUrl = new URL(request.url);
     const h = crypto.getRandomValues(Buffer.alloc(32)).toString("base64url");
-    searchParams.set("h", h);
-    const state = searchParams.toString();
+    stateUrl.searchParams.set("h", h);
+    const state = stateUrl.toString();
 
     const url = authorizeUrl(state);
     const setCookie = await stateCookie.serialize(state);
