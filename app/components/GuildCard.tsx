@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import type { Guild, Member } from "@prisma/client";
 import ClickableCard, { type ClickableCardProps } from "./ClickableCard";
 
-const PERMISSIONS = ["register", "write"] as const;
+const PERMISSIONS = ["register", "write", "admin"] as const;
 
 export default function GuildCard({
   guild,
