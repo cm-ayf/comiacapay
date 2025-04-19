@@ -2,7 +2,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { useLoaderData, useNavigate } from "react-router";
 import type { Route } from "./+types/_index";
 import EventCard from "~/components/EventCard";
@@ -32,6 +32,13 @@ export async function loader({ request }: Route.LoaderArgs) {
   return { members, recentEvents };
 }
 
+export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
+  const response = await serverLoader();
+  prefetchRecentEvents(response.recentEvents).catch(() => {});
+  return response;
+}
+clientLoader.hydrate = true as const;
+
 async function prefetchRecentEvents(events: { id: string; guildId: string }[]) {
   await Promise.all(
     events.flatMap((event: { id: string; guildId: string }) => [
@@ -52,18 +59,11 @@ async function prefetchRecentEvents(events: { id: string; guildId: string }[]) {
 }
 
 export default function Page() {
-  const { members, recentEvents } = useLoaderData<typeof loader>();
+  const { members, recentEvents } = useLoaderData<typeof clientLoader>();
   const indexMemberByGuildId = useMemo(
     () => new Map(members.map((m) => [m.guildId, m])),
     [members],
   );
-
-  const didPrefetchRecentEventsRef = useRef(false);
-  useEffect(() => {
-    if (!didPrefetchRecentEventsRef.current)
-      prefetchRecentEvents(recentEvents).catch(() => {});
-    didPrefetchRecentEventsRef.current = true;
-  }, [recentEvents]);
 
   const navigate = useNavigate();
 
