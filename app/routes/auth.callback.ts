@@ -39,6 +39,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       headers: {
         "Set-Cookie": await commitSession(session, {
           maxAge: tokenResult.expires_in,
+          secure: request.url.startsWith("https://"),
         }),
       },
     });

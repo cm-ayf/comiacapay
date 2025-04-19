@@ -12,7 +12,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     const state = stateUrl.toString();
 
     const url = authorizeUrl(state);
-    const setCookie = await stateCookie.serialize(state);
+    const setCookie = await stateCookie.serialize(state, {
+      secure: request.url.startsWith("https://"),
+    });
     return redirect(url.toString(), {
       headers: { "Set-Cookie": setCookie },
     });
