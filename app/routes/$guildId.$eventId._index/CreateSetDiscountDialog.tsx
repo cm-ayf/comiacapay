@@ -1,5 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useParams } from "react-router";
+import { useAlert } from "~/components/Alert";
 import {
   RemixFormDialog,
   RemixFormDialogActions,
@@ -24,12 +25,14 @@ export default function CreateSetDiscountDialog({
   ...props
 }: CreateSetDiscountDialogProps) {
   const { guildId, eventId } = useParams();
+  const { success } = useAlert();
   return (
     <RemixFormDialog<CreateSetDiscountInput>
       {...props}
       title="セット割引を追加"
       resolver={resolver}
       defaultValues={{ __typename: "SetDiscount", itemIds: [], amount: 0 }}
+      onSubmitComplete={() => success("セット割引を追加しました")}
       submitConfig={{
         method: "POST",
         action: `/${guildId}/${eventId}/discounts`,

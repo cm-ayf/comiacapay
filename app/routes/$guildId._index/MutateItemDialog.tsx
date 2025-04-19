@@ -1,7 +1,9 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useMemo } from "react";
 import { useLoaderData, useParams } from "react-router";
+import type { action } from "../$guildId.items.$itemId";
 import type { loader } from "./loader";
+import { useAlert } from "~/components/Alert";
 import ItemDialogContent from "~/components/ItemDialogContent";
 import {
   RemixFormDialog,
@@ -29,10 +31,11 @@ export default function MutateItemDialog({
   const { guildId } = useParams();
   const events = useLoaderData<typeof loader>();
   const usedItemIds = useMemo(() => new Set(flatItemIds(events)), [events]);
+  const { success } = useAlert();
   if (!item) return null;
 
   return (
-    <RemixFormDialog<UpdateItemInput>
+    <RemixFormDialog<UpdateItemInput, typeof action>
       open
       onClose={onClose}
       title="商品を追加"
@@ -43,6 +46,14 @@ export default function MutateItemDialog({
         issuedAt: getISODateString(item.issuedAt),
       }}
       submitConfig={{ method: "PATCH", action: `/${guildId}/items/${item.id}` }}
+      onSubmitComplete={(data) => {
+        if (!data) return;
+        if ("delete" in data) {
+          success("商品を削除しました");
+        } else {
+          success("商品を更新しました");
+        }
+      }}
     >
       <ItemDialogContent />
       <RemixFormDialogActions

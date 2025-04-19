@@ -2,6 +2,7 @@ import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useLoaderData, useNavigate, useParams } from "react-router";
 import type { action } from "./action";
 import type { loader } from "./loader";
+import { useAlert } from "~/components/Alert";
 import EventDialogContent from "~/components/EventDialogContent";
 import {
   RemixFormDialog,
@@ -27,6 +28,7 @@ export default function MutateEventDialog({
   ...props
 }: MutateEventDialogProps) {
   const { guildId } = useParams();
+  const { success } = useAlert();
   const navigate = useNavigate();
   const { hasReceipt } = useLoaderData<typeof loader>();
 
@@ -37,9 +39,15 @@ export default function MutateEventDialog({
       resolver={resolver}
       defaultValues={{ name: event.name, date: getISODateString(event.date) }}
       submitConfig={{ method: "PATCH" }}
-      onSubmitComplete={(data) =>
-        data && "delete" in data && navigate(`/${guildId}`)
-      }
+      onSubmitComplete={(data) => {
+        if (!data) return;
+        if ("delete" in data) {
+          success("イベントを削除しました");
+          navigate(`/${guildId}`);
+        } else {
+          success("イベントを更新しました");
+        }
+      }}
     >
       <EventDialogContent />
       <RemixFormDialogActions
