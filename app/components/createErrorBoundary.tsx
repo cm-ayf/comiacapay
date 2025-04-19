@@ -35,6 +35,8 @@ function UnauthorizedError() {
 }
 
 function UnknownError({ error }: { error: unknown }) {
+  const s =
+    error instanceof Error ? error.stack : JSON.stringify(error, null, 2);
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMore />}>
@@ -42,7 +44,7 @@ function UnknownError({ error }: { error: unknown }) {
       </AccordionSummary>
       <AccordionDetails>
         <pre>
-          <code>{JSON.stringify(error, null, 2)}</code>
+          <code>{s}</code>
         </pre>
       </AccordionDetails>
     </Accordion>
