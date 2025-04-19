@@ -102,7 +102,12 @@ export function RemixFormDialogActions({
 
   return (
     <DialogActions>
-      <Button type="submit" color="primary" loading={formState.isLoading}>
+      <Button
+        type="submit"
+        color="primary"
+        disabled={!formState.isValid}
+        loading={formState.isLoading}
+      >
         {submitButton.label}
       </Button>
       {deleteButton && (

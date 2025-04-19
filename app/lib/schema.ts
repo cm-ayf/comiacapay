@@ -95,7 +95,7 @@ export type UpdateEventOutput = InferOutput<typeof UpdateEvent>;
 
 export const CreateSetDiscount = object({
   __typename: literal("SetDiscount"),
-  itemIds: array(snowflake()),
+  itemIds: pipe(array(snowflake()), nonEmpty()),
   amount: uint(),
 });
 export type CreateSetDiscountInput = InferInput<typeof CreateSetDiscount>;
