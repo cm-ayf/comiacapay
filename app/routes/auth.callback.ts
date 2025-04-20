@@ -44,7 +44,6 @@ export async function loader({ request }: Route.LoaderArgs) {
       },
     });
   } catch (e) {
-    console.error(e);
     const error = OAuth2Error.fromError(e);
     return redirect(error.toRedirectLocation());
   }
