@@ -78,7 +78,11 @@ function BreadcrumbsNavigation() {
 function NavigationLoading() {
   const navigation = useNavigation();
 
-  return navigation.state !== "idle" && <CircularProgress />;
+  return (
+    navigation.state !== "idle" && (
+      <CircularProgress color="secondary" size={32} />
+    )
+  );
 }
 
 function UserButton({ user, onClick }: { user: User; onClick: () => void }) {
