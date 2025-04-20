@@ -5,6 +5,7 @@ import Avatar from "@mui/material/Avatar";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Button from "@mui/material/Button";
 import ButtonBase from "@mui/material/ButtonBase";
+import CircularProgress from "@mui/material/CircularProgress";
 import Menu, { type MenuProps } from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
@@ -13,6 +14,7 @@ import Box from "@mui/material-pigment-css/Box";
 import type { User } from "@prisma/client";
 import { useNetworkConnectivity } from "@remix-pwa/client";
 import { type PropsWithChildren, useRef, useState } from "react";
+import { useNavigation } from "react-router";
 import { useAlert } from "./Alert";
 import { LinkComponent, NoDiscoverLinkComponent } from "./LinkComponent";
 import { useBreadcrumbs } from "~/lib/handle";
@@ -34,6 +36,7 @@ export default function Navigation({ user }: NavigationProps) {
       <Toolbar variant="dense">
         <BreadcrumbsNavigation />
         <Box sx={{ flex: 1 }} />
+        <NavigationLoading />
         {user ? (
           <UserButton user={user} onClick={() => setOpen(true)} />
         ) : (
@@ -70,6 +73,12 @@ function BreadcrumbsNavigation() {
       )}
     </Breadcrumbs>
   );
+}
+
+function NavigationLoading() {
+  const navigation = useNavigation();
+
+  return navigation.state !== "idle" && <CircularProgress />;
 }
 
 function UserButton({ user, onClick }: { user: User; onClick: () => void }) {
