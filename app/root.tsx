@@ -3,6 +3,7 @@ import "@pigment-css/react/styles.css";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material-pigment-css/Container";
 import type { User } from "@prisma/client";
+import { ManifestLink } from "@remix-pwa/manifest";
 import { installPWAGlobals } from "@remix-pwa/sw/install-pwa-globals";
 import { Fragment, type PropsWithChildren } from "react";
 import type { MetaFunction } from "react-router";
@@ -50,6 +51,7 @@ export function Layout({ children }: PropsWithChildren) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="emotion-insertion-point" content="" />
+        <ManifestLink href="/manifest.webmanifest" />
         <Meta />
         <Links />
       </head>
@@ -66,6 +68,7 @@ function AppLayout({
   children,
   user,
 }: PropsWithChildren<{ user: User | undefined }>) {
+  installPWAGlobals();
   const PageContextProvider = useHandleValue("PageContextProvider", Fragment);
   const TopComponent = useHandleValue("TopComponent", Fragment);
   const ButtomComponent = useHandleValue("ButtomComponent", Fragment);
