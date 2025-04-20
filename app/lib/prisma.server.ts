@@ -34,6 +34,7 @@ function mapKnownError(
     case "P2014": // would violate required relation
       return data({ code: "CONFLICT", model, meta: error.meta }, 409);
     default:
+      console.error(error);
       return data({ code: "INTERNAL_SERVER_ERROR" }, 500);
   }
 }
@@ -46,6 +47,7 @@ const mapKnownErrorExtension = Prisma.defineExtension({
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           throw mapKnownError(error, model);
         } else {
+          console.error(error);
           throw data({ code: "INTERNAL_SERVER_ERROR" }, 500);
         }
       });
