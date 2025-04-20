@@ -15,9 +15,10 @@ export function CreateReceiptButton() {
 
   const submit = useCallback(() => {
     const receipt = getCreateReceiptInput();
-    fetcher.submit([receipt], {
+    fetcher.submit(receipt, {
       method: "POST",
-      action: `/${guildId}/${eventId}/receipts`,
+      // this button is rendered outside of the route context
+      action: `/${guildId}/${eventId}/register`,
       encType: "application/json",
     });
   }, [fetcher, guildId, eventId]);

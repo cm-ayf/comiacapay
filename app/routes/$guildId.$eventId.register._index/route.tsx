@@ -8,6 +8,9 @@ import { RegisterDisplayPanel } from "./RegisterDisplayPanel";
 import type { Handle } from "~/lib/handle";
 import { useTotal } from "~/lib/register";
 
+export { action } from "./action";
+export { clientAction } from "./clientAction";
+
 export default function Register() {
   const { displays } = useDisplays();
   return (

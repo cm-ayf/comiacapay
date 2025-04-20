@@ -5,11 +5,11 @@ import TableRow from "@mui/material/TableRow";
 import { useMemo } from "react";
 import { useLoaderData } from "react-router";
 import { useDisplays } from "../$guildId.$eventId";
-import type { loader } from "./loader";
+import type { clientLoader } from "./clientLoader";
 
 export default function Summary() {
   const { displays } = useDisplays();
-  const receipts = useLoaderData<typeof loader>();
+  const { receipts } = useLoaderData<typeof clientLoader>();
 
   const total = useMemo(() => {
     return receipts.reduce((total, receipt) => total + receipt.total, 0);

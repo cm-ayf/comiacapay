@@ -1,17 +1,18 @@
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
-import type { MouseEventHandler, PropsWithChildren } from "react";
-import { LinkComponent } from "./LinkComponent";
+import type { ElementType, MouseEventHandler, PropsWithChildren } from "react";
+import { LinkComponent as DefaultLinkComponent } from "./LinkComponent";
 
 type OnClick = MouseEventHandler<HTMLButtonElement> | undefined;
 
 export type ClickableCardProps =
-  | { href: string; onClick?: never }
-  | { href?: never; onClick?: OnClick };
+  | { href: string; LinkComponent?: ElementType; onClick?: never }
+  | { href?: never; LinkComponent?: never; onClick?: OnClick };
 
 export default function ClickableCard({
   children,
   href,
+  LinkComponent = DefaultLinkComponent,
   onClick,
 }: PropsWithChildren<ClickableCardProps>) {
   return (

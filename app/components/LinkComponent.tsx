@@ -15,3 +15,25 @@ export const LinkComponent = forwardRef<
     </Link>
   );
 });
+
+export const PrefetchLinkComponent = forwardRef<
+  HTMLAnchorElement,
+  PropsWithChildren<LinkComponentProps>
+>(function PrefetchLinkComponent({ children, href, ...props }, ref) {
+  return (
+    <Link ref={ref} to={href} prefetch="render" {...props}>
+      {children}
+    </Link>
+  );
+});
+
+export const NoDiscoverLinkComponent = forwardRef<
+  HTMLAnchorElement,
+  PropsWithChildren<LinkComponentProps>
+>(function NoDiscoverLinkComponent({ children, href, ...props }, ref) {
+  return (
+    <Link ref={ref} to={href} discover="none" {...props}>
+      {children}
+    </Link>
+  );
+});

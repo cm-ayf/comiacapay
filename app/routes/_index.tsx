@@ -3,11 +3,14 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
 import { useMemo } from "react";
-import { useLoaderData, useNavigate } from "react-router";
+import { Form, useLoaderData } from "react-router";
 import type { Route } from "./+types/_index";
 import EventCard from "~/components/EventCard";
 import GuildCard from "~/components/GuildCard";
-import { LinkComponent } from "~/components/LinkComponent";
+import {
+  LinkComponent,
+  PrefetchLinkComponent,
+} from "~/components/LinkComponent";
 import { getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
 
@@ -47,13 +50,6 @@ async function prefetchRecentEvents(events: { id: string; guildId: string }[]) {
           _routes: "routes/$guildId,routes/$guildId.$eventId",
         })}`,
       ),
-      fetch(
-        `/__manifest?${new URLSearchParams({
-          p: `/${event.guildId}/${event.id}/register`,
-          // @ts-expect-error -- undocumented
-          version: window.__reactRouterManifest?.version,
-        })}`,
-      ),
     ]),
   );
 }
@@ -64,8 +60,6 @@ export default function Page() {
     () => new Map(members.map((m) => [m.guildId, m])),
     [members],
   );
-
-  const navigate = useNavigate();
 
   return (
     <>
@@ -97,9 +91,13 @@ export default function Page() {
               <EventCard
                 guild={member.guild}
                 event={event}
-                onClick={() =>
-                  navigate(`/${member.guildId}/${event.id}/register`)
-                }
+                LinkComponent={PrefetchLinkComponent}
+                href={`/${member.guildId}/${event.id}/register`}
+              />
+              {/* for fog-of-war discovery */}
+              <Form
+                aria-hidden
+                action={`/${member.guildId}/${event.id}/receipts?first=true`}
               />
             </Grid>
           );

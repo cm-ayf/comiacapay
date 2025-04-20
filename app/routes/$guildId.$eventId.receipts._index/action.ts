@@ -24,7 +24,7 @@ export async function action({ request, params }: Route.ActionArgs) {
         resolver,
       );
 
-      const [receipt, records] = await prisma.$transaction([
+      const [receipt] = await prisma.$transaction([
         prisma.receipt.createMany({
           data: body.map(({ id, total }) => ({ id, eventId, userId, total })),
         }),
@@ -33,8 +33,7 @@ export async function action({ request, params }: Route.ActionArgs) {
         }),
       ]);
 
-      Object.assign(receipt, { __neverRevalidate: true });
-      return data({ ...receipt, records }, 201);
+      return data(receipt, 201);
     }
     case "DELETE": {
       const url = new URL(request.url);

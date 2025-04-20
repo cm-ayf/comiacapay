@@ -14,7 +14,7 @@ import type { User } from "@prisma/client";
 import { useNetworkConnectivity } from "@remix-pwa/client";
 import { type PropsWithChildren, useRef, useState } from "react";
 import { useAlert } from "./Alert";
-import { LinkComponent } from "./LinkComponent";
+import { LinkComponent, NoDiscoverLinkComponent } from "./LinkComponent";
 import { useBreadcrumbs } from "~/lib/handle";
 import { useLocationType, useUrlWithRedirectTo } from "~/lib/location";
 
@@ -59,7 +59,11 @@ function BreadcrumbsNavigation() {
         index === length - 1 ? (
           <Typography key={href}>{label}</Typography>
         ) : (
-          <ButtonBase key={href} LinkComponent={LinkComponent} href={href}>
+          <ButtonBase
+            key={href}
+            LinkComponent={NoDiscoverLinkComponent}
+            href={href}
+          >
             {label}
           </ButtonBase>
         ),

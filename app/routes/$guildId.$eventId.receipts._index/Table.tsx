@@ -1,15 +1,10 @@
-import {
-  DataGrid,
-  gridDateTimeFormatter,
-  GridToolbar,
-  type GridColDef,
-} from "@mui/x-data-grid";
+import { DataGrid, GridToolbar, type GridColDef } from "@mui/x-data-grid";
 import { useMemo } from "react";
 import { useLoaderData, useRevalidator } from "react-router";
 import { useMember } from "../$guildId";
 import { useDisplays } from "../$guildId.$eventId";
-import type { loader } from "./loader";
-import type { ClientReceipt } from "~/lib/schema";
+import type { clientLoader } from "./clientLoader";
+import type { IDBReceipt } from "~/lib/idb.client";
 import { Snowflake } from "~/lib/snowflake";
 
 export default function Table({
@@ -23,23 +18,36 @@ export default function Table({
   const columns = useMemo<GridColDef[]>(
     () => [
       {
-        field: "datetime",
+        field: "timestamp",
         headerName: "時刻",
+        type: "dateTime",
         width: 160,
-        valueGetter: gridDateTimeFormatter,
       },
-      { field: "total", headerName: "合計", width: 90, align: "right" },
-      // { field: "pushed", headerName: "同期", width: 90, align: "center" },
+      {
+        field: "total",
+        headerName: "合計",
+        type: "number",
+        width: 90,
+        align: "right",
+      },
+      {
+        field: "pushed",
+        headerName: "同期",
+        type: "boolean",
+        width: 90,
+        align: "center",
+      },
       ...displays.map<GridColDef>(({ item }) => ({
         field: item.id,
         headerName: item.name,
         width: 160,
+        type: "number",
         align: "right",
       })),
     ],
     [displays],
   );
-  const receipts = useLoaderData<typeof loader>();
+  const { receipts } = useLoaderData<typeof clientLoader>();
   const me = useMember();
   const revalidator = useRevalidator();
 
@@ -60,16 +68,16 @@ export default function Table({
   );
 }
 
-function toRow({ records, ...rest }: ClientReceipt): {
+function toRow({ records, ...rest }: IDBReceipt): {
   id: string;
-  datetime: Date;
+  timestamp: Date;
   total: number;
   [itemId: `${bigint}`]: number;
 } {
   const snowflake = Snowflake.parse(rest.id);
   return {
     ...rest,
-    datetime: new Date(snowflake ? snowflake.timestamp : 0),
+    timestamp: new Date(snowflake ? snowflake.timestamp : 0),
     ...Object.fromEntries(records.map(({ itemId, count }) => [itemId, count])),
   };
 }
