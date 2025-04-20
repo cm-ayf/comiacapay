@@ -11,6 +11,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     where: {
       event: { id: eventId, guildId },
     },
+    orderBy: { id: "desc" },
     include: { records: true },
   });
 

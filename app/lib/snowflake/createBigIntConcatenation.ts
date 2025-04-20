@@ -9,14 +9,15 @@ function mask(bits: bigint) {
 export default function createBigIntConcatenation<
   Definition extends readonly bigint[] | [],
 >(definition: Definition) {
+  const reverseDefinition = definition.slice().reverse() as Definition;
   return {
     split(source: bigint) {
-      const parts = [] as Parts<Definition>;
-      definition.forEach((bits, index: keyof Definition) => {
+      const parts = [] as { -readonly [I in keyof Definition]: number };
+      reverseDefinition.forEach((bits, index: keyof Definition) => {
         parts[index] = Number(source & mask(bits));
         source >>= bits;
       });
-      return parts;
+      return parts.reverse() as Parts<Definition>;
     },
     build(...parts: Parts<Definition>) {
       let source = 0n;

@@ -27,9 +27,11 @@ export async function action({ request, params }: Route.ActionArgs) {
       const [receipt] = await prisma.$transaction([
         prisma.receipt.createMany({
           data: body.map(({ id, total }) => ({ id, eventId, userId, total })),
+          skipDuplicates: true,
         }),
         prisma.record.createMany({
           data: Array.from(flatRecords(eventId, body)),
+          skipDuplicates: true,
         }),
       ]);
 

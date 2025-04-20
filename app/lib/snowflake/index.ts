@@ -1,8 +1,8 @@
 import createBigIntConcatenation from "./createBigIntConcatenation";
 
 const { split, build } = createBigIntConcatenation<
-  [increment: 12n, pid: 10n, timestamp: 42n]
->([12n, 10n, 42n]);
+  [timestamp: 42n, pid: 10n, increment: 12n]
+>([42n, 10n, 12n]);
 
 export class Snowflake {
   private static epoch = 1420070400000;
@@ -15,7 +15,7 @@ export class Snowflake {
   }
 
   static generate() {
-    return new this(this.increment++, this.pid, Date.now() - this.epoch);
+    return new this(Date.now() - this.epoch, this.pid, this.increment++);
   }
 
   static parse(snowflake: string | null | undefined) {
@@ -44,11 +44,11 @@ export class Snowflake {
     switch (args.length) {
       case 1:
         this.source = args[0];
-        [this.increment, this.pid, this.#timestampOffset] = split(args[0]);
+        [this.#timestampOffset, this.pid, this.increment] = split(args[0]);
         break;
       case 3:
         this.source = build(...args);
-        [this.increment, this.pid, this.#timestampOffset] = args;
+        [this.#timestampOffset, this.pid, this.increment] = args;
         break;
     }
 

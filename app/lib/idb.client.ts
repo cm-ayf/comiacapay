@@ -51,7 +51,9 @@ function init() {
 export async function getReceipts(eventId: string): Promise<IDBReceipt[]> {
   const db = await init();
   const receipts = await db.getAllFromIndex("Receipt", "eventId", eventId);
-  return receipts.filter((receipt) => !receipt.deleted);
+  return receipts
+    .filter((receipt) => !receipt.deleted)
+    .sort((a, b) => a.id.localeCompare(b.id));
 }
 
 export async function addReceipt(
