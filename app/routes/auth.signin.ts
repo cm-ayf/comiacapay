@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { redirectDocument } from "react-router";
 import type { Route } from "./+types/auth.signin";
 import { stateCookie } from "~/lib/cookie.server";
 import { authorizeUrl } from "~/lib/oauth2/auth.server";
@@ -15,11 +15,11 @@ export async function loader({ request }: Route.LoaderArgs) {
     const setCookie = await stateCookie.serialize(state, {
       secure: request.url.startsWith("https://"),
     });
-    return redirect(url.toString(), {
+    return redirectDocument(url.toString(), {
       headers: { "Set-Cookie": setCookie },
     });
   } catch (e) {
     const error = OAuth2Error.fromError(e);
-    return redirect(error.toRedirectLocation());
+    return redirectDocument(error.toRedirectLocation());
   }
 }

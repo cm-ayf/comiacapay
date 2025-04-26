@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { redirectDocument } from "react-router";
 import type { Route } from "./+types/auth.callback";
 import { stateCookie } from "~/lib/cookie.server";
 import { env } from "~/lib/env.server";
@@ -35,7 +35,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     const user = await upsertUserAndMembers(tokenResult);
     session.set("userId", user.id);
 
-    return redirect(state.searchParams.get("redirect_to") ?? "/", {
+    return redirectDocument(state.searchParams.get("redirect_to") ?? "/", {
       headers: {
         "Set-Cookie": await commitSession(session, {
           maxAge: tokenResult.expires_in,
@@ -45,7 +45,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     });
   } catch (e) {
     const error = OAuth2Error.fromError(e);
-    return redirect(error.toRedirectLocation());
+    return redirectDocument(error.toRedirectLocation());
   }
 }
 
@@ -97,5 +97,5 @@ async function trampoline({ code, state }: AuthorizationResponse) {
   url.searchParams.set("code", encryptedCode);
   url.searchParams.set("state", state.toString());
   url.searchParams.set("iv", iv.toString("base64url"));
-  return redirect(url.toString());
+  return redirectDocument(url.toString());
 }

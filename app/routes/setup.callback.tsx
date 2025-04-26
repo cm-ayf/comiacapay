@@ -10,7 +10,7 @@ import Box from "@mui/material-pigment-css/Box";
 import type { APIRole } from "discord-api-types/v10";
 import { useId } from "react";
 import {
-  redirect,
+  redirectDocument,
   useFetcher,
   useLoaderData,
   useNavigate,
@@ -36,11 +36,11 @@ const resolver = valibotResolver(UpdateGuild);
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId");
-  if (!userId) throw redirect("/");
+  if (!userId) throw redirectDocument("/");
 
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  if (!code) throw redirect("/");
+  if (!code) throw redirectDocument("/");
 
   const tokenResult = await exchangeBotCode(code);
   const guild = await upsertGuildAndMember(tokenResult);

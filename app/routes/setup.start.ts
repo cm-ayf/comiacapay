@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { redirectDocument } from "react-router";
 import type { Route } from "./+types/setup.start";
 import { OAuth2Error } from "~/lib/oauth2/error";
 import { authorizeBotUrl } from "~/lib/oauth2/setup.server";
@@ -9,10 +9,10 @@ export async function loader({ request }: Route.LoaderArgs) {
   const userId = session.get("userId");
   if (!userId) {
     const error = new OAuth2Error("invalid_request");
-    return redirect(error.toRedirectLocation());
+    return redirectDocument(error.toRedirectLocation());
   }
 
   const url = new URL(request.url);
   const authorizeUrl = authorizeBotUrl(url.searchParams.get("guild_id"));
-  return redirect(authorizeUrl.toString());
+  return redirectDocument(authorizeUrl.toString());
 }

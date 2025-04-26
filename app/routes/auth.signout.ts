@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { redirectDocument } from "react-router";
 import type { Route } from "./+types/auth.signout";
 import { revokeToken } from "~/lib/oauth2/auth.server";
 import { destroySession, getSession } from "~/lib/session.server";
@@ -11,7 +11,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     if (tokenResult) await revokeToken(tokenResult);
   } catch {}
 
-  return redirect("/", {
+  return redirectDocument("/", {
     headers: { "Set-Cookie": await destroySession(session) },
   });
 }
