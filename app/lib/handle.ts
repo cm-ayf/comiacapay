@@ -1,4 +1,4 @@
-import type { Breakpoint } from "@pigment-css/react";
+import type { Breakpoint } from "@mui/material-pigment-css";
 import { useMemo, type FC, type PropsWithChildren } from "react";
 import {
   useLoaderData,

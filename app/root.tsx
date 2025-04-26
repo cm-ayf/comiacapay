@@ -1,5 +1,5 @@
 import "./global.css";
-import "@pigment-css/react/styles.css";
+import "@mui/material-pigment-css/styles.css";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material-pigment-css/Container";
 import type { User } from "@prisma/client";

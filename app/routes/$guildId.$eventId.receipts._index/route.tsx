@@ -4,8 +4,8 @@ import TabPanel from "@mui/lab/TabPanel";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Tab from "@mui/material/Tab";
-import Box from "@pigment-css/react/Box";
-import Container from "@pigment-css/react/Container";
+import Box from "@mui/material-pigment-css/Box";
+import Container from "@mui/material-pigment-css/Container";
 import {
   createContext,
   Suspense,
