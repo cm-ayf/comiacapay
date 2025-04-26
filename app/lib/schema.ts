@@ -12,6 +12,7 @@ import {
   boolean,
   custom,
   date,
+  exactOptional,
   integer,
   literal,
   minValue,
@@ -19,7 +20,6 @@ import {
   nullable,
   number,
   object,
-  partial,
   pipe,
   string,
   transform,
@@ -82,7 +82,11 @@ export const CreateItem = object({
 });
 export type CreateItemInput = InferInput<typeof CreateItem>;
 export type CreateItemOutput = InferOutput<typeof CreateItem>;
-export const UpdateItem = partial(CreateItem);
+export const UpdateItem = object({
+  name: exactOptional(CreateItem.entries.name),
+  picture: exactOptional(CreateItem.entries.picture),
+  issuedAt: exactOptional(CreateItem.entries.issuedAt),
+});
 export type UpdateItemInput = InferInput<typeof UpdateItem>;
 export type UpdateItemOutput = InferOutput<typeof UpdateItem>;
 
@@ -97,7 +101,10 @@ export const CreateEvent = object({
 });
 export type CreateEventInput = InferInput<typeof CreateEvent>;
 export type CreateEventOutput = InferOutput<typeof CreateEvent>;
-export const UpdateEvent = partial(CreateEvent);
+export const UpdateEvent = object({
+  name: exactOptional(CreateEvent.entries.name),
+  date: exactOptional(CreateEvent.entries.date),
+});
 export type UpdateEventInput = InferInput<typeof UpdateEvent>;
 export type UpdateEventOutput = InferOutput<typeof UpdateEvent>;
 

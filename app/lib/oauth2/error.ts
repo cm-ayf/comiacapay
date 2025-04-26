@@ -1,7 +1,7 @@
 import {
   enum_,
+  exactOptional,
   object,
-  optional,
   safeParser,
   string,
   type InferOutput,
@@ -17,7 +17,7 @@ type OAuth2ErrorString = InferOutput<typeof OAuth2ErrorString>;
 
 const OAuth2ErrorJson = object({
   error: OAuth2ErrorString,
-  error_description: optional(string()),
+  error_description: exactOptional(string()),
 });
 type OAuth2ErrorJson = InferOutput<typeof OAuth2ErrorJson>;
 const parseOAuth2ErrorJson = safeParser(OAuth2ErrorJson);
