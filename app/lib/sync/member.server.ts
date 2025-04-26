@@ -9,7 +9,6 @@ const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 export function freshMember(
   { userId, tokenResult }: SessionData,
   guildId: string,
-  refresh?: boolean,
 ) {
   return prisma.$transaction(async (prisma) => {
     const { guild, ...member } = await prisma.member.findUniqueOrThrow({
@@ -18,8 +17,7 @@ export function freshMember(
       },
       include: { guild: true },
     });
-    refresh ??= member.freshUntil.getTime() < Date.now();
-    if (!refresh) return member;
+    if (Date.now() < member.freshUntil.getTime()) return member;
 
     const currentUserGuildMember = await getCurrentUserGuildMember(
       tokenResult,
