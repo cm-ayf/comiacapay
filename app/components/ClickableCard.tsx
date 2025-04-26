@@ -16,7 +16,7 @@ export default function ClickableCard({
   onClick,
 }: PropsWithChildren<ClickableCardProps>) {
   return (
-    <Card sx={{ minWidth: "250px" }}>
+    <Card>
       {href ? (
         <CardActionArea LinkComponent={LinkComponent} href={href}>
           {children}

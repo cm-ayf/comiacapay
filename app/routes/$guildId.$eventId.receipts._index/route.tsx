@@ -31,7 +31,6 @@ export { loader } from "./loader";
 export { clientLoader } from "./clientLoader";
 
 export const handle: Handle<unknown> = {
-  breadcrumbLabel: () => "購入履歴",
   PageContextProvider,
   TopComponent,
 };

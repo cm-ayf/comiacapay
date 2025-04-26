@@ -73,7 +73,7 @@ export default function Page() {
       </Box>
       <Grid container spacing={16}>
         {members.map(({ guild, ...member }) => (
-          <Grid key={guild.id}>
+          <Grid key={guild.id} size={{ xs: 12, sm: 6, md: 4 }}>
             <GuildCard guild={guild} member={member} href={`/${guild.id}`} />
           </Grid>
         ))}
@@ -87,7 +87,7 @@ export default function Page() {
           if (!member?.register) return null;
 
           return (
-            <Grid key={event.id}>
+            <Grid key={event.id} size={{ xs: 12, sm: 6, md: 4 }}>
               <EventCard
                 guild={member.guild}
                 event={event}

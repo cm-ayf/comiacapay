@@ -10,7 +10,7 @@
     ".react-router/types/**/*"
   ],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "lib": ["DOM", "DOM.Iterable", "ES2023"],
     "types": ["vite/client"],
     "rootDirs": [".", "./.react-router/types"],
     "target": "ES2022",

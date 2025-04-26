@@ -12,9 +12,17 @@ export default function DisplayPanel({
   display,
 }: PropsWithChildren<{ display: ClientDisplay }>) {
   return (
-    <Card sx={{ display: "flex", flexDirection: "row" }}>
+    <Card sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
       <CardItemPicture item={display.item} />
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <Box
+        sx={{
+          alignSelf: "stretch",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
         <CardContent>
           <Typography sx={{ fontSize: "1.5em" }}>
             {display.item.name}
@@ -25,9 +33,9 @@ export default function DisplayPanel({
           )}
           {display.dedication && <Typography>献本あり</Typography>}
         </CardContent>
-        <Box sx={{ flex: 1 }} />
         {children && (
           <CardActions
+            disableSpacing
             sx={{ flexDirection: "column", alignItems: "flex-start" }}
           >
             {children}

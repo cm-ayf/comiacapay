@@ -12,9 +12,12 @@ import {
   boolean,
   custom,
   date,
+  integer,
   literal,
+  minValue,
   nonEmpty,
   nullable,
+  number,
   object,
   partial,
   pipe,
@@ -51,10 +54,7 @@ export function dateLike() {
 }
 
 export function uint() {
-  return custom<number>(
-    (input) =>
-      typeof input === "number" && Number.isInteger(input) && input >= 0,
-  );
+  return pipe(number(), integer(), minValue(0));
 }
 
 export type ClientGuild = SerializeFrom<Guild>;
@@ -132,7 +132,7 @@ export type CreateRecordOutput = InferOutput<typeof CreateRecord>;
 export const CreateReceipt = object({
   id: snowflake(),
   total: uint(),
-  records: array(CreateRecord),
+  records: pipe(array(CreateRecord), nonEmpty()),
 });
 export type CreateReceiptInput = InferInput<typeof CreateReceipt>;
 export type CreateReceiptOutput = InferOutput<typeof CreateReceipt>;

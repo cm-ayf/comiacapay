@@ -11,7 +11,14 @@ export default function ItemCard({
   return (
     <ClickableCard {...props}>
       <CardItemPicture item={item} />
-      <CardContent sx={{ width: "250px" }}>
+      <CardContent
+        sx={(theme) => ({
+          width: 180,
+          [theme.breakpoints.up("sm")]: {
+            width: 250,
+          },
+        })}
+      >
         <Typography
           sx={{ textAlign: "center", fontSize: "1.25rem", fontWeight: "bold" }}
         >

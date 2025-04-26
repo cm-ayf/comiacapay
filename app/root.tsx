@@ -12,17 +12,12 @@ import type { Route } from "./+types/root";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
 import createErrorBoundary from "./components/createErrorBoundary";
-import { useHandleValue, type Handle } from "./lib/handle";
+import { useHandleValue, useTitle, type Handle } from "./lib/handle";
 import { getSessionOr401 } from "./lib/middleware.server";
 import { prisma } from "./lib/prisma.server";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
   {
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
@@ -40,11 +35,13 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export const handle: Handle<typeof loader> = {
-  breadcrumbLabel: () => "Comiacapay",
+  title: "Comiacapay",
+  getName: () => "TOP",
 };
 
 export function Layout({ children }: PropsWithChildren) {
   installPWAGlobals();
+  const title = useTitle();
   return (
     <html lang="ja">
       <head>
@@ -54,6 +51,7 @@ export function Layout({ children }: PropsWithChildren) {
         <ManifestLink href="/manifest.webmanifest" />
         <Meta />
         <Links />
+        <title>{title}</title>
       </head>
       <body>
         {children}
@@ -81,17 +79,7 @@ function AppLayout({
       <PageContextProvider>
         <TopComponent />
         <AlertProvider>
-          <Container
-            maxWidth={maxWidth ?? "lg"}
-            component="main"
-            sx={{
-              flex: 1,
-              padding: "16px 24px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "16px",
-            }}
-          >
+          <Container maxWidth={maxWidth ?? "lg"} component="main">
             {children}
           </Container>
         </AlertProvider>

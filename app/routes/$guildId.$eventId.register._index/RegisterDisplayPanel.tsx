@@ -22,41 +22,33 @@ function FlagsCheck({ display }: { display: ClientDisplay }) {
   const event = useEvent();
   const [record, setRecord] = useRecordSnapshot(event, display.itemId);
   return (
-    <Box sx={{ paddingInline: 2, display: "flex", gap: 1 }}>
-      {display.dedication && (
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={record.dedication}
-              onChange={(e) => {
-                setRecord(({ count }) => ({
-                  count: Math.max(count, 1),
-                  dedication: e.target.checked,
-                  internal: false,
-                }));
-              }}
-            />
-          }
-          label="献本"
-        />
-      )}
-      {display.internalPrice && (
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={record.internal}
-              onChange={(e) => {
-                setRecord(({ count }) => ({
-                  count: Math.max(count, 1),
-                  dedication: false,
-                  internal: e.target.checked,
-                }));
-              }}
-            />
-          }
-          label="部内"
-        />
-      )}
+    <Box>
+      <FormControlLabel
+        control={<Checkbox checked={record.dedication} />}
+        value={record.dedication}
+        onChange={(_, checked) => {
+          setRecord(({ count }) => ({
+            count: Math.max(count, 1),
+            dedication: checked,
+            internal: false,
+          }));
+        }}
+        label="献本"
+        disabled={!display.dedication}
+      />
+      <FormControlLabel
+        control={<Checkbox checked={record.internal} />}
+        value={record.internal}
+        onChange={(_, checked) => {
+          setRecord(({ count }) => ({
+            count: Math.max(count, 1),
+            dedication: false,
+            internal: checked,
+          }));
+        }}
+        label="部内"
+        disabled={!display.internalPrice}
+      />
     </Box>
   );
 }
@@ -69,7 +61,15 @@ function Counter({ itemId }: { itemId: string }) {
   const value = record.count === 0 || record.count === 1 ? record.count : "+";
 
   return (
-    <Box sx={{ height: 56, display: "flex", flexDirection: "row", gap: 1 }}>
+    <Box
+      sx={{
+        width: "100%",
+        height: 42,
+        display: "flex",
+        flexDirection: "row",
+        gap: 1,
+      }}
+    >
       <ToggleButtonGroup
         value={value}
         exclusive
@@ -94,7 +94,11 @@ function Counter({ itemId }: { itemId: string }) {
         type="number"
         value={record.count}
         onChange={(e) => setRecord({ count: parseInt(e.target.value) })}
-        sx={{ height: "100%" }}
+        slotProps={{
+          input: {
+            sx: { height: "100%", maxWidth: 80 },
+          },
+        }}
       />
     </Box>
   );

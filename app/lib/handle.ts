@@ -1,6 +1,11 @@
 import type { Breakpoint } from "@pigment-css/react";
 import { useMemo, type FC, type PropsWithChildren } from "react";
-import { useLoaderData, useMatches, type UIMatch } from "react-router";
+import {
+  useLoaderData,
+  useLocation,
+  useMatches,
+  type UIMatch,
+} from "react-router";
 
 type SerializeFrom<AppData> = ReturnType<typeof useLoaderData<AppData>>;
 
@@ -9,10 +14,11 @@ export interface Handle<AppData> {
   PageContextProvider?: FC<PropsWithChildren>;
   TopComponent?: FC;
   ButtomComponent?: FC;
-  breadcrumbLabel?: (data?: SerializeFrom<AppData>) => string | undefined;
+  title?: string;
+  getName?: (data: SerializeFrom<AppData> | undefined) => string | undefined;
 }
 
-type Match<AppData> = UIMatch<
+export type Match<AppData> = UIMatch<
   SerializeFrom<AppData>,
   Handle<AppData> | undefined
 >;
@@ -27,16 +33,28 @@ export function useHandleValue<K extends keyof Handle<unknown>>(
   return useMemo(() => value ?? fallback, [value, fallback]);
 }
 
-export function useBreadcrumbs() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const matches = useMatches() as Match<any>[];
-  const breadcrumbs = matches
-    .map(<AppData>(match: Match<AppData>) => {
-      if (match.handle?.breadcrumbLabel) {
-        const label = match.handle.breadcrumbLabel(match.data) ?? "…";
-        return { href: match.pathname, label };
-      } else return null;
-    })
-    .filter((breadcrumb) => !!breadcrumb);
-  return breadcrumbs;
+export interface Breadcrumb {
+  href: string;
+  name: string;
+}
+
+export function useTitle(): string | undefined {
+  const matches = useMatches() as Match<unknown>[];
+  const match = matches.findLast((match) => match.handle?.title);
+  return match?.handle?.title?.replace(/\{(\d+)\}/g, (_, i) => {
+    const match = matches[i];
+    return match?.handle?.getName?.(match?.data) ?? "…";
+  });
+}
+
+export function useBreadcrumbs(): Breadcrumb[] {
+  const { pathname } = useLocation();
+  const matches = useMatches() as Match<unknown>[];
+  return matches
+    .filter((match) => !match.pathname.startsWith(pathname))
+    .reverse()
+    .map((match) => {
+      const name = match.handle?.getName?.(match?.data) ?? "…";
+      return { href: match.pathname, name };
+    });
 }

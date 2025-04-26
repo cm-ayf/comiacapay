@@ -41,13 +41,15 @@ function GuildCardWrapper() {
 
   return (
     <>
-      <Box sx={{ display: "flex", flexDirection: "row" }}>
-        <GuildCard
-          guild={guild}
-          member={member}
-          onClick={member.admin ? () => setOpen(true) : undefined}
-        />
-      </Box>
+      <Grid container>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <GuildCard
+            guild={guild}
+            member={member}
+            onClick={member.admin ? () => setOpen(true) : undefined}
+          />
+        </Grid>
+      </Grid>
       {member.admin && (
         <UpdateGuildDialog
           open={open}
@@ -109,7 +111,7 @@ function Events() {
       </Box>
       <Grid container spacing={16}>
         {events.map((event) => (
-          <Grid key={event.id}>
+          <Grid key={event.id} size={{ xs: 12, sm: 6, md: 4 }}>
             <EventCard event={event} href={`/${me.guildId}/${event.id}`} />
           </Grid>
         ))}

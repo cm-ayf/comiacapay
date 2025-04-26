@@ -7,7 +7,6 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { useFetcher, useParams } from "react-router";
@@ -42,27 +41,37 @@ function About() {
 
   return (
     <>
-      <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-        <EventCard
-          event={event}
-          onClick={me.write ? () => setOpen(true) : undefined}
-        />
-        <Button
-          LinkComponent={LinkComponent}
-          variant="contained"
-          href={`/${event.guildId}/${event.id}/register`}
-          disabled={!me.register}
-        >
-          レジを起動
-        </Button>
-        <Button
-          LinkComponent={LinkComponent}
-          variant="contained"
-          href={`/${event.guildId}/${event.id}/receipts`}
-        >
-          購入履歴
-        </Button>
-      </Box>
+      <Grid container spacing={16}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <EventCard
+            event={event}
+            onClick={me.write ? () => setOpen(true) : undefined}
+          />
+        </Grid>
+        <Grid size={{ xs: 6, md: 3 }}>
+          <Button
+            LinkComponent={LinkComponent}
+            variant="contained"
+            href={`/${event.guildId}/${event.id}/register`}
+            sx={{ height: "100%" }}
+            fullWidth
+            disabled={!me.register}
+          >
+            レジを起動
+          </Button>
+        </Grid>
+        <Grid size={{ xs: 6, md: 3 }}>
+          <Button
+            LinkComponent={LinkComponent}
+            variant="contained"
+            href={`/${event.guildId}/${event.id}/receipts`}
+            sx={{ height: "100%" }}
+            fullWidth
+          >
+            購入履歴
+          </Button>
+        </Grid>
+      </Grid>
       {me.write && (
         <MutateEventDialog
           open={open}
@@ -86,7 +95,7 @@ function Displays() {
       </Typography>
       <Grid container spacing={16}>
         {displays.map((display) => (
-          <Grid key={display.item.id} size={{ xs: 12, lg: 6 }}>
+          <Grid key={display.item.id} size={{ xs: 12, md: 6 }}>
             <DisplayCard display={display}>
               <Button onClick={() => setDisplay(display)} disabled={!me.write}>
                 編集
@@ -95,7 +104,7 @@ function Displays() {
           </Grid>
         ))}
         {me.write && remainingItems.length > 0 && (
-          <Grid size={{ xs: 12, lg: 6 }}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <CreateDisplaySelect
               items={remainingItems}
               setDisplay={setDisplay}
@@ -151,12 +160,12 @@ function Discounts() {
       </Typography>
       <Grid container spacing={16}>
         {event.discounts.map((discount) => (
-          <Grid key={discount.id} size={{ xs: 12, lg: 6 }}>
+          <Grid key={discount.id} size={{ xs: 12, md: 6 }}>
             <DiscountCard discount={discount} />
           </Grid>
         ))}
         {me.write && (
-          <Grid size={{ xs: 12, lg: 6 }}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <CreateDiscountSelect setType={setType} />
           </Grid>
         )}

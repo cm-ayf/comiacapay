@@ -52,7 +52,8 @@ export async function action({ request, params }: Route.ActionArgs) {
 }
 
 export const handle: Handle<typeof loader> = {
-  breadcrumbLabel: (r) => r?.name,
+  title: "{1}",
+  getName: (r) => r?.name,
 };
 
 export function useGuild() {

@@ -9,29 +9,36 @@ export default function CardItemPicture({ item }: { item: ClientItem }) {
       <CardMedia
         component="img"
         image={item.picture}
-        alt="Item picture"
-        height={350}
-        width={250}
-        sx={{
-          width: "auto",
+        alt={item.name}
+        sx={(theme) => ({
           objectFit: "contain",
           backgroundColor: "grey.300",
-        }}
+          backdropFilter: "blur(16px)",
+          height: 252,
+          width: 180,
+          [theme.breakpoints.up("sm")]: {
+            height: 350,
+            width: 250,
+          },
+        })}
       />
     );
   } else {
     return (
       <Box
-        sx={[
-          {
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "grey.300",
+        sx={(theme) => ({
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          backgroundColor: "grey.300",
+          height: 252,
+          width: 180,
+          [theme.breakpoints.up("sm")]: {
             height: 350,
-            minWidth: 250,
+            width: 250,
           },
-        ]}
+        })}
       >
         <Typography sx={{ color: "grey.500", fontSize: "3rem" }}>
           {item.name}

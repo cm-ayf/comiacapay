@@ -1,23 +1,22 @@
 import CloudDone from "@mui/icons-material/CloudDone";
 import CloudOff from "@mui/icons-material/CloudOff";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Button from "@mui/material/Button";
-import ButtonBase from "@mui/material/ButtonBase";
 import CircularProgress from "@mui/material/CircularProgress";
-import Menu, { type MenuProps } from "@mui/material/Menu";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import type { User } from "@prisma/client";
 import { useNetworkConnectivity } from "@remix-pwa/client";
-import { type PropsWithChildren, useRef, useState } from "react";
-import { useNavigation } from "react-router";
+import { forwardRef, useRef, useState } from "react";
+import { Link, useNavigation, type LinkProps } from "react-router";
 import { useAlert } from "./Alert";
-import { LinkComponent, NoDiscoverLinkComponent } from "./LinkComponent";
-import { useBreadcrumbs } from "~/lib/handle";
+import { useBreadcrumbs, useTitle, type Breadcrumb } from "~/lib/handle";
 import { useLocationType, useUrlWithRedirectTo } from "~/lib/location";
 
 export const REPOSITORY: string = "https://github.com/cm-ayf/comiacapay";
@@ -28,24 +27,40 @@ export interface NavigationProps {
 }
 
 export default function Navigation({ user }: NavigationProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<"breadcrumb" | "menu" | false>(false);
   const ref = useRef<HTMLDivElement>(null);
+  const title = useTitle();
+  const breadcrumbs = useBreadcrumbs();
 
   return (
     <AppBar ref={ref} sx={{ height: 48 }}>
       <Toolbar variant="dense">
-        <BreadcrumbsNavigation />
-        <Box sx={{ flex: 1 }} />
+        {breadcrumbs.length > 0 ? (
+          <IconButton onClick={() => setOpen("breadcrumb")}>
+            <KeyboardArrowLeftIcon sx={{ color: "var(--AppBar-color)" }} />
+          </IconButton>
+        ) : (
+          <Box sx={{ width: "40px" }} />
+        )}
+        <Typography variant="h1" sx={{ flex: 1, fontSize: "1em" }}>
+          {title}
+        </Typography>
         <NavigationLoading />
         {user ? (
-          <UserButton user={user} onClick={() => setOpen(true)} />
+          <UserButton user={user} onClick={() => setOpen("menu")} />
         ) : (
           <SigninButton />
         )}
         <ConnectivityStatus />
+        <BreadcrumbsContent
+          breadcrumbs={breadcrumbs}
+          anchorEl={ref.current}
+          open={open === "breadcrumb"}
+          onClose={() => setOpen(false)}
+        />
         <MenuContent
           anchorEl={ref.current}
-          open={open}
+          open={open === "menu"}
           onClose={() => setOpen(false)}
         />
       </Toolbar>
@@ -53,25 +68,32 @@ export default function Navigation({ user }: NavigationProps) {
   );
 }
 
-function BreadcrumbsNavigation() {
-  const breadcrumbs = useBreadcrumbs();
-
+function BreadcrumbsContent({
+  open,
+  anchorEl,
+  onClose,
+  breadcrumbs,
+}: {
+  open: boolean;
+  anchorEl: HTMLElement | null;
+  onClose: () => void;
+  breadcrumbs: Breadcrumb[];
+}) {
   return (
-    <Breadcrumbs sx={{ color: "var(--AppBar-color)" }}>
-      {breadcrumbs.map(({ href, label }, index, { length }) =>
-        index === length - 1 ? (
-          <Typography key={href}>{label}</Typography>
-        ) : (
-          <ButtonBase
-            key={href}
-            LinkComponent={NoDiscoverLinkComponent}
-            href={href}
-          >
-            {label}
-          </ButtonBase>
-        ),
-      )}
-    </Breadcrumbs>
+    <Menu
+      open={open}
+      anchorEl={anchorEl}
+      onClose={onClose}
+      onClickCapture={onClose}
+      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      transformOrigin={{ vertical: "top", horizontal: "left" }}
+    >
+      {breadcrumbs.map(({ href, name }) => (
+        <MenuItem key={href} component={ListItemLink} to={href}>
+          {name}
+        </MenuItem>
+      ))}
+    </Menu>
   );
 }
 
@@ -123,12 +145,7 @@ function UserButton({ user, onClick }: { user: User; onClick: () => void }) {
 function SigninButton() {
   const signinUrl = useUrlWithRedirectTo("/auth/signin");
   return (
-    <Button
-      component={LinkComponent}
-      color="inherit"
-      href={signinUrl}
-      reloadDocument
-    >
+    <Button component={Link} color="inherit" to={signinUrl} reloadDocument>
       サインイン
     </Button>
   );
@@ -139,30 +156,47 @@ function ConnectivityStatus() {
   return connectivity ? <CloudDone /> : <CloudOff />;
 }
 
-function MenuContent(props: Pick<MenuProps, "open" | "anchorEl" | "onClose">) {
-  const { success, error } = useAlert();
+function MenuContent({
+  open,
+  anchorEl,
+  onClose,
+}: {
+  open: boolean;
+  anchorEl: HTMLElement | null;
+  onClose: () => void;
+}) {
+  const { success } = useAlert();
   const refreshUrl = useUrlWithRedirectTo("/auth/refresh");
   const signoutUrl = useUrlWithRedirectTo("/auth/signout");
   const locationType = useLocationType();
 
   return (
     <Menu
-      {...props}
+      open={open}
+      anchorEl={anchorEl}
+      onClose={onClose}
+      onClickCapture={onClose}
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       transformOrigin={{ vertical: "top", horizontal: "right" }}
     >
-      <MenuLinkItem href={refreshUrl}>権限を更新</MenuLinkItem>
-      <MenuLinkItem href={signoutUrl}>サインアウト</MenuLinkItem>
-      <MenuLinkItem href={`${DOCS}/${locationType}.md`} target="_blank">
-        マニュアル
-      </MenuLinkItem>
+      <MenuItem component={ListItemLink} to={refreshUrl} reloadDocument>
+        権限を更新
+      </MenuItem>
+      <MenuItem component={ListItemLink} to={signoutUrl} reloadDocument>
+        サインアウト
+      </MenuItem>
       <MenuItem
-        onClick={() => {
-          navigator.clipboard
-            .writeText(window.location.href)
-            .then(() => success("URLをコピーしました"))
-            .catch(() => error("URLをコピーできませんでした"))
-            .finally(() => props.onClose?.({}, "escapeKeyDown"));
+        component={ListItemLink}
+        to={`${DOCS}/${locationType}.md`}
+        target="_blank"
+      >
+        マニュアル
+      </MenuItem>
+      <MenuItem
+        onClick={async () => {
+          await navigator.clipboard?.writeText(window.location.href);
+          success("URLをコピーしました");
+          onClose();
         }}
       >
         この画面のURLをコピー
@@ -171,26 +205,14 @@ function MenuContent(props: Pick<MenuProps, "open" | "anchorEl" | "onClose">) {
   );
 }
 
-function MenuLinkItem({
-  children,
-  ...props
-}: PropsWithChildren<{
-  href: string;
-  target?: string;
-}>) {
-  return (
-    <MenuItem sx={{ p: 0 }}>
-      <ButtonBase
-        sx={{
-          px: "16px",
-          py: "6px",
-          width: "100%",
-          justifyContent: "flex-start",
-        }}
-        {...props}
-      >
-        {children}
-      </ButtonBase>
-    </MenuItem>
-  );
-}
+const ListItemLink = forwardRef<HTMLAnchorElement, LinkProps>(
+  function ListItemLink({ role, children, ...props }, ref) {
+    return (
+      <li role={role}>
+        <Link ref={ref} {...props}>
+          {children}
+        </Link>
+      </li>
+    );
+  },
+);

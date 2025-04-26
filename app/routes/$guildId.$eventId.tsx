@@ -74,7 +74,8 @@ export async function action({ request, params }: Route.ActionArgs) {
 }
 
 export const handle: Handle<typeof loader> = {
-  breadcrumbLabel: (event) => event?.name,
+  title: "{1} / {2}",
+  getName: (event) => event?.name,
 };
 
 export function useEvent() {

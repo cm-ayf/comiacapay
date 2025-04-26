@@ -1,9 +1,7 @@
-import type { SxProp } from "@pigment-css/react";
+import type { Theme } from "@mui/material/styles";
 
-declare global {
-  namespace React {
-    interface Attributes {
-      sx?: SxProp | null | undefined;
-    }
+declare module "@mui/material-pigment-css" {
+  interface ThemeArgs {
+    theme: Theme;
   }
 }
