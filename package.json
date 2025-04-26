@@ -38,8 +38,8 @@
     "@remix-pwa/worker-runtime": "3.0.0-dev.1",
     "discord-api-types": "^0.37.101",
     "idb": "^8.0.2",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "react-hook-form": "7.55.0",
     "react-router": "7.5.2",
     "remix-hook-form": "7.0.1",
@@ -65,7 +65,7 @@
     "eslint-plugin-jsx-a11y": "6.10.0",
     "eslint-plugin-mui-path-imports": "^0.0.15",
     "eslint-plugin-react": "7.37.1",
-    "eslint-plugin-react-hooks": "4.6.2",
+    "eslint-plugin-react-hooks": "5.2.0",
     "globals": "15.11.0",
     "husky": "9.1.6",
     "lint-staged": "15.2.10",
@@ -85,10 +85,9 @@
       "@mui/utils": "^7"
     },
     "@remix-pwa/manifest": {
-      "@remix-run/react": "npm:react-router"
-    },
-    "eslint-plugin-react-hooks": {
-      "eslint": "^9"
+      "@remix-run/react": "npm:react-router",
+      "react": ">=18",
+      "react-dom": ">=18"
     }
   },
   "engines": {
