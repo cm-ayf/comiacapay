@@ -2,11 +2,13 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import Tab from "@mui/material/Tab";
 import Box from "@pigment-css/react/Box";
 import Container from "@pigment-css/react/Container";
 import {
   createContext,
+  Suspense,
   useCallback,
   useContext,
   useState,
@@ -19,10 +21,10 @@ import {
   useRouteLoaderData,
 } from "react-router";
 import Summary from "./Summary";
-import Table from "./Table";
 import type { action } from "./action";
 import type { clientLoader } from "./clientLoader";
 import type { loader } from "./loader";
+import { dynamic } from "~/lib/dynamic";
 import type { Handle } from "~/lib/handle";
 
 export { action } from "./action";
@@ -81,6 +83,7 @@ function TopComponent() {
   );
 }
 
+const Table = dynamic(() => import("./Table"));
 export default function Page() {
   const { selected, setSelected } = useContext(PageContext);
   // TODO: get rid of emotion to have `p: 0` working
@@ -90,7 +93,9 @@ export default function Page() {
         <Summary />
       </TabPanel>
       <TabPanel value="table" sx={{ p: 0, height: "100%" }}>
-        <Table selected={selected} setSelected={setSelected} />
+        <Suspense fallback={<CircularProgress />}>
+          <Table selected={selected} setSelected={setSelected} />
+        </Suspense>
       </TabPanel>
     </>
   );

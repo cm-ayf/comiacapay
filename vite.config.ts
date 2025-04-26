@@ -16,6 +16,7 @@ export default defineConfig({
         "@mui/icons-material",
         "@mui/lab",
         "@mui/x-data-grid",
+        "@mui/x-internals",
       ],
       displayName: process.env["NODE_ENV"] !== "production",
     }),
@@ -28,6 +29,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@mui/x-internals": "@mui/x-internals/esm",
+      "use-sync-external-store/shim": "react",
     },
   },
   build: {
