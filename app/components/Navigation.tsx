@@ -166,7 +166,6 @@ function MenuContent({
   onClose: () => void;
 }) {
   const { success } = useAlert();
-  const refreshUrl = useUrlWithRedirectTo("/auth/refresh");
   const signoutUrl = useUrlWithRedirectTo("/auth/signout");
   const locationType = useLocationType();
 
@@ -179,9 +178,6 @@ function MenuContent({
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       transformOrigin={{ vertical: "top", horizontal: "right" }}
     >
-      <MenuItem component={ListItemLink} to={refreshUrl} reloadDocument>
-        権限を更新
-      </MenuItem>
       <MenuItem component={ListItemLink} to={signoutUrl} reloadDocument>
         サインアウト
       </MenuItem>
