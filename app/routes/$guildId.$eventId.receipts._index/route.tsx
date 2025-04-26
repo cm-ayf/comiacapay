@@ -83,6 +83,7 @@ function TopComponent() {
 
 export default function Page() {
   const { selected, setSelected } = useContext(PageContext);
+  // TODO: get rid of emotion to have `p: 0` working
   return (
     <>
       <TabPanel value="summary" sx={{ p: 0, height: "100%" }}>

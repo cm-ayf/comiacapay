@@ -11,8 +11,12 @@ export default defineConfig({
   plugins: [
     pigment({
       theme: createTheme(),
-      // TODO: get rid of emotion from @mui/lab and transform
-      transformLibraries: ["@mui/material"],
+      transformLibraries: [
+        "@mui/material",
+        "@mui/icons-material",
+        "@mui/lab",
+        "@mui/x-data-grid",
+      ],
       displayName: process.env["NODE_ENV"] !== "production",
     }),
     reactRouter(),
