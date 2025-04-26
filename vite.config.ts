@@ -12,7 +12,7 @@ export default defineConfig({
     pigment({
       theme: createTheme(),
       // TODO: get rid of emotion from @mui/lab and transform
-      transformLibraries: ["@mui/material", "@mui/x-data-grid"],
+      transformLibraries: ["@mui/material"],
       displayName: process.env["NODE_ENV"] !== "production",
     }),
     reactRouter(),
@@ -30,7 +30,7 @@ export default defineConfig({
     target: "es2022",
   },
   ssr: {
-    noExternal: [/^@mui\//, "@pigment-css/react", "@remix-run/react"],
+    noExternal: [/^@mui\//, "@pigment-css/react"],
   },
   define: {
     "process.env.NODE_ENV": JSON.stringify(process.env["NODE_ENV"]),
