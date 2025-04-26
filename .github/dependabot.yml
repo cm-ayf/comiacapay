@@ -5,8 +5,35 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      minor-patch:
+      react-router:
+        patterns:
+          - "react-router"
+          - "@react-router/*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      mui:
+        patterns:
+          - "@mui/*"
+          - "@pigment-css/*"
+      prisma:
+        patterns:
+          - "prisma"
+          - "@prisma/*"
+      remix-pwa:
+        patterns:
+          - "@remix-pwa/*"
+
+      patch:
+        update-types: ["patch"]
+        dependency-type: "production"
+      dev-minor-patch:
         update-types: ["minor", "patch"]
+        dependency-type: "development"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
