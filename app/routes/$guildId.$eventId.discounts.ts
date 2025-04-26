@@ -7,7 +7,7 @@ import {
   getValidatedBodyOr400,
 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { CreateDiscount, type CreateDiscountInput } from "~/lib/schema";
+import { CreateDiscount } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
 
 const resolver = valibotResolver(CreateDiscount);
@@ -19,10 +19,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   switch (request.method) {
     case "POST": {
-      const body = await getValidatedBodyOr400<CreateDiscountInput>(
-        request,
-        resolver,
-      );
+      const body = await getValidatedBodyOr400(request, resolver);
 
       const discount = await prisma.$transaction(async (prisma) => {
         const { discounts } = await prisma.event.findUniqueOrThrow({

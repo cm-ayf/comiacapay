@@ -17,12 +17,7 @@ import {
   getValidatedBodyOr400,
 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import {
-  UpdateEvent,
-  type ClientDisplay,
-  type ClientItem,
-  type UpdateEventOutput,
-} from "~/lib/schema";
+import { UpdateEvent, type ClientDisplay, type ClientItem } from "~/lib/schema";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const { userId } = await getSessionOr401(request);
@@ -44,10 +39,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   switch (request.method) {
     case "PATCH": {
-      const body = await getValidatedBodyOr400<UpdateEventOutput>(
-        request,
-        resolver,
-      );
+      const body = await getValidatedBodyOr400(request, resolver);
       if ("clone" in body) throw data(null, 400);
 
       return await prisma.event.update({

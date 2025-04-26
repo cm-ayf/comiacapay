@@ -7,7 +7,7 @@ import {
   getValidatedBodyOr400,
 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { UpdateItem, type UpdateItemOutput } from "~/lib/schema";
+import { UpdateItem } from "~/lib/schema";
 
 const resolver = valibotResolver(UpdateItem);
 
@@ -18,10 +18,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   switch (request.method) {
     case "PATCH": {
-      const body = await getValidatedBodyOr400<UpdateItemOutput>(
-        request,
-        resolver,
-      );
+      const body = await getValidatedBodyOr400(request, resolver);
 
       return await prisma.item.update({
         where: { id: itemId, guildId },

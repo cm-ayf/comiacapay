@@ -7,7 +7,7 @@ import {
   getValidatedBodyOr400,
 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { CreateItem, type CreateItemOutput } from "~/lib/schema";
+import { CreateItem } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
 
 const resolver = valibotResolver(CreateItem);
@@ -20,10 +20,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   switch (request.method) {
     case "POST": {
-      const body = await getValidatedBodyOr400<CreateItemOutput>(
-        request,
-        resolver,
-      );
+      const body = await getValidatedBodyOr400(request, resolver);
 
       const id = Snowflake.generate().toString();
       const item = await prisma.item.create({

@@ -7,7 +7,7 @@ import {
   getValidatedBodyOr400,
 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { CreateEvent, type CreateEventOutput } from "~/lib/schema";
+import { CreateEvent } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
 
 const resolver = valibotResolver(CreateEvent);
@@ -17,10 +17,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const { guildId } = params;
   await getMemberOr4xx(userId, guildId, "write");
 
-  const { name, date, clone } = await getValidatedBodyOr400<CreateEventOutput>(
-    request,
-    resolver,
-  );
+  const { name, date, clone } = await getValidatedBodyOr400(request, resolver);
   const id = Snowflake.generate().toString();
   const event = await prisma.event.create({
     data: {

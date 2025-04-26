@@ -19,10 +19,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   switch (request.method) {
     case "POST": {
-      const body = await getValidatedBodyOr400<CreateReceiptsOutput>(
-        request,
-        resolver,
-      );
+      const body = await getValidatedBodyOr400(request, resolver);
 
       const [receipt] = await prisma.$transaction([
         prisma.receipt.createMany({

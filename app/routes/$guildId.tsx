@@ -15,7 +15,7 @@ import {
   getValidatedBodyOr400,
 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { UpdateGuild, type UpdateGuildOutput } from "~/lib/schema";
+import { UpdateGuild } from "~/lib/schema";
 import { freshMember } from "~/lib/sync/member.server";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -43,10 +43,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const { userId } = await getSessionOr401(request);
   await getMemberOr4xx(userId, guildId, "admin");
 
-  const data = await getValidatedBodyOr400<UpdateGuildOutput>(
-    request,
-    resolver,
-  );
+  const data = await getValidatedBodyOr400(request, resolver);
 
   return await prisma.guild.update({
     where: { id: guildId },

@@ -8,7 +8,7 @@ import {
   getValidatedBodyOr400,
 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { CreateReceipt, type CreateReceiptOutput } from "~/lib/schema";
+import { CreateReceipt } from "~/lib/schema";
 
 const resolver = valibotResolver(CreateReceipt);
 
@@ -19,8 +19,10 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   switch (request.method) {
     case "POST": {
-      const { records, ...rest } =
-        await getValidatedBodyOr400<CreateReceiptOutput>(request, resolver);
+      const { records, ...rest } = await getValidatedBodyOr400(
+        request,
+        resolver,
+      );
 
       const receipt = await prisma.receipt.create({
         data: {

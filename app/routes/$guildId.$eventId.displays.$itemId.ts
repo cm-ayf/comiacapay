@@ -7,7 +7,7 @@ import {
   getValidatedBodyOr400,
 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
-import { UpsertDisplay, type UpsertDisplayInput } from "~/lib/schema";
+import { UpsertDisplay } from "~/lib/schema";
 
 const resolver = valibotResolver(UpsertDisplay);
 
@@ -18,10 +18,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   switch (request.method) {
     case "PUT": {
-      const body = await getValidatedBodyOr400<UpsertDisplayInput>(
-        request,
-        resolver,
-      );
+      const body = await getValidatedBodyOr400(request, resolver);
 
       const display = await prisma.display.upsert({
         where: {
