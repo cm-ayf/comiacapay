@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import type { User } from "@prisma/client";
 import { useNetworkConnectivity } from "@remix-pwa/client";
-import { forwardRef, useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   Link,
   useFetcher,
@@ -226,14 +226,10 @@ function useRefresh() {
   }, [fetcher, guildId]);
 }
 
-const ListItemLink = forwardRef<HTMLAnchorElement, LinkProps>(
-  function ListItemLink({ role, children, ...props }, ref) {
-    return (
-      <li role={role}>
-        <Link ref={ref} {...props}>
-          {children}
-        </Link>
-      </li>
-    );
-  },
-);
+function ListItemLink({ role, children, ...props }: LinkProps) {
+  return (
+    <li role={role}>
+      <Link {...props}>{children}</Link>
+    </li>
+  );
+}
