@@ -3,17 +3,17 @@ import type { Fetcher } from "react-router";
 
 export function useOnSubmitComplete<TData>(
   fetcher: Fetcher<TData>,
-  callback: (data: TData | undefined) => void,
+  callback: (data: TData) => void,
 ) {
-  const isSubmitting = fetcher.state === "submitting";
-  const isSubmittingRef = useRef(isSubmitting);
+  const dataRef = useRef(fetcher.data);
 
   // avoid firing useEffect by callback change
-  const callbackRef = useRef(() => {});
-  callbackRef.current = () => callback(fetcher.data);
+  const callbackRef = useRef(callback);
+  callbackRef.current = callback;
 
   useEffect(() => {
-    if (!isSubmitting && isSubmittingRef.current) callbackRef.current();
-    isSubmittingRef.current = isSubmitting;
-  }, [isSubmitting]);
+    if (fetcher.data && fetcher.data !== dataRef.current)
+      callbackRef.current(fetcher.data);
+    dataRef.current = fetcher.data;
+  }, [fetcher.data]);
 }

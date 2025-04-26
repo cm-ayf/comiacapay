@@ -1,24 +1,25 @@
 import Card from "@mui/material/Card";
-import CardActionArea from "@mui/material/CardActionArea";
-import type { ElementType, MouseEventHandler, PropsWithChildren } from "react";
-import { LinkComponent as DefaultLinkComponent } from "./LinkComponent";
-
-type OnClick = MouseEventHandler<HTMLButtonElement> | undefined;
+import CardActionArea, {
+  type CardActionAreaProps,
+} from "@mui/material/CardActionArea";
+import type { PropsWithChildren } from "react";
+import { Link, type LinkProps } from "react-router";
 
 export type ClickableCardProps =
-  | { href: string; LinkComponent?: ElementType; onClick?: never }
-  | { href?: never; LinkComponent?: never; onClick?: OnClick };
+  | (Pick<LinkProps, "to" | "discover" | "prefetch" | "reloadDocument"> & {
+      onClick?: never;
+    })
+  | { to?: never; onClick?: CardActionAreaProps["onClick"] };
 
 export default function ClickableCard({
   children,
-  href,
-  LinkComponent = DefaultLinkComponent,
   onClick,
+  ...props
 }: PropsWithChildren<ClickableCardProps>) {
   return (
     <Card>
-      {href ? (
-        <CardActionArea LinkComponent={LinkComponent} href={href}>
+      {props.to ? (
+        <CardActionArea component={Link} {...props}>
           {children}
         </CardActionArea>
       ) : onClick ? (

@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
 import { useState } from "react";
-import { useLoaderData } from "react-router";
+import { href, Link, useLoaderData } from "react-router";
 import { useGuild, useMember } from "../$guildId";
 import CreateEventDialog from "./CreateEventDialog";
 import CreateItemDialog from "./CreateItemDialog";
@@ -18,7 +18,6 @@ import type { loader } from "./loader";
 import EventCard from "~/components/EventCard";
 import GuildCard from "~/components/GuildCard";
 import ItemCard from "~/components/ItemCard";
-import { LinkComponent } from "~/components/LinkComponent";
 import type { ClientItem } from "~/lib/schema";
 
 export { loader } from "./loader";
@@ -79,10 +78,7 @@ function UpdateGuildDialog({
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Button
-          LinkComponent={LinkComponent}
-          href={`/setup/start?guild_id=${guildId}`}
-        >
+        <Button component={Link} to={`/setup/start?guild_id=${guildId}}`}>
           認証
         </Button>
       </DialogActions>
@@ -112,7 +108,13 @@ function Events() {
       <Grid container spacing={16}>
         {events.map((event) => (
           <Grid key={event.id} size={{ xs: 12, sm: 6, md: 4 }}>
-            <EventCard event={event} href={`/${me.guildId}/${event.id}`} />
+            <EventCard
+              event={event}
+              to={href("/:guildId/:eventId", {
+                guildId: event.guildId,
+                eventId: event.id,
+              })}
+            />
           </Grid>
         ))}
       </Grid>

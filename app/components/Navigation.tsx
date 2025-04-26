@@ -89,7 +89,7 @@ function BreadcrumbsContent({
       transformOrigin={{ vertical: "top", horizontal: "left" }}
     >
       {breadcrumbs.map(({ href, name }) => (
-        <MenuItem key={href} component={ListItemLink} to={href}>
+        <MenuItem key={href} component={ListItemLink} to={href} discover="none">
           {name}
         </MenuItem>
       ))}

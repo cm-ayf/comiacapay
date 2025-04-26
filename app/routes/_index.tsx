@@ -3,14 +3,10 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
 import { useMemo } from "react";
-import { Form, useLoaderData } from "react-router";
+import { Form, href, Link, useLoaderData } from "react-router";
 import type { Route } from "./+types/_index";
 import EventCard from "~/components/EventCard";
 import GuildCard from "~/components/GuildCard";
-import {
-  LinkComponent,
-  PrefetchLinkComponent,
-} from "~/components/LinkComponent";
 import { getSessionOr401 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
 
@@ -67,14 +63,18 @@ export default function Page() {
         <Typography variant="h2" sx={{ fontSize: "2em" }}>
           サーバー
         </Typography>
-        <Button LinkComponent={LinkComponent} href="/setup/start">
+        <Button component={Link} to={href("/setup/start")}>
           追加・設定変更
         </Button>
       </Box>
       <Grid container spacing={16}>
         {members.map(({ guild, ...member }) => (
           <Grid key={guild.id} size={{ xs: 12, sm: 6, md: 4 }}>
-            <GuildCard guild={guild} member={member} href={`/${guild.id}`} />
+            <GuildCard
+              guild={guild}
+              member={member}
+              to={href("/:guildId", { guildId: guild.id })}
+            />
           </Grid>
         ))}
       </Grid>
@@ -86,19 +86,21 @@ export default function Page() {
           const member = indexMemberByGuildId.get(event.guildId);
           if (!member?.register) return null;
 
+          const target = href("/:guildId/:eventId/register", {
+            guildId: event.guildId,
+            eventId: event.id,
+          });
+
           return (
             <Grid key={event.id} size={{ xs: 12, sm: 6, md: 4 }}>
               <EventCard
                 guild={member.guild}
                 event={event}
-                LinkComponent={PrefetchLinkComponent}
-                href={`/${member.guildId}/${event.id}/register`}
+                to={target}
+                prefetch="render"
               />
               {/* for fog-of-war discovery */}
-              <Form
-                aria-hidden
-                action={`/${member.guildId}/${event.id}/receipts?first=true`}
-              />
+              <Form aria-hidden action={target} />
             </Grid>
           );
         })}

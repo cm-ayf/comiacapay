@@ -33,7 +33,7 @@ export interface RemixFormDialogProps<T extends FieldValues, U> {
   defaultValues: DefaultValues<NoInfer<T>>;
   submitConfig?: SubmitOptions;
 
-  onSubmitComplete?: (data: SerializeFrom<U> | undefined) => void;
+  onSubmitComplete?: (data: SerializeFrom<U>) => void;
 }
 
 const HandleDeleteContext = createContext<() => void>(() => {});

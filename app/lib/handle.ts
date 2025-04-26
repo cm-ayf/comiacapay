@@ -47,13 +47,13 @@ export function useTitle(): string | undefined {
   });
 }
 
-export function useBreadcrumbs(): Breadcrumb[] {
+export function useBreadcrumbs() {
   const { pathname } = useLocation();
   const matches = useMatches() as Match<unknown>[];
   return matches
     .filter((match) => !match.pathname.startsWith(pathname))
     .reverse()
-    .map((match) => {
+    .map<Breadcrumb>((match) => {
       const name = match.handle?.getName?.(match?.data) ?? "…";
       return { href: match.pathname, name };
     });

@@ -86,7 +86,6 @@ function RolesSelect({
   const { success } = useAlert();
   const navigate = useNavigate();
   useOnSubmitComplete(fetcher, (data) => {
-    if (!data) return;
     success("設定を保存しました");
     navigate(`/${data.id}`);
   });

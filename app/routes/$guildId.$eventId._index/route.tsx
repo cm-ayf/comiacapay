@@ -9,7 +9,7 @@ import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material-pigment-css/Grid";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
-import { useFetcher, useParams } from "react-router";
+import { href, Link, useFetcher, useParams } from "react-router";
 import { useMember } from "../$guildId";
 import { useDisplays, useEvent } from "../$guildId.$eventId";
 import CreateSetDiscountDialog from "./CreateSetDiscountDialog";
@@ -19,7 +19,6 @@ import UpsertDisplayDialog, {
 } from "./UpsertDisplayDialog";
 import DisplayCard from "~/components/DisplayPanel";
 import EventCard from "~/components/EventCard";
-import { LinkComponent } from "~/components/LinkComponent";
 import type { ClientEvent, ClientItem } from "~/lib/schema";
 
 export { loader } from "./loader";
@@ -50,9 +49,12 @@ function About() {
         </Grid>
         <Grid size={{ xs: 6, md: 3 }}>
           <Button
-            LinkComponent={LinkComponent}
+            component={Link}
             variant="contained"
-            href={`/${event.guildId}/${event.id}/register`}
+            to={href("/:guildId/:eventId/register", {
+              guildId: event.guildId,
+              eventId: event.id,
+            })}
             sx={{ height: "100%" }}
             fullWidth
             disabled={!me.register}
@@ -62,9 +64,12 @@ function About() {
         </Grid>
         <Grid size={{ xs: 6, md: 3 }}>
           <Button
-            LinkComponent={LinkComponent}
+            component={Link}
             variant="contained"
-            href={`/${event.guildId}/${event.id}/receipts`}
+            to={href("/:guildId/:eventId/receipts", {
+              guildId: event.guildId,
+              eventId: event.id,
+            })}
             sx={{ height: "100%" }}
             fullWidth
           >
