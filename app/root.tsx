@@ -14,7 +14,7 @@ import Navigation from "./components/Navigation";
 import createErrorBoundary from "./components/createErrorBoundary";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
 import { getSessionOr401 } from "./lib/middleware.server";
-import { prisma } from "./lib/prisma.server";
+import { freshUser } from "./lib/sync/user.server";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -27,11 +27,8 @@ export const links: Route.LinksFunction = () => [
 export const meta: MetaFunction = (_) => [];
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const { userId } = await getSessionOr401(request);
-
-  return await prisma.user.findUniqueOrThrow({
-    where: { id: userId },
-  });
+  const session = await getSessionOr401(request);
+  return await freshUser(session);
 }
 
 export const handle: Handle<typeof loader> = {

@@ -2,13 +2,13 @@ import type { FieldValues, Resolver } from "react-hook-form";
 import { data } from "react-router";
 import { getValidatedBody } from "./body.server";
 import { prisma } from "./prisma.server";
-import { getSession } from "./session.server";
+import { getSession, type SessionData } from "./session.server";
 
-export async function getSessionOr401(request: Request) {
+export async function getSessionOr401(request: Request): Promise<SessionData> {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId");
   const tokenResult = session.get("tokenResult");
-  if (!userId) throw data(null, 401);
+  if (!userId || !tokenResult) throw data(null, 401);
   return { userId, tokenResult };
 }
 

@@ -14,6 +14,7 @@ import type {
   RESTPostOAuth2RefreshTokenResult,
   RESTPostOAuth2RefreshTokenURLEncodedData,
 } from "discord-api-types/v10";
+import { data } from "react-router";
 import { env } from "../env.server";
 import { OAuth2Error } from "./error";
 import { oauth2Post, oauth2Url } from "./shared.server";
@@ -91,6 +92,11 @@ async function oauth2Get<T>(
     cache: "no-cache",
   });
 
+  printRateLimitHeaders(response);
+
+  if (response.status === 429) {
+    throw data({ retryAfter: response.headers.get("Retry-After") }, 429);
+  }
   if (response.status === 401) {
     throw new OAuth2Error("access_denied");
   } else if (!response.ok) {
@@ -103,33 +109,29 @@ async function oauth2Get<T>(
 export async function getCurrentUser(
   tokenSet: RESTPostOAuth2AccessTokenResult,
 ) {
-  return oauth2Get<APIUser>(Routes.user(), tokenSet).catch((e) => {
-    throw OAuth2Error.fromError(e, {
-      error_description: "Failed to get current user",
-    });
-  });
+  return oauth2Get<APIUser>(Routes.user(), tokenSet);
 }
 
 export async function getCurrentUserGuilds(
   tokenSet: RESTPostOAuth2AccessTokenResult,
 ) {
-  return oauth2Get<APIGuild[]>(Routes.userGuilds(), tokenSet).catch((e) => {
-    throw OAuth2Error.fromError(e, {
-      error_description: "Failed to get current user guilds",
-    });
-  });
+  return oauth2Get<APIGuild[]>(Routes.userGuilds(), tokenSet);
 }
 
 export async function getCurrentUserGuildMember(
   tokenSet: RESTPostOAuth2AccessTokenResult,
   guildId: string,
 ) {
-  return oauth2Get<APIGuildMember>(
-    Routes.userGuildMember(guildId),
-    tokenSet,
-  ).catch((e) => {
-    throw OAuth2Error.fromError(e, {
-      error_description: "Failed to get current user guild member",
-    });
-  });
+  return oauth2Get<APIGuildMember>(Routes.userGuildMember(guildId), tokenSet);
+}
+
+function printRateLimitHeaders(request: Response) {
+  console.log(request.url);
+  console.log("Retry-After:", request.headers.get("Retry-After"));
+
+  for (const [name, value] of request.headers) {
+    if (name.toLowerCase().startsWith("x-ratelimit-")) {
+      console.log(`${name}:`, value);
+    }
+  }
 }

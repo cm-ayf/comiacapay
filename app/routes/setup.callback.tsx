@@ -29,7 +29,7 @@ import { useOnSubmitComplete } from "~/lib/fetcher";
 import { exchangeBotCode } from "~/lib/oauth2/setup.server";
 import { UpdateGuild, type UpdateGuildInput } from "~/lib/schema";
 import { getSession } from "~/lib/session.server";
-import { upsertGuildAndMember } from "~/lib/sync.server";
+import { upsertGuildAndMember } from "~/lib/sync/guild.server";
 
 const resolver = valibotResolver(UpdateGuild);
 

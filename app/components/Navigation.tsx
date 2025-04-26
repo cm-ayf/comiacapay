@@ -13,8 +13,14 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import type { User } from "@prisma/client";
 import { useNetworkConnectivity } from "@remix-pwa/client";
-import { forwardRef, useRef, useState } from "react";
-import { Link, useNavigation, type LinkProps } from "react-router";
+import { forwardRef, useCallback, useRef, useState } from "react";
+import {
+  Link,
+  useFetcher,
+  useNavigation,
+  useParams,
+  type LinkProps,
+} from "react-router";
 import { useAlert } from "./Alert";
 import { useBreadcrumbs, useTitle, type Breadcrumb } from "~/lib/handle";
 import { useLocationType, useUrlWithRedirectTo } from "~/lib/location";
@@ -168,6 +174,7 @@ function MenuContent({
   const { success } = useAlert();
   const signoutUrl = useUrlWithRedirectTo("/auth/signout");
   const locationType = useLocationType();
+  const refresh = useRefresh();
 
   return (
     <Menu
@@ -178,7 +185,13 @@ function MenuContent({
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       transformOrigin={{ vertical: "top", horizontal: "right" }}
     >
-      <MenuItem component={ListItemLink} to={signoutUrl} reloadDocument>
+      <MenuItem onClick={refresh}>権限を更新する</MenuItem>
+      <MenuItem
+        component={ListItemLink}
+        to={signoutUrl}
+        discover="none"
+        reloadDocument
+      >
         サインアウト
       </MenuItem>
       <MenuItem
@@ -199,6 +212,18 @@ function MenuContent({
       </MenuItem>
     </Menu>
   );
+}
+
+function useRefresh() {
+  const fetcher = useFetcher();
+  const { guildId } = useParams();
+
+  return useCallback(() => {
+    const action = guildId
+      ? `/auth/refresh?guild_id=${guildId}`
+      : "/auth/refresh";
+    fetcher.submit(null, { method: "POST", action });
+  }, [fetcher, guildId]);
 }
 
 const ListItemLink = forwardRef<HTMLAnchorElement, LinkProps>(

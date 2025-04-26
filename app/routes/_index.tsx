@@ -19,7 +19,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   });
   const recentEvents = await prisma.event.findMany({
     where: {
-      guildId: { in: members.map((m) => m.guildId) },
+      guildId: {
+        in: members.filter((member) => member.register).map((m) => m.guildId),
+      },
       date: {
         gte: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3),
         lte: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
@@ -84,7 +86,7 @@ export default function Page() {
       <Grid container spacing={16}>
         {recentEvents.map((event) => {
           const member = indexMemberByGuildId.get(event.guildId);
-          if (!member?.register) return null;
+          if (!member) return null;
 
           const target = href("/:guildId/:eventId/register", {
             guildId: event.guildId,

@@ -5,7 +5,7 @@ import { sidCookie } from "./cookie.server";
 import { prisma } from "./prisma.server";
 import { Snowflake } from "./snowflake";
 
-interface SessionData {
+export interface SessionData {
   userId: string;
   tokenResult: RESTPostOAuth2AccessTokenResult;
 }

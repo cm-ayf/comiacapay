@@ -78,7 +78,7 @@ function UpdateGuildDialog({
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Button component={Link} to={`/setup/start?guild_id=${guildId}}`}>
+        <Button component={Link} to={`/setup/start?guild_id=${guildId}`}>
           認証
         </Button>
       </DialogActions>

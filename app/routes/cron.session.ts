@@ -2,7 +2,6 @@ import type { Route } from "./+types/cron.session";
 import { isVercelCronRequest } from "~/lib/cron.server";
 import { refreshTokens } from "~/lib/oauth2/auth.server";
 import { prisma } from "~/lib/prisma.server";
-import { upsertUserAndMembers } from "~/lib/sync.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
   if (!isVercelCronRequest(request))
@@ -19,10 +18,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     } else if (session.expires.getTime() < now + 86400000) {
       const tokenResult = await refreshTokens(session.tokenResult);
       const expires = new Date(now + tokenResult.expires_in * 1000);
-      const user = await upsertUserAndMembers(tokenResult);
       await prisma.session.update({
         where: { id: session.id },
-        data: { userId: user.id, tokenResult, expires },
+        data: { tokenResult, expires },
       });
     }
   }

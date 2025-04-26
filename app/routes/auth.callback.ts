@@ -2,10 +2,10 @@ import { redirectDocument } from "react-router";
 import type { Route } from "./+types/auth.callback";
 import { stateCookie } from "~/lib/cookie.server";
 import { env } from "~/lib/env.server";
-import { exchangeCode } from "~/lib/oauth2/auth.server";
+import { exchangeCode, getCurrentUser } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";
+import { prisma } from "~/lib/prisma.server";
 import { getSession, commitSession } from "~/lib/session.server";
-import { upsertUserAndMembers } from "~/lib/sync.server";
 
 const rawKey = Buffer.from(env.DISCORD_OAUTH2_TRAMPOLINE_KEY, "base64url");
 const key = await crypto.subtle.importKey("raw", rawKey, "AES-GCM", true, [
@@ -32,8 +32,19 @@ export async function loader({ request }: Route.LoaderArgs) {
     const tokenResult = await exchangeCode(code);
     session.set("tokenResult", tokenResult);
 
-    const user = await upsertUserAndMembers(tokenResult);
+    const user = await getCurrentUser(tokenResult).catch((e) => {
+      throw OAuth2Error.fromError(e, {
+        error: "server_error",
+        error_description: "Failed to get current user",
+      });
+    });
     session.set("userId", user.id);
+
+    await prisma.user.upsert({
+      where: { id: user.id },
+      update: {},
+      create: { id: user.id, username: user.username },
+    });
 
     return redirectDocument(state.searchParams.get("redirect_to") ?? "/", {
       headers: {

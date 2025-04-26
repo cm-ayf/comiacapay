@@ -1,6 +1,7 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import Typography from "@mui/material/Typography";
 import {
+  data,
   Outlet,
   useRouteLoaderData,
   type ShouldRevalidateFunctionArgs,
@@ -15,11 +16,13 @@ import {
 } from "~/lib/middleware.server";
 import { prisma } from "~/lib/prisma.server";
 import { UpdateGuild, type UpdateGuildOutput } from "~/lib/schema";
+import { freshMember } from "~/lib/sync/member.server";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
-  const { userId } = await getSessionOr401(request);
+  const session = await getSessionOr401(request);
   const { guildId } = params;
-  const member = await getMemberOr4xx(userId, guildId, "read");
+  const member = await freshMember(session, guildId);
+  if (!member.read) throw data(null, 403);
 
   const guild = await prisma.guild.findUniqueOrThrow({
     where: { id: guildId },
