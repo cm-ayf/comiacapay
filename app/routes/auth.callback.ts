@@ -7,12 +7,6 @@ import { OAuth2Error } from "~/lib/oauth2/error";
 import { prisma } from "~/lib/prisma.server";
 import { getSession, commitSession } from "~/lib/session.server";
 
-const rawKey = Buffer.from(env.DISCORD_OAUTH2_TRAMPOLINE_KEY, "base64url");
-const key = await crypto.subtle.importKey("raw", rawKey, "AES-GCM", true, [
-  "encrypt",
-  "decrypt",
-]);
-
 export async function loader({ request }: Route.LoaderArgs) {
   try {
     const { code, state, shouldTrampoline } =
@@ -60,6 +54,17 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 }
 
+let key: Promise<CryptoKey>;
+async function getTrampolineKey() {
+  if (!env.DISCORD_OAUTH2_TRAMPOLINE_KEY)
+    throw new OAuth2Error("invalid_request");
+  const rawKey = Buffer.from(env.DISCORD_OAUTH2_TRAMPOLINE_KEY, "base64url");
+  return (key ??= crypto.subtle.importKey("raw", rawKey, "AES-GCM", true, [
+    "encrypt",
+    "decrypt",
+  ]));
+}
+
 interface AuthorizationResponse {
   code: string;
   state: URL;
@@ -82,6 +87,7 @@ async function retrieveAuthorizationResponse(
 
   const iv = url.searchParams.get("iv");
   if (iv) {
+    const key = await getTrampolineKey();
     const decryptedCodeBuffer = await crypto.subtle.decrypt(
       { name: "AES-GCM", iv: Buffer.from(iv, "base64url") },
       key,
@@ -97,6 +103,7 @@ async function retrieveAuthorizationResponse(
 async function trampoline({ code, state }: AuthorizationResponse) {
   const url = new URL("/auth/callback", state.origin);
 
+  const key = await getTrampolineKey();
   const iv = crypto.getRandomValues(Buffer.alloc(12));
   const encryptedCodeBuffer = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
