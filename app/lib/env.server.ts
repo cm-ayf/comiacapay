@@ -1,18 +1,10 @@
-function check<T extends string>(
-  env: NodeJS.ProcessEnv,
-  keys: T[],
-): asserts env is NodeJS.ProcessEnv & Record<T, string> {
-  const missing = keys.filter((key) => !(key in env));
-  if (missing.length > 0) {
-    throw new Error(`Missing environment variables: ${missing.join(", ")}`);
-  }
-}
+import { exactOptional, object, parse, string } from "valibot";
 
-check(process.env, [
-  "DISCORD_OAUTH2_ORIGIN",
-  "DISCORD_OAUTH2_TRAMPOLINE_KEY",
-  "DISCORD_CLIENT_ID",
-  "DISCORD_CLIENT_SECRET",
-]);
+const EnvSchema = object({
+  DISCORD_CLIENT_ID: string(),
+  DISCORD_CLIENT_SECRET: string(),
+  DISCORD_OAUTH2_ORIGIN: string(),
+  DISCORD_OAUTH2_TRAMPOLINE_KEY: exactOptional(string()),
+});
 
-export const env = process.env;
+export const env = parse(EnvSchema, process.env);
