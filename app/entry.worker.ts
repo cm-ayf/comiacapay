@@ -1,8 +1,6 @@
-/// <reference lib="WebWorker" types="serviceworker" types="@remix-pwa/worker-runtime" />
+/// <reference lib="WebWorker" types="serviceworker" />
 import { EnhancedCache } from "@remix-pwa/sw/enhanced-cache";
 import type { DefaultFetchHandlerArgs } from "@remix-pwa/sw/types";
-
-declare const self: ServiceWorkerGlobalScope;
 
 const registerDataCache = new EnhancedCache("registerDataCache", {
   strategy: "NetworkFirst",
