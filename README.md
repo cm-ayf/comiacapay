@@ -57,10 +57,13 @@ Vercel 上で設定し，[Vercel CLI](https://vercel.com/docs/cli)でダウン�
 ### 設定する
 
 - `DISCORD_OAUTH2_ORIGIN`：OAuth2 認証に利用するホスト名です．スキーマとホスト名を含んでください．
-  - Vercel 上では，Production および Preview 環境では Vercel のホスト名を，Development 環境では`http://localhost:3000`を指定してください．
+  - Vercel 上では，Production および Preview 環境では Vercel のホスト名を，Development 環境では`http://localhost:5173`を指定してください．
 - `DISCORD_OAUTH2_TRAMPOLINE_KEY`：プレビュー環境で OAuth2 を動作させるために必要なシークレットです．`./scripts/generateTrampolineKey.mjs` で生成してください．
 - `DISCORD_CLIENT_ID`：Discord の OAuth2 認証に利用します．
 - `DISCORD_CLIENT_SECRET`：Discord の OAuth2 認証に利用します．
+- `POSTGRES_PRISMA_URL`・`POSTGRES_URL_NON_POOLING`：データベースに接続する URL です．
+  - Production 環境では Supabase の Integration が自動で設定します．
+  - Development 環境ではどちらも `postgres://$(whoami)@localhost:5432/comiacapay` などとしてください．
 
 ### ダウンロードする
 
