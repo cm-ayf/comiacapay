@@ -3,12 +3,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import Tooltip from "@mui/material/Tooltip";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  type PropsWithChildren,
-} from "react";
+import { createContext, use, useCallback, type PropsWithChildren } from "react";
 import type { DefaultValues, FieldValues, Resolver } from "react-hook-form";
 import {
   useFetcher,
@@ -78,9 +73,9 @@ export function RemixFormDialog<T extends FieldValues, U = unknown>({
     >
       <RemixFormProvider {...methods} handleSubmit={null} reset={null}>
         <DialogTitle>{title}</DialogTitle>
-        <HandleDeleteContext.Provider value={handleDelete}>
+        <HandleDeleteContext value={handleDelete}>
           {children}
-        </HandleDeleteContext.Provider>
+        </HandleDeleteContext>
       </RemixFormProvider>
     </Dialog>
   );
@@ -98,7 +93,7 @@ export function RemixFormDialogActions({
   deleteButton,
 }: RemixFormDialogButtonsProps) {
   const { formState } = useRemixFormContext();
-  const handleDelete = useContext(HandleDeleteContext);
+  const handleDelete = use(HandleDeleteContext);
 
   return (
     <DialogActions>

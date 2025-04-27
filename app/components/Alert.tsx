@@ -5,8 +5,8 @@ import {
   type PropsWithChildren,
   type ReactNode,
   createContext,
+  use,
   useCallback,
-  useContext,
   useReducer,
 } from "react";
 
@@ -36,9 +36,7 @@ export function AlertProvider({ children }: PropsWithChildren) {
   const [state, dispatch] = useReducer(reducer, []);
   return (
     <>
-      <AlertContext.Provider value={{ dispatch }}>
-        {children}
-      </AlertContext.Provider>
+      <AlertContext value={{ dispatch }}>{children}</AlertContext>
       <Stack>
         {state.map((alert) => (
           <Snackbar
@@ -61,7 +59,7 @@ export function AlertProvider({ children }: PropsWithChildren) {
 }
 
 export function useAlert(): Record<AlertColor, (message: ReactNode) => void> {
-  const { dispatch } = useContext(AlertContext);
+  const { dispatch } = use(AlertContext);
   return {
     success: useCallback(
       (message) => dispatch({ severity: "success", message }),
