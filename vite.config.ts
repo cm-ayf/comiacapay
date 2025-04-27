@@ -1,5 +1,4 @@
 import { createTheme } from "@mui/material/styles";
-import { jaJP } from "@mui/x-data-grid/locales/jaJP";
 import { pigment } from "@pigment-css/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
 import { reactRouterPWA } from "@remix-pwa/dev";
@@ -11,7 +10,7 @@ import surpressNodeModulesWarning from "./plugins/surpress-node-modules-warning"
 export default defineConfig({
   plugins: [
     pigment({
-      theme: createTheme({}, jaJP),
+      theme: createTheme(),
       transformLibraries: [
         "@mui/material",
         "@mui/icons-material",
