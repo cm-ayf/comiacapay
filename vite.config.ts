@@ -32,9 +32,6 @@ export default defineConfig({
       "use-sync-external-store/shim": "react",
     },
   },
-  build: {
-    target: "es2022",
-  },
   ssr: {
     noExternal: [/^@mui\//, "@pigment-css/react"],
   },
