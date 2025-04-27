@@ -55,8 +55,10 @@ export default function Table({
   const revalidator = useRevalidator();
 
   const theme = useTheme();
+  const localizedTheme = useMemo(() => createTheme(theme, jaJP), [theme]);
+
   return (
-    <ThemeProvider theme={createTheme(theme, jaJP)}>
+    <ThemeProvider theme={localizedTheme}>
       <DataGrid
         loading={revalidator.state === "loading"}
         slots={{ toolbar: GridToolbar }}
