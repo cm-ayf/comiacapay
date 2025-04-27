@@ -1,4 +1,7 @@
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useTheme } from "@mui/material-pigment-css";
 import { DataGrid, GridToolbar, type GridColDef } from "@mui/x-data-grid";
+import { jaJP } from "@mui/x-data-grid/locales/jaJP";
 import { useMemo } from "react";
 import { useLoaderData, useRevalidator } from "react-router";
 import { useMember } from "../$guildId";
@@ -51,20 +54,23 @@ export default function Table({
   const me = useMember();
   const revalidator = useRevalidator();
 
+  const theme = useTheme();
   return (
-    <DataGrid
-      loading={revalidator.state === "loading"}
-      slots={{ toolbar: GridToolbar }}
-      rows={receipts.map(toRow)}
-      columns={columns}
-      checkboxSelection={me.register}
-      getRowId={(row) => row.id}
-      rowSelectionModel={selected}
-      onRowSelectionModelChange={(selected) =>
-        setSelected(selected.map(String))
-      }
-      sx={{ height: "100%" }}
-    />
+    <ThemeProvider theme={createTheme(theme, jaJP)}>
+      <DataGrid
+        loading={revalidator.state === "loading"}
+        slots={{ toolbar: GridToolbar }}
+        rows={receipts.map(toRow)}
+        columns={columns}
+        checkboxSelection={me.register}
+        getRowId={(row) => row.id}
+        rowSelectionModel={selected}
+        onRowSelectionModelChange={(selected) =>
+          setSelected(selected.map(String))
+        }
+        sx={{ height: "100%" }}
+      />
+    </ThemeProvider>
   );
 }
 
