@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
 import { useMemo } from "react";
-import { Form, href, Link, useLoaderData } from "react-router";
+import { href, Link, useLoaderData } from "react-router";
 import type { Route } from "./+types/_index";
 import EventCard from "~/components/EventCard";
 import GuildCard from "~/components/GuildCard";
@@ -33,27 +33,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   return { members, recentEvents };
 }
 
-export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
-  const response = await serverLoader();
-  prefetchRecentEvents(response.recentEvents).catch(() => {});
-  return response;
-}
-clientLoader.hydrate = true as const;
-
-async function prefetchRecentEvents(events: { id: string; guildId: string }[]) {
-  await Promise.all(
-    events.flatMap((event: { id: string; guildId: string }) => [
-      fetch(
-        `/${event.guildId}/${event.id}/register.data?${new URLSearchParams({
-          _routes: "routes/$guildId,routes/$guildId.$eventId",
-        })}`,
-      ),
-    ]),
-  );
-}
-
 export default function Page() {
-  const { members, recentEvents } = useLoaderData<typeof clientLoader>();
+  const { members, recentEvents } = useLoaderData<typeof loader>();
   const indexMemberByGuildId = useMemo(
     () => new Map(members.map((m) => [m.guildId, m])),
     [members],
@@ -101,8 +82,6 @@ export default function Page() {
                 to={target}
                 prefetch="render"
               />
-              {/* for fog-of-war discovery */}
-              <Form aria-hidden action={target} />
             </Grid>
           );
         })}

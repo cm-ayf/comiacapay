@@ -8,6 +8,7 @@ import { installPWAGlobals } from "@remix-pwa/sw/install-pwa-globals";
 import { Fragment, type PropsWithChildren } from "react";
 import type { MetaFunction } from "react-router";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { UAParser } from "ua-parser-js";
 import type { Route } from "./+types/root";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
@@ -36,12 +37,29 @@ export const handle: Handle<typeof loader> = {
   getName: () => "TOP",
 };
 
+const prefetchedLinks = new Set<string>();
+function handlePrefetchLinksOnSafari(head: HTMLHeadElement) {
+  const parser = new UAParser();
+  if (!parser.getBrowser().is("safari")) return;
+
+  const links = head.querySelectorAll<HTMLLinkElement>(`link[rel=prefetch]`);
+  for (const link of links) {
+    if (prefetchedLinks.has(link.href)) continue;
+    prefetchedLinks.add(link.href);
+    fetch(link.href, { priority: "low" }).catch(() => {});
+  }
+}
+
 export function Layout({ children }: PropsWithChildren) {
   installPWAGlobals();
   const title = useTitle();
   return (
     <html lang="ja">
-      <head>
+      <head
+        ref={(head) => {
+          if (head) handlePrefetchLinksOnSafari(head);
+        }}
+      >
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="emotion-insertion-point" content="" />
