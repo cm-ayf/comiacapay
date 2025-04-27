@@ -17,7 +17,7 @@
 - 準備
   - Node.js をインストールしてください．
   - `npm install`を実行してください．
-  - [環境変数の項](#環境変数)を参照して`.env`を作成してください．
+  - 「[環境変数](#環境変数)」を参照して`.env`を作成してください．
 - 実行：`npm run dev`を実行してください．
 
 ## デプロイ
@@ -38,6 +38,12 @@
 
 なお，[Prisma スキーマ](prisma/schema.prisma)を変更することで，他のデータベースでも動作すると考えられます．スキーマは Supabase 向けに調整されていることに注意してください．
 
+以下の環境変数を設定してください：
+
+- `POSTGRES_PRISMA_URL`・`POSTGRES_URL_NON_POOLING`：データベースに接続する URL です．
+  - Production 環境では Supabase の Integration が自動で設定します．
+  - Development 環境ではどちらも `postgres://$(whoami)@localhost:5432/comiacapay` などとしてください．
+
 #### マイグレーション
 
 マイグレーションは自動化されていません．適宜`npm run migrate:deploy`を実行してください．詳しくは[公式ドキュメント](https://www.prisma.io/docs/concepts/components/prisma-migrate)を参照してください．
@@ -48,22 +54,37 @@
 通常の Discord ボットとは異なり，Client ID と Client Secret を利用して OAuth2 認証を行います．  
 [Discord Developer Portal](https://discord.com/developers/applications)でアプリケーションを用意してください．
 
-## 環境変数
-
-Vercel 上で設定し，[Vercel CLI](https://vercel.com/docs/cli)でダウンロードすることを想定しています．
-
-データベースの接続情報は，Production向けにはVercelとSupabaseとのIntegrationにより自動的に設定されます．Development向けには，Vercel上で設定するか，ダウンロードした後に手動で設定してください．
-
-### 設定する
+以下の環境変数を設定してください：
 
 - `DISCORD_OAUTH2_ORIGIN`：OAuth2 認証に利用するホスト名です．スキーマとホスト名を含んでください．
-  - Vercel 上では，Production および Preview 環境では Vercel のホスト名を，Development 環境では`http://localhost:5173`を指定してください．
-- `DISCORD_OAUTH2_TRAMPOLINE_KEY`：プレビュー環境で OAuth2 を動作させるために必要なシークレットです．`./scripts/generateTrampolineKey.mjs` で生成してください．
+  - Vercel 上では，Production 環境では Vercel のホスト名を，Development 環境では`http://localhost:5173`を指定してください．
 - `DISCORD_CLIENT_ID`：Discord の OAuth2 認証に利用します．
 - `DISCORD_CLIENT_SECRET`：Discord の OAuth2 認証に利用します．
-- `POSTGRES_PRISMA_URL`・`POSTGRES_URL_NON_POOLING`：データベースに接続する URL です．
-  - Production 環境では Supabase の Integration が自動で設定します．
-  - Development 環境ではどちらも `postgres://$(whoami)@localhost:5432/comiacapay` などとしてください．
+
+また，コンソール上で以下の2つをリダイレクト URL として設定する必要があります．
+
+- `${DISCORD_OAUTH2_ORIGIN}/auth/callback`
+- `${DISCORD_OAUTH2_ORIGIN}/setup/callback`
+
+<details>
+<summary>Preview 環境を使用するための追加設定</summary>
+
+Discord は Production 環境以外にリダイレクトできないため，上の設定だけでは Preview 環境で OAuth2 認証ができません．  
+Comiacapay ではトランポリンという機構を利用して Preview 環境で OAuth2 認証を行うことができます．トランポリンでは，Production 環境が一度認可コードを受け取り，それを暗号化して Preview 環境に送信します．
+
+トランポリンを利用するためには，以下の設定が必要です：
+
+- Preview 環境の `DISCORD_OAUTH2_ORIGIN` に **Production** 環境のホスト名を設定する
+- 全環境共通で `DISCORD_OAUTH2_TRAMPOLINE_KEY` に AES 鍵を設定する
+  - `./scripts/generateTrampolineKey.mjs` で生成できます．
+
+トランポリンは `/setup/callback` では利用できないため，Preview 環境でサーバー設定を行うことはできません．
+
+</details>
+
+## 環境変数
+
+Vercel 上で設定し，[Vercel CLI](https://vercel.com/docs/cli)でダウンロードすることを想定しています．設定項目は「[デプロイ](#デプロイ)」を参照してください．
 
 ### ダウンロードする
 
