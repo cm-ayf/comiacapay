@@ -1,6 +1,5 @@
 // @ts-check
 
-import { fixupPluginRules, includeIgnoreFile } from "@eslint/compat";
 import prettier from "eslint-config-prettier";
 import importX from "eslint-plugin-import-x";
 import jsxA11y from "eslint-plugin-jsx-a11y";
@@ -10,30 +9,6 @@ import reactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import muiPigmentCss from "./eslint-plugin-mui-pigment-css/index.js";
-/** @import { Linter } from "eslint" */
-/** @import { FixupPluginDefinition } from "@eslint/compat" */
-
-/** @type {Linter.Config} */
-const reactHooksFlatConfigRecommended = {
-  plugins: {
-    "react-hooks": fixupPluginRules(
-      /** @type {FixupPluginDefinition} */ (reactHooks),
-    ),
-  },
-  rules: /** @type {Linter.RulesRecord} */ (
-    reactHooks.configs.recommended.rules
-  ),
-};
-
-/** @type {Linter.Config} */
-const muiPathImportsMuiPathImports = {
-  plugins: {
-    "mui-path-imports": /** @type {any} */ (muiPathImports),
-  },
-  rules: {
-    "mui-path-imports/mui-path-imports": "error",
-  },
-};
 
 export default tseslint.config(
   ...tseslint.configs.recommended,
@@ -62,7 +37,7 @@ export default tseslint.config(
     },
   },
   jsxA11y.flatConfigs.recommended,
-  /** @type {Linter.Config} */ ({
+  {
     ...react.configs.flat.recommended,
     settings: {
       react: {
@@ -74,14 +49,20 @@ export default tseslint.config(
         { name: "NavLink", linkAttribute: "to" },
       ],
     },
-  }),
-  /** @type {Linter.Config} */ (react.configs.flat["jsx-runtime"]),
-  reactHooksFlatConfigRecommended,
-  muiPathImportsMuiPathImports,
-  muiPigmentCss,
-  includeIgnoreFile(new URL(import.meta.resolve("./.gitignore")).pathname),
+  },
+  react.configs.flat["jsx-runtime"],
+  reactHooks.configs["recommended-latest"],
   {
-    ignores: [".react-router/types"],
+    plugins: {
+      "mui-path-imports": muiPathImports,
+    },
+    rules: {
+      "mui-path-imports/mui-path-imports": "error",
+    },
+  },
+  muiPigmentCss,
+  {
+    ignores: ["build/**", ".react-router/**", "public/entry/worker.js"],
   },
   {
     rules: {
