@@ -9,8 +9,8 @@ import Container from "@mui/material-pigment-css/Container";
 import {
   createContext,
   Suspense,
+  use,
   useCallback,
-  useContext,
   useState,
   type PropsWithChildren,
 } from "react";
@@ -55,15 +55,15 @@ function PageContextProvider({ children }: PropsWithChildren) {
 
   return (
     <TabContext value={tab}>
-      <PageContext.Provider value={{ tab, setTab, selected, setSelected }}>
+      <PageContext value={{ tab, setTab, selected, setSelected }}>
         {children}
-      </PageContext.Provider>
+      </PageContext>
     </TabContext>
   );
 }
 
 function TopComponent() {
-  const { tab, setTab, selected } = useContext(PageContext);
+  const { tab, setTab, selected } = use(PageContext);
 
   return (
     <Container
@@ -85,7 +85,7 @@ function TopComponent() {
 
 const Table = dynamic(() => import("./Table"));
 export default function Page() {
-  const { selected, setSelected } = useContext(PageContext);
+  const { selected, setSelected } = use(PageContext);
   // TODO: get rid of emotion to have `p: 0` working
   return (
     <>
