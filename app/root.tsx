@@ -6,7 +6,6 @@ import type { User } from "@prisma/client";
 import { ManifestLink } from "@remix-pwa/manifest";
 import { installPWAGlobals } from "@remix-pwa/sw/install-pwa-globals";
 import { Fragment, type PropsWithChildren } from "react";
-import type { MetaFunction } from "react-router";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { UAParser } from "ua-parser-js";
 import type { Route } from "./+types/root";
@@ -16,16 +15,6 @@ import createErrorBoundary from "./components/createErrorBoundary";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
 import { getSessionOr401 } from "./lib/middleware.server";
 import { freshUser } from "./lib/sync/user.server";
-
-export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
-];
-
-export const meta: MetaFunction = (_) => [];
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSessionOr401(request);
