@@ -1,9 +1,0 @@
-type Member {
-  guild: Guild!
-  guildId: String! @model
-
-  read: Boolean! @model
-  register: Boolean! @model
-  write: Boolean! @model
-  admin: Boolean! @model
-}

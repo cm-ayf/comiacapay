@@ -1,4 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "crons": [{ "path": "/healthcheck", "schedule": "0 0 * * *" }]
+  "framework": "react-router",
+  "crons": [
+    {
+      "path": "/cron/session",
+      "schedule": "0 0 * * *"
+    }
+  ]
 }

@@ -22,8 +22,23 @@ model User {
   username String
   picture  String?
 
+  freshUntil DateTime @default(now()) @map("fresh_until")
+
   members  Member[]
   receipts Receipt[]
+  sessions Session[]
+}
+
+model Session {
+  id  String @id // snowflake
+  sid String @unique // secure random string
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String? @map("user_id")
+
+  /// [TokenResult]
+  tokenResult Json?    @map("token_result")
+  expires     DateTime
 }
 
 model Guild {
@@ -50,6 +65,8 @@ model Member {
   register Boolean
   write    Boolean
   admin    Boolean
+
+  freshUntil DateTime @default(now()) @map("fresh_until")
 
   @@id([userId, guildId])
 }

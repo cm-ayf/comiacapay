@@ -1,9 +1,0 @@
-type User {
-  id: ID! @model
-
-  name: String @model
-  username: String! @model
-  picture: String @model
-
-  members: [Member!]!
-}
