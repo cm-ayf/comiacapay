@@ -20,7 +20,6 @@ export async function getMemberOr4xx(
   const member = await prisma.member.findUniqueOrThrow({
     where: {
       userId_guildId: { userId, guildId },
-      read: true,
     },
   });
   if (!member[permission]) throw data(null, 403);
