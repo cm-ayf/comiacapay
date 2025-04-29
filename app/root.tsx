@@ -2,22 +2,115 @@ import "./global.css";
 import "@mui/material-pigment-css/styles.css";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material-pigment-css/Container";
-import type { User } from "@prisma/client";
+import { Prisma, PrismaClient, type User } from "@prisma/client";
 import { Fragment, useRef, type PropsWithChildren } from "react";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import {
+  data,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  unstable_createContext,
+} from "react-router";
 import { pwaInfo } from "virtual:pwa-info";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import type { Route } from "./+types/root";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
 import createErrorBoundary from "./components/createErrorBoundary";
+import { sidCookie } from "./lib/cookie.server";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
-import { getSessionOr401 } from "./lib/middleware.server";
+import {
+  createPrismaSessionStorage,
+  type SessionData,
+} from "./lib/session.server";
 import { freshUser } from "./lib/sync/user.server";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSessionOr401(request);
-  return await freshUser(session);
+export const prismaContext = unstable_createContext<PrismaClient>();
+const prismaMiddleware: Route.unstable_MiddlewareFunction = async (
+  { context },
+  next,
+) => {
+  context.set(prismaContext, new PrismaClient());
+  try {
+    return await next();
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      error = mapKnownError(error);
+    }
+    throw error;
+  }
+};
+
+function mapKnownError(error: Prisma.PrismaClientKnownRequestError) {
+  switch (error.code) {
+    case "P2001": // record does not exist
+    case "P2025": // no record found
+      return data({ code: "NOT_FOUND", meta: error.meta }, 404);
+    case "P2002": // unique constraint failed
+    case "P2003": // foreign key constraint failed
+    case "P2014": // would violate required relation
+      return data({ code: "CONFLICT", meta: error.meta }, 409);
+  }
+
+  return error;
+}
+
+export const sessionContext = unstable_createContext<SessionData>();
+const sessionMiddleware: Route.unstable_MiddlewareFunction = async (
+  { request, context },
+  next,
+) => {
+  const url = new URL(request.url);
+  if (url.pathname === "/auth/signin" || url.pathname === "/auth/callback")
+    return next();
+
+  const prisma = context.get(prismaContext);
+  const { getSession, commitSession } = createPrismaSessionStorage(
+    prisma,
+    sidCookie,
+  );
+
+  const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId");
+  const tokenResult = session.get("tokenResult");
+  if (!userId || !tokenResult) {
+    throw data(
+      { code: "UNAUTHORIZED" },
+      {
+        status: 401,
+        headers: {
+          "Set-Cookie": await commitSession(session, {
+            secure: url.protocol === "https",
+          }),
+        },
+      },
+    );
+  }
+
+  context.set(sessionContext, { userId, tokenResult });
+  return next();
+};
+
+export const userContext = unstable_createContext<User>();
+const userMiddleware: Route.unstable_MiddlewareFunction = async (
+  { context },
+  next,
+) => {
+  const user = await freshUser(context);
+  context.set(userContext, user);
+  return next();
+};
+
+export const unstable_middleware = [
+  prismaMiddleware,
+  sessionMiddleware,
+  userMiddleware,
+];
+
+export async function loader({ context }: Route.LoaderArgs) {
+  return context.get(userContext);
 }
 
 export const handle: Handle<typeof loader> = {

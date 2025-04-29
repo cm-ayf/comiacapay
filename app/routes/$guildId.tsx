@@ -1,31 +1,40 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import Typography from "@mui/material/Typography";
+import type { Member } from "@prisma/client";
 import {
   data,
   Outlet,
+  unstable_createContext,
   useRouteLoaderData,
   type ShouldRevalidateFunctionArgs,
 } from "react-router";
 import type { Route } from "./+types/$guildId";
 import createErrorBoundary from "~/components/createErrorBoundary";
+import { getValidatedBodyOr400 } from "~/lib/body.server";
 import type { Handle } from "~/lib/handle";
-import {
-  getMemberOr4xx,
-  getSessionOr401,
-  getValidatedBodyOr400,
-} from "~/lib/middleware.server";
-import { prisma } from "~/lib/prisma.server";
 import { UpdateGuild } from "~/lib/schema";
 import { freshMember } from "~/lib/sync/member.server";
+import { prismaContext } from "~/root";
 
-export async function loader({ request, params }: Route.LoaderArgs) {
-  const session = await getSessionOr401(request);
-  const { guildId } = params;
-  const member = await freshMember(session, guildId);
+export const memberContext = unstable_createContext<Member>();
+const memberMiddleware: Route.unstable_MiddlewareFunction = async (
+  { context, params },
+  next,
+) => {
+  const member = await freshMember(context, params.guildId);
+  context.set(memberContext, member);
+  return next();
+};
+
+export const unstable_middleware = [memberMiddleware];
+
+export async function loader({ context }: Route.LoaderArgs) {
+  const prisma = context.get(prismaContext);
+  const member = context.get(memberContext);
   if (!member.read) throw data({ code: "FORBIDDEN", permission: "read" }, 403);
 
   const guild = await prisma.guild.findUniqueOrThrow({
-    where: { id: guildId },
+    where: { id: member.guildId },
     include: {
       items: {
         orderBy: { issuedAt: "desc" },
@@ -38,15 +47,15 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 const resolver = valibotResolver(UpdateGuild);
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { guildId } = params;
-  const { userId } = await getSessionOr401(request);
-  await getMemberOr4xx(userId, guildId, "admin");
+export async function action({ request, context }: Route.ActionArgs) {
+  const prisma = context.get(prismaContext);
+  const member = context.get(memberContext);
+  if (!member.admin) throw Response.json(null, { status: 403 });
 
   const data = await getValidatedBodyOr400(request, resolver);
 
   return await prisma.guild.update({
-    where: { id: guildId },
+    where: { id: member.guildId },
     data,
   });
 }
