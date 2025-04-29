@@ -64,7 +64,6 @@ export class Snowflake {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var _Snowflake: typeof Snowflake;
 }
 

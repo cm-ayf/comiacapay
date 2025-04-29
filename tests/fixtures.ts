@@ -1,13 +1,15 @@
 import { test as base } from "@playwright/test";
-import type {
-  Guild,
-  Event,
-  Item,
-  Display,
-  Receipt,
-  User,
+import { PrismaPg } from "@prisma/adapter-pg";
+import {
+  type Guild,
+  type Event,
+  type Item,
+  type Display,
+  type Receipt,
+  type User,
+  PrismaClient,
 } from "~/generated/prisma/client";
-import { prisma } from "~/lib/prisma.server";
+import { env } from "~/lib/env.server";
 import { Snowflake } from "~/lib/snowflake";
 
 type Fixtures = {
@@ -18,6 +20,10 @@ type Fixtures = {
   displays: [Display, Display];
   receipts: [Receipt, Receipt, Receipt];
 };
+
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: env.POSTGRES_PRISMA_URL }),
+});
 
 export const test = base.extend<Fixtures>({
   // Guild fixture

@@ -3,14 +3,21 @@ import type {
   APIGuild,
   RESTPostOAuth2AccessTokenWithBotAndGuildsScopeResult,
 } from "discord-api-types/v10";
+import type { RouterContextProvider } from "react-router";
 import { getCurrentUser } from "../oauth2/auth.server";
-import { prisma } from "../prisma.server";
-import type { Prisma } from "~/generated/prisma/client";
+import { Prisma } from "~/generated/prisma/client";
+// eslint-disable-next-line import-x/no-restricted-paths
+import { prismaContext } from "~/root";
 
-export async function upsertGuildAndMember({
-  guild,
-  ...tokenResult
-}: RESTPostOAuth2AccessTokenWithBotAndGuildsScopeResult) {
+export async function upsertGuildAndMember(
+  context: Readonly<RouterContextProvider>,
+  {
+    guild,
+    ...tokenResult
+  }: RESTPostOAuth2AccessTokenWithBotAndGuildsScopeResult,
+) {
+  const prisma = context.get(prismaContext);
+
   const currentUser = await getCurrentUser(tokenResult);
 
   const attributes: Pick<Prisma.GuildCreateInput, "name" | "picture"> = {

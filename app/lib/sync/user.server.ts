@@ -5,13 +5,16 @@ import {
   RouteBases,
   type APIUser,
 } from "discord-api-types/v10";
+import type { RouterContextProvider } from "react-router";
 import { getCurrentUser, getCurrentUserGuilds } from "../oauth2/auth.server";
-import { prisma } from "../prisma.server";
-import type { SessionData } from "../session.server";
+// eslint-disable-next-line import-x/no-restricted-paths
+import { prismaContext, sessionContext } from "~/root";
 
 const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 
-export async function freshUser({ userId, tokenResult }: SessionData) {
+export async function freshUser(context: Readonly<RouterContextProvider>) {
+  const prisma = context.get(prismaContext);
+  const { userId, tokenResult } = context.get(sessionContext);
   return await prisma.$transaction(async (prisma) => {
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: userId },

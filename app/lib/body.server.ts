@@ -21,3 +21,14 @@ export async function getValidatedBody<T extends FieldValues>(
       };
   }
 }
+
+export async function getValidatedBodyOr400<T extends FieldValues>(
+  request: Request,
+  resolver: Resolver<T>,
+): Promise<T> {
+  const { errors, data } = await getValidatedBody(request, resolver);
+  if (errors)
+    throw Response.json({ code: "BAD_REQUEST", errors }, { status: 400 });
+
+  return data!;
+}
