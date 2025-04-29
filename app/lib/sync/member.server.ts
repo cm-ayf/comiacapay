@@ -1,15 +1,18 @@
 import type { Guild } from "@prisma/client";
 import type { APIGuildMember } from "discord-api-types/v10";
+import type { unstable_RouterContextProvider } from "react-router";
 import { getCurrentUserGuildMember } from "../oauth2/auth.server";
-import { prisma } from "../prisma.server";
-import type { SessionData } from "../session.server";
+import { prismaContext, sessionContext } from "~/root";
 
 const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 
 export function freshMember(
-  { userId, tokenResult }: SessionData,
+  context: unstable_RouterContextProvider,
   guildId: string,
 ) {
+  const prisma = context.get(prismaContext);
+  const { userId, tokenResult } = context.get(sessionContext);
+
   return prisma.$transaction(async (prisma) => {
     const { guild, ...member } = await prisma.member.findUniqueOrThrow({
       where: {
