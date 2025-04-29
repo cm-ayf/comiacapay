@@ -1,22 +1,20 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import type { Prisma } from "@prisma/client";
 import { data } from "react-router";
+import { memberContext } from "../$guildId";
 import type { Route } from "./+types/route";
-import {
-  getMemberOr4xx,
-  getSessionOr401,
-  getValidatedBodyOr400,
-} from "~/lib/middleware.server";
-import { prisma } from "~/lib/prisma.server";
+import { getValidatedBodyOr400 } from "~/lib/body.server";
 import { CreateReceipts, type CreateReceiptsOutput } from "~/lib/schema";
+import { prismaContext } from "~/root";
 
 const resolver = valibotResolver(CreateReceipts);
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { userId } = await getSessionOr401(request);
-  const { guildId, eventId } = params;
-  await getMemberOr4xx(userId, guildId, "register");
+export async function action({ request, params, context }: Route.ActionArgs) {
+  const prisma = context.get(prismaContext);
+  const { userId, register } = context.get(memberContext);
+  if (!register) throw data(null, 403);
 
+  const { eventId } = params;
   switch (request.method) {
     case "POST": {
       const body = await getValidatedBodyOr400(request, resolver);

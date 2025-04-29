@@ -1,8 +1,6 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, type PrismaClient } from "@prisma/client";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
-import { createSessionStorage } from "react-router";
-import { sidCookie } from "./cookie.server";
-import { prisma } from "./prisma.server";
+import { createSessionStorage, type Cookie } from "react-router";
 import { Snowflake } from "./snowflake";
 
 export interface SessionData {
@@ -10,9 +8,12 @@ export interface SessionData {
   tokenResult: RESTPostOAuth2AccessTokenResult;
 }
 
-export const { getSession, commitSession, destroySession } =
-  createSessionStorage<SessionData, unknown>({
-    cookie: sidCookie,
+export function createPrismaSessionStorage(
+  prisma: PrismaClient,
+  cookie: Cookie,
+) {
+  return createSessionStorage<SessionData, unknown>({
+    cookie,
     async createData({ userId = null, tokenResult = Prisma.DbNull }, expires) {
       if (!expires) return "";
       const id = Snowflake.generate().toString();
@@ -63,3 +64,4 @@ export const { getSession, commitSession, destroySession } =
       });
     },
   });
+}

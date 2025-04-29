@@ -1,11 +1,11 @@
+import { memberContext } from "../$guildId";
 import type { Route } from "./+types/route";
-import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
-import { prisma } from "~/lib/prisma.server";
+import { prismaContext } from "~/root";
 
-export async function loader({ request, params }: Route.LoaderArgs) {
-  const { userId } = await getSessionOr401(request);
-  const { guildId } = params;
-  await getMemberOr4xx(userId, guildId, "read");
+export async function loader({ context }: Route.LoaderArgs) {
+  const prisma = context.get(prismaContext);
+  const { guildId, read } = context.get(memberContext);
+  if (!read) throw Response.json(null, { status: 403 });
 
   return await prisma.event.findMany({
     where: { guildId },
