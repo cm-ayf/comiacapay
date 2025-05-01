@@ -1,5 +1,6 @@
 import type { Guild } from "@prisma/client";
 import type { APIGuildMember } from "discord-api-types/v10";
+import { data } from "react-router";
 import { getCurrentUserGuildMember } from "../oauth2/auth.server";
 import { prisma } from "../prisma.server";
 import type { SessionData } from "../session.server";
@@ -11,12 +12,16 @@ export function freshMember(
   guildId: string,
 ) {
   return prisma.$transaction(async (prisma) => {
-    const { guild, ...member } = await prisma.member.findUniqueOrThrow({
-      where: {
-        userId_guildId: { userId, guildId },
-      },
-      include: { guild: true },
-    });
+    const { guild, ...member } = await prisma.member
+      .findUniqueOrThrow({
+        where: {
+          userId_guildId: { userId, guildId },
+        },
+        include: { guild: true },
+      })
+      .expect({
+        P2025: () => data({ code: "NOT_FOUND" }, 404),
+      });
     if (Date.now() < member.freshUntil.getTime()) return member;
 
     const currentUserGuildMember = await getCurrentUserGuildMember(

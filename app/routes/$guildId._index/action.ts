@@ -1,4 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
+import type { Prisma } from "@prisma/client";
 import { data } from "react-router";
 import type { Route } from "./+types/route";
 import {
@@ -19,38 +20,33 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const { name, date, clone } = await getValidatedBodyOr400(request, resolver);
   const id = Snowflake.generate().toString();
-  const event = await prisma.event.create({
-    data: {
-      id,
-      guildId,
-      name,
-      date: new Date(date),
-    },
-  });
+
+  const create: Prisma.EventUncheckedCreateInput = { id, guildId, name, date };
 
   if (clone) {
-    const { discounts, displays } = await prisma.event.findUniqueOrThrow({
-      where: { id: clone },
-      include: { displays: true },
-    });
-
-    await prisma.display.createMany({
-      data: displays.map((display) => ({
+    const { discounts, displays } = await prisma.event
+      .findUniqueOrThrow({
+        where: { id: clone, guildId },
+        include: { displays: true },
+      })
+      .expect({
+        P2025: () => data({ code: "NOT_FOUND" }, 404),
+      });
+    create.discounts = discounts.map((discount) => ({
+      ...discount,
+      id: Snowflake.generate().toString(),
+    }));
+    create.displays = {
+      create: displays.map((display) => ({
         ...display,
-        eventId: event.id,
+        id: Snowflake.generate().toString(),
       })),
-    });
-
-    await prisma.event.update({
-      where: { id: event.id },
-      data: {
-        discounts: discounts.map((discount) => ({
-          ...discount,
-          id: Snowflake.generate().toString(),
-        })),
-      },
-    });
+    };
   }
+
+  const event = await prisma.event.create({
+    data: create,
+  });
 
   return data(event, 201);
 }

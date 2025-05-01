@@ -16,6 +16,13 @@ export async function action({ request, params }: Route.ActionArgs) {
   const { userId } = await getSessionOr401(request);
   const { guildId, eventId } = params;
   await getMemberOr4xx(userId, guildId, "register");
+  await prisma.event
+    .findUniqueOrThrow({
+      where: { id: eventId, guildId },
+    })
+    .expect({
+      P2025: () => data({ code: "NOT_FOUND" }, 404),
+    });
 
   switch (request.method) {
     case "POST": {

@@ -30,7 +30,7 @@ export const { getSession, commitSession, destroySession } =
       });
       if (!session) return null;
       if (session.expires.getTime() < Date.now()) {
-        await prisma.session.deleteMany({
+        await prisma.session.delete({
           where: { sid },
         });
         return null;
@@ -47,7 +47,7 @@ export const { getSession, commitSession, destroySession } =
       expires,
     ) {
       if (!expires) {
-        await prisma.session.deleteMany({
+        await prisma.session.delete({
           where: { sid },
         });
       } else {
@@ -58,7 +58,7 @@ export const { getSession, commitSession, destroySession } =
       }
     },
     async deleteData(sid) {
-      await prisma.session.deleteMany({
+      await prisma.session.delete({
         where: { sid },
       });
     },

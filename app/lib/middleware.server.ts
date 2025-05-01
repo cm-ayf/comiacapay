@@ -17,11 +17,15 @@ export async function getMemberOr4xx(
   guildId: string,
   permission: "read" | "write" | "register" | "admin",
 ) {
-  const member = await prisma.member.findUniqueOrThrow({
-    where: {
-      userId_guildId: { userId, guildId },
-    },
-  });
+  const member = await prisma.member
+    .findUniqueOrThrow({
+      where: {
+        userId_guildId: { userId, guildId },
+      },
+    })
+    .expect({
+      P2025: () => data({ code: "NOT_FOUND" }, 404),
+    });
   if (!member[permission]) throw data(null, 403);
   return member;
 }

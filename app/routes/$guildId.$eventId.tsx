@@ -24,10 +24,14 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const { guildId, eventId } = params;
   await getMemberOr4xx(userId, guildId, "read");
 
-  return await prisma.event.findUniqueOrThrow({
-    where: { id: eventId, guildId },
-    include: { displays: true },
-  });
+  return await prisma.event
+    .findUniqueOrThrow({
+      where: { id: eventId, guildId },
+      include: { displays: true },
+    })
+    .expect({
+      P2025: () => data({ code: "NOT_FOUND" }, 404),
+    });
 }
 
 const resolver = valibotResolver(UpdateEvent);
@@ -42,20 +46,33 @@ export async function action({ request, params }: Route.ActionArgs) {
       const body = await getValidatedBodyOr400(request, resolver);
       if ("clone" in body) throw data(null, 400);
 
-      return await prisma.event.update({
-        where: { id: eventId, guildId },
-        data: body,
-        include: { displays: true },
-      });
+      return await prisma.event
+        .update({
+          where: { id: eventId, guildId },
+          data: body,
+          include: { displays: true },
+        })
+        .expect({
+          P2025: () => data({ code: "NOT_FOUND" }, 404),
+        });
     }
     case "DELETE": {
       const [displays, event] = await prisma.$transaction([
-        prisma.display.deleteMany({
-          where: { eventId },
-        }),
-        prisma.event.delete({
-          where: { id: eventId, guildId },
-        }),
+        prisma.display
+          .deleteMany({
+            where: { eventId },
+          })
+          .expect({
+            P2014: () => data({ code: "CONFLICT" }, 409),
+          }),
+        prisma.event
+          .delete({
+            where: { id: eventId, guildId },
+          })
+          .expect({
+            P2014: () => data({ code: "CONFLICT" }, 409),
+            P2025: () => data({ code: "NOT_FOUND" }, 404),
+          }),
       ]);
       Object.assign(event, { delete: true, __neverRevalidate: true });
       return { ...event, displays };
