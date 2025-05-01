@@ -21,31 +21,47 @@ export async function action({ request, params }: Route.ActionArgs) {
       const body = await getValidatedBodyOr400(request, resolver);
 
       // check parent resource belonging guild
-      await prisma.item.findUniqueOrThrow({
-        where: { id: itemId, guildId },
-      });
-      await prisma.event.findUniqueOrThrow({
-        where: { id: eventId, guildId },
-      });
+      await prisma.item
+        .findUniqueOrThrow({
+          where: { id: itemId, guildId },
+        })
+        .expect({
+          P2025: () => data({ code: "NOT_FOUND" }, 404),
+        });
+      await prisma.event
+        .findUniqueOrThrow({
+          where: { id: eventId, guildId },
+        })
+        .expect({
+          P2025: () => data({ code: "NOT_FOUND" }, 404),
+        });
 
-      const display = await prisma.display.upsert({
-        where: {
-          eventId_itemId: { eventId, itemId },
-        },
-        create: { eventId, itemId, ...body },
-        update: body,
-      });
+      const display = await prisma.display
+        .upsert({
+          where: {
+            eventId_itemId: { eventId, itemId },
+          },
+          create: { eventId, itemId, ...body },
+          update: body,
+        })
+        .expect({
+          P2025: () => data({ code: "NOT_FOUND" }, 404),
+        });
 
       return data(display, 201);
     }
     case "DELETE": {
-      const display = await prisma.display.delete({
-        where: {
-          eventId_itemId: { eventId, itemId },
-          event: { guildId },
-          item: { guildId },
-        },
-      });
+      const display = await prisma.display
+        .delete({
+          where: {
+            eventId_itemId: { eventId, itemId },
+            event: { guildId },
+            item: { guildId },
+          },
+        })
+        .expect({
+          P2014: () => data({ code: "CONFLICT" }, 409),
+        });
       Object.assign(display, { delete: true });
       return display;
     }

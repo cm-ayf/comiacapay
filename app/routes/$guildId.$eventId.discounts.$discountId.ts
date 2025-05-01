@@ -11,10 +11,14 @@ export async function action({ request, params }: Route.ActionArgs) {
   switch (request.method) {
     case "DELETE": {
       const discount = await prisma.$transaction(async (prisma) => {
-        const { discounts } = await prisma.event.findUniqueOrThrow({
-          where: { id: eventId, guildId },
-          select: { discounts: true },
-        });
+        const { discounts } = await prisma.event
+          .findUniqueOrThrow({
+            where: { id: eventId, guildId },
+            select: { discounts: true },
+          })
+          .expect({
+            P2025: () => data({ code: "NOT_FOUND" }, 404),
+          });
         const discount = discounts.find((d) => d.id === discountId);
         if (!discount)
           throw data({ code: "NOT_FOUND", model: "Discount" }, 404);

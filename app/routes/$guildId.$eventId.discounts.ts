@@ -22,10 +22,14 @@ export async function action({ request, params }: Route.ActionArgs) {
       const body = await getValidatedBodyOr400(request, resolver);
 
       const discount = await prisma.$transaction(async (prisma) => {
-        const { discounts } = await prisma.event.findUniqueOrThrow({
-          where: { id: eventId, guildId },
-          select: { discounts: true },
-        });
+        const { discounts } = await prisma.event
+          .findUniqueOrThrow({
+            where: { id: eventId, guildId },
+            select: { discounts: true },
+          })
+          .expect({
+            P2025: () => data({ code: "NOT_FOUND" }, 404),
+          });
         const id = Snowflake.generate().toString();
         const discount = { id, ...body };
         await prisma.event.update({

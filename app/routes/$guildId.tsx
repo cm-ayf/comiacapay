@@ -43,12 +43,16 @@ export async function action({ request, params }: Route.ActionArgs) {
   const { userId } = await getSessionOr401(request);
   await getMemberOr4xx(userId, guildId, "admin");
 
-  const data = await getValidatedBodyOr400(request, resolver);
+  const body = await getValidatedBodyOr400(request, resolver);
 
-  return await prisma.guild.update({
-    where: { id: guildId },
-    data,
-  });
+  return await prisma.guild
+    .update({
+      where: { id: guildId },
+      data: body,
+    })
+    .expect({
+      P2025: () => data({ code: "NOT_FOUND" }, 404),
+    });
 }
 
 export const handle: Handle<typeof loader> = {

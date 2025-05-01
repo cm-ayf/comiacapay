@@ -1,6 +1,6 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, type PrismaPromise } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
-import { data } from "react-router";
 
 // union of one
 export type Discount = SetDiscount;
@@ -21,40 +21,87 @@ declare global {
   }
 }
 
-function mapKnownError(
-  error: Prisma.PrismaClientKnownRequestError,
-  model: string | undefined,
-) {
-  switch (error.code) {
-    case "P2001": // record does not exist
-    case "P2025": // no record found
-      return data({ code: "NOT_FOUND", model, meta: error.meta }, 404);
-    case "P2002": // unique constraint failed
-    case "P2003": // foreign key constraint failed
-    case "P2014": // would violate required relation
-      return data({ code: "CONFLICT", model, meta: error.meta }, 409);
-    default:
-      console.error(error);
-      return data({ code: "INTERNAL_SERVER_ERROR" }, 500);
+export interface ExpectHandler {
+  [code: `P${number}`]: (error: PrismaClientKnownRequestError) => unknown;
+}
+
+declare module "@prisma/client/runtime/library" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  export interface PrismaPromise<T> {
+    expect(handler: ExpectHandler): this;
   }
 }
 
-const mapKnownErrorExtension = Prisma.defineExtension({
-  name: "mapKnownError",
-  query: {
-    $allOperations({ model, args, query }) {
-      return query(args).catch((error) => {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          throw mapKnownError(error, model);
-        } else {
-          console.error(error);
-          throw data({ code: "INTERNAL_SERVER_ERROR" }, 500);
+function handle(error: unknown, handler: ExpectHandler): unknown {
+  if (
+    error instanceof PrismaClientKnownRequestError &&
+    error.code.startsWith("P")
+  ) {
+    const code = error.code as `P${number}`;
+    if (handler[code]) return handler[code](error);
+  }
+  return error;
+}
+
+function extendPrismaPromise<T>(promise: PrismaPromise<T>) {
+  const handler: ExpectHandler = {};
+  const self = new Proxy(promise, {
+    get(target, p, receiver) {
+      switch (p) {
+        case "expect": {
+          return (h: ExpectHandler) => {
+            Object.assign(handler, h);
+            return self;
+          };
         }
-      });
+        case "then": {
+          const then = Reflect.get(target, p, receiver);
+          return ((onfulfilled, onrejected) =>
+            then(
+              onfulfilled,
+              onrejected &&
+                ((reason: unknown) => onrejected(handle(reason, handler))),
+            )) satisfies typeof then;
+        }
+        case "catch": {
+          const _catch = Reflect.get(target, p, receiver);
+          return ((onrejected) =>
+            _catch(
+              onrejected &&
+                ((reason: unknown) => onrejected(handle(reason, handler))),
+            )) satisfies typeof _catch;
+        }
+        case "finally": {
+          const _finally = Reflect.get(target, p, receiver);
+          return ((onfinally) =>
+            _finally(onfinally).catch((reason) => {
+              throw handle(reason, handler);
+            })) satisfies typeof _finally;
+        }
+        default: {
+          const method = Reflect.get(target, p, receiver);
+          if (typeof method !== "function") return method;
+          return (...args: unknown[]) => {
+            const ret = method(...args);
+            if (ret?.[Symbol.toStringTag] !== "PrismaPromise") return ret;
+            return extendPrismaPromise(ret);
+          };
+        }
+      }
+    },
+  });
+  return self;
+}
+
+const expectExtension = Prisma.defineExtension({
+  name: "expect",
+  query: {
+    $allOperations({ query, args }) {
+      return extendPrismaPromise(query(args));
     },
   },
 });
 
 export const { prisma } = Object.assign(global, {
-  prisma: new PrismaClient().$extends(mapKnownErrorExtension),
+  prisma: new PrismaClient().$extends(expectExtension),
 });

@@ -20,15 +20,24 @@ export async function action({ request, params }: Route.ActionArgs) {
     case "PATCH": {
       const body = await getValidatedBodyOr400(request, resolver);
 
-      return await prisma.item.update({
-        where: { id: itemId, guildId },
-        data: body,
-      });
+      return await prisma.item
+        .update({
+          where: { id: itemId, guildId },
+          data: body,
+        })
+        .expect({
+          P2025: () => data({ code: "NOT_FOUND" }, 404),
+        });
     }
     case "DELETE": {
-      const item = await prisma.item.delete({
-        where: { id: itemId, guildId },
-      });
+      const item = await prisma.item
+        .delete({
+          where: { id: itemId, guildId },
+        })
+        .expect({
+          P2014: () => data({ code: "CONFLICT" }, 409),
+          P2025: () => data({ code: "NOT_FOUND" }, 404),
+        });
       Object.assign(item, { delete: true });
       return item;
     }

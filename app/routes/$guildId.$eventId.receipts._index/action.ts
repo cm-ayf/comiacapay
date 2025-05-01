@@ -17,6 +17,15 @@ export async function action({ request, params }: Route.ActionArgs) {
   const { guildId, eventId } = params;
   await getMemberOr4xx(userId, guildId, "register");
 
+  await prisma.event
+    .findUniqueOrThrow({
+      where: { id: eventId, guildId },
+      select: { id: true },
+    })
+    .expect({
+      P2025: () => data({ code: "NOT_FOUND" }, 404),
+    });
+
   switch (request.method) {
     case "POST": {
       const body = await getValidatedBodyOr400(request, resolver);
@@ -39,7 +48,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       const targetIds = url.searchParams.getAll("id");
       if (targetIds.length === 0) throw data({ code: "BAD_REQUEST" }, 400);
 
-      await prisma.$transaction([
+      const [, receipt] = await prisma.$transaction([
         prisma.record.deleteMany({
           where: {
             receiptId: { in: targetIds },
@@ -51,7 +60,8 @@ export async function action({ request, params }: Route.ActionArgs) {
           },
         }),
       ]);
-      return { delete: true };
+      Object.assign(receipt, { delete: true });
+      return data(receipt, 200);
     }
     default:
       throw data(null, 405);
