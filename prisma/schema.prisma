@@ -10,9 +10,8 @@ generator json {
 }
 
 datasource db {
-  provider  = "postgres"
-  url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
+  provider = "postgres"
+  url      = env("DATABASE_URL")
 }
 
 model User {

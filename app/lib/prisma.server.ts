@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import { withAccelerate } from "@prisma/extension-accelerate";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { data } from "react-router";
 
@@ -56,5 +57,7 @@ const mapKnownErrorExtension = Prisma.defineExtension({
 });
 
 export const { prisma } = Object.assign(global, {
-  prisma: new PrismaClient().$extends(mapKnownErrorExtension),
+  prisma: new PrismaClient()
+    .$extends(withAccelerate())
+    .$extends(mapKnownErrorExtension),
 });
