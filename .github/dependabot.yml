@@ -26,6 +26,14 @@ updates:
       remix-pwa:
         patterns:
           - "@remix-pwa/*"
+      typescript:
+        patterns:
+          - "typescript"
+          - "typescript-eslint"
+      eslint:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
 
       patch:
         update-types: ["patch"]
