@@ -4,6 +4,13 @@
 
 以下の説明は開発者向けです．[利用者向けの説明はこちら](docs/index.md)．
 
+## コントリビュートする前に
+
+現在，このリポジトリには [`@TypeChangeBot[bot]`](https://github.com/apps/typechangebot) という GitHub App が導入されています．この GitHub App はコミッターによる変更を観察し，その変更を何故行ったかを尋ねて記録します．  
+もし現時点以降の記録を望まないのであれば `@TypeChangeBot[bot] OPTOUT` と，もし今までの全ての記録を削除したいのであれば `@TypeChangeBot[bot] REMOVE` を，それぞれコメントしてください．
+
+詳しくは，[開発者による説明](https://cse-rdyer-05.unl.edu/tcbot/)を参照してください．
+
 ## 技術スタック
 
 - [TypeScript](https://www.typescriptlang.org/)
