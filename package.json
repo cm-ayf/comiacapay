@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@eslint/compat": "1.2.9",
-    "@eslint/js": "9.25.1",
+    "@eslint/js": "9.27.0",
     "@pigment-css/vite-plugin": "0.0.30",
     "@react-router/dev": "7.6.0",
     "@remix-pwa/dev": "4.0.0-dev.3",
@@ -61,7 +61,7 @@
     "@types/react-dom": "19.1.5",
     "@types/serviceworker": "0.0.134",
     "@vercel/react-router": "1.1.0",
-    "eslint": "9.25.1",
+    "eslint": "9.27.0",
     "eslint-config-prettier": "10.1.5",
     "eslint-import-resolver-typescript": "4.3.4",
     "eslint-plugin-import-x": "4.11.1",
