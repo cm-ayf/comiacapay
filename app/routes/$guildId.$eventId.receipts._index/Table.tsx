@@ -1,7 +1,17 @@
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useTheme } from "@mui/material-pigment-css";
-import { DataGrid, GridToolbar, type GridColDef } from "@mui/x-data-grid";
-import { jaJP } from "@mui/x-data-grid/locales/jaJP";
+import { extendTheme, ThemeProvider, useTheme } from "@mui/material/styles";
+import {
+  ColumnsPanelTrigger,
+  DataGrid,
+  ExportCsv,
+  FilterPanelTrigger,
+  GridFilterListIcon,
+  GridViewColumnIcon,
+  GridDownloadIcon,
+  Toolbar,
+  ToolbarButton,
+  type GridColDef,
+} from "@mui/x-data-grid";
+import { jaJP } from "@mui/x-data-grid/locales";
 import { useMemo } from "react";
 import { useLoaderData, useRevalidator } from "react-router";
 import { useMember } from "../$guildId";
@@ -10,13 +20,15 @@ import type { clientLoader } from "./clientLoader";
 import type { IDBReceipt } from "~/lib/idb.client";
 import { Snowflake } from "~/lib/snowflake";
 
-export default function Table({
-  selected,
-  setSelected,
-}: {
-  selected: string[];
-  setSelected: (ids: string[]) => void;
-}) {
+export default function Table(
+  {
+    // selected,
+    // setSelected,
+  }: {
+    selected: string[];
+    setSelected: (ids: string[]) => void;
+  },
+) {
   const { displays } = useDisplays();
   const columns = useMemo<GridColDef[]>(
     () => [
@@ -32,6 +44,7 @@ export default function Table({
         type: "number",
         width: 90,
         align: "right",
+        valueFormatter: (value: number) => `¥${value.toLocaleString()}`,
       },
       {
         field: "pushed",
@@ -46,6 +59,8 @@ export default function Table({
         width: 160,
         type: "number",
         align: "right",
+        valueGetter: (value: number | undefined) => value ?? 0,
+        valueFormatter: (value: number) => (value ? String(value) : ""),
       })),
     ],
     [displays],
@@ -55,33 +70,53 @@ export default function Table({
   const revalidator = useRevalidator();
 
   const theme = useTheme();
-  const localizedTheme = useMemo(() => createTheme(theme, jaJP), [theme]);
+  const localizedTheme = useMemo(() => extendTheme(theme, jaJP), [theme]);
 
   return (
     <ThemeProvider theme={localizedTheme}>
       <DataGrid
         loading={revalidator.state === "loading"}
-        slots={{ toolbar: GridToolbar }}
+        showToolbar
+        slots={{ toolbar: TableToolbar }}
         rows={receipts.map(toRow)}
         columns={columns}
         checkboxSelection={me.register}
         getRowId={(row) => row.id}
-        rowSelectionModel={selected}
-        onRowSelectionModelChange={(selected) =>
-          setSelected(selected.map(String))
-        }
+        // rowSelectionModel={selected}
+        // onRowSelectionModelChange={(selected) =>
+        //   setSelected(selected.map(String))
+        // }
+        ignoreValueFormatterDuringExport
         sx={{ height: "100%" }}
       />
     </ThemeProvider>
   );
 }
 
-function toRow({ records, ...rest }: IDBReceipt): {
+function TableToolbar() {
+  return (
+    <Toolbar>
+      <ColumnsPanelTrigger render={<ToolbarButton />}>
+        <GridViewColumnIcon fontSize="small" />
+      </ColumnsPanelTrigger>
+      <FilterPanelTrigger render={<ToolbarButton />}>
+        <GridFilterListIcon fontSize="small" />
+      </FilterPanelTrigger>
+      <ExportCsv render={<ToolbarButton />}>
+        <GridDownloadIcon fontSize="small" />
+      </ExportCsv>
+    </Toolbar>
+  );
+}
+
+interface Row {
   id: string;
   timestamp: Date;
   total: number;
   [itemId: `${bigint}`]: number;
-} {
+}
+
+function toRow({ records, ...rest }: IDBReceipt): Row {
   const snowflake = Snowflake.parse(rest.id);
   return {
     ...rest,
