@@ -67,21 +67,20 @@ export default function Chart() {
     }
 
     // Add selected display count lines
-    for (const itemId of selectedItemIds) {
-      const display = displays.find((d) => d.itemId === itemId);
-      if (display) {
-        series.push({
-          type: "line",
-          dataKey: itemId,
-          label: `${display.item.name} (個)`,
-          curve: "stepAfter",
-          showMark: false,
-          connectNulls: true,
-          area: true,
-          stack: "count",
-          yAxisId: "count",
-        });
-      }
+    for (const display of displays) {
+      if (!selectedItemIds.includes(display.itemId)) continue;
+
+      series.push({
+        type: "line",
+        dataKey: display.itemId,
+        label: `${display.item.name} (個)`,
+        curve: "stepAfter",
+        showMark: false,
+        connectNulls: true,
+        area: true,
+        stack: "count",
+        yAxisId: "count",
+      });
     }
 
     return series;
