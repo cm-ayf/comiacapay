@@ -35,21 +35,18 @@ export default function Chart() {
       // Update revenue
       totalRevenue += receipt.total;
 
-      // Create dataset entry
-      const entry: Record<string, number> = {
-        timestamp: snowflake ? snowflake.timestamp : 0,
-        revenue: totalRevenue,
-      };
-
       // Update counts
       for (const { itemId, count } of receipt.records) {
         // Lazily initialize count for each itemId
         if (displayCounts[itemId] === undefined) displayCounts[itemId] = count;
         else displayCounts[itemId] += count;
-        Object.assign(entry, displayCounts);
       }
 
-      dataset.push(entry);
+      dataset.push({
+        timestamp: snowflake ? snowflake.timestamp : 0,
+        revenue: totalRevenue,
+        ...displayCounts,
+      });
     }
     return dataset;
   }, [receipts]);
