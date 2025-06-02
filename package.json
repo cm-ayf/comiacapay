@@ -29,7 +29,7 @@
     "@mui/lab": "7.0.0-beta.12",
     "@mui/material": "7.1.0",
     "@mui/material-pigment-css": "7.1.0",
-    "@mui/x-data-grid": "7.29.4",
+    "@mui/x-data-grid": "7.29.5",
     "@pigment-css/react": "0.0.30",
     "@prisma/client": "6.8.2",
     "@react-router/fs-routes": "7.6.1",
