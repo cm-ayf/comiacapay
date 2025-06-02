@@ -77,6 +77,8 @@ export default function Table() {
   const theme = useTheme();
   const localizedTheme = useMemo(() => extendTheme(theme, jaJP), [theme]);
 
+  const rows = useMemo(() => receipts.map(toRow), [receipts]);
+
   const [rowSelectionModel, setRowSelectionModel] =
     useState<GridRowSelectionModel>({ type: "include", ids: new Set() });
 
@@ -87,7 +89,7 @@ export default function Table() {
           loading={revalidator.state === "loading"}
           showToolbar
           slots={{ toolbar: TableToolbar }}
-          rows={receipts.map(toRow)}
+          rows={rows}
           columns={columns}
           checkboxSelection={me.register}
           getRowId={(row) => row.id}
