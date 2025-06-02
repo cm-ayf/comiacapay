@@ -11,13 +11,7 @@ export default defineConfig({
   plugins: [
     pigment({
       theme: createTheme(),
-      transformLibraries: [
-        "@mui/material",
-        "@mui/icons-material",
-        "@mui/lab",
-        "@mui/x-data-grid",
-        "@mui/x-internals",
-      ],
+      transformLibraries: ["@mui/material", "@mui/icons-material", "@mui/lab"],
       displayName: process.env["NODE_ENV"] !== "production",
     }),
     reactRouter(),
@@ -28,12 +22,11 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@mui/x-internals": "@mui/x-internals/esm",
       "use-sync-external-store/shim": "react",
     },
   },
   ssr: {
-    noExternal: [/^@mui\//, "@pigment-css/react"],
+    noExternal: [/^@mui\/(?!x-)/, "@pigment-css/react"],
   },
   define: {
     "process.env.NODE_ENV": JSON.stringify(process.env["NODE_ENV"]),

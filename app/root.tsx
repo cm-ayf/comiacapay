@@ -71,8 +71,6 @@ function AppLayout({
   user,
 }: PropsWithChildren<{ user: User | undefined }>) {
   installPWAGlobals();
-  const PageContextProvider = useHandleValue("PageContextProvider", Fragment);
-  const TopComponent = useHandleValue("TopComponent", Fragment);
   const ButtomComponent = useHandleValue("ButtomComponent", Fragment);
   const maxWidth = useHandleValue("containerMaxWidth", "lg");
 
@@ -80,15 +78,12 @@ function AppLayout({
     <>
       <Navigation user={user} />
       <Toolbar variant="dense" />
-      <PageContextProvider>
-        <TopComponent />
-        <AlertProvider>
-          <Container maxWidth={maxWidth ?? "lg"} component="main">
-            {children}
-          </Container>
-        </AlertProvider>
-        <ButtomComponent />
-      </PageContextProvider>
+      <AlertProvider>
+        <Container maxWidth={maxWidth ?? "lg"} component="main">
+          {children}
+        </Container>
+      </AlertProvider>
+      <ButtomComponent />
     </>
   );
 }
