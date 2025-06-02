@@ -19,14 +19,14 @@ export { loader } from "./loader";
 export { clientLoader } from "./clientLoader";
 
 const Table = dynamic(() => import("./Table"));
+const Chart = dynamic(() => import("./Chart"));
 export default function Page() {
-  const [tab, setTab] = useState<"summary" | "table">("summary");
-  // TODO: get rid of emotion to have `p: 0` working
+  const [tab, setTab] = useState<"summary" | "table" | "chart">("summary");
   return (
     <TabContext value={tab}>
       <Box
         sx={{
-          marginTop: -2,
+          marginBlock: -2,
           marginInline: -3,
           display: "flex",
           flexDirection: "row",
@@ -36,6 +36,7 @@ export default function Page() {
         <TabList onChange={(_, value) => setTab(value)}>
           <Tab label="概要" value="summary" />
           <Tab label="表" value="table" />
+          <Tab label="グラフ" value="chart" />
         </TabList>
         <Buttons />
       </Box>
@@ -45,6 +46,11 @@ export default function Page() {
       <TabPanel value="table" sx={{ p: 0, height: "100%" }}>
         <Suspense fallback={<CircularProgress />}>
           <Table />
+        </Suspense>
+      </TabPanel>
+      <TabPanel value="chart" sx={{ p: 0, height: "100%" }}>
+        <Suspense fallback={<CircularProgress />}>
+          <Chart />
         </Suspense>
       </TabPanel>
     </TabContext>
@@ -62,7 +68,6 @@ function Buttons() {
 }
 
 function PushButton() {
-  // this button is rendered outside of the route context
   const data = useLoaderData<typeof loader | typeof clientLoader>();
   const fetcher = useFetcher<typeof action>();
   const onClick = useCallback(() => {
