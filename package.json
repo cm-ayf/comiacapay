@@ -38,7 +38,7 @@
     "@remix-pwa/manifest": "3.0.1-dev.2",
     "@remix-pwa/sw": "4.0.0-dev.3",
     "@remix-pwa/worker-runtime": "3.0.0-dev.1",
-    "discord-api-types": "0.38.8",
+    "discord-api-types": "0.38.9",
     "idb": "^8.0.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
