@@ -17,7 +17,7 @@ import {
 } from "@mui/x-data-grid";
 import { jaJP } from "@mui/x-data-grid/locales";
 import { createContext, use, useCallback, useMemo, useState } from "react";
-import { useLoaderData, useParams, useRevalidator } from "react-router";
+import { useLoaderData, useRevalidator } from "react-router";
 import { useFetcher } from "react-router";
 import { useMember } from "../$guildId";
 import { useDisplays } from "../$guildId.$eventId";
@@ -124,7 +124,6 @@ function TableToolbar() {
 
 function DeleteButton() {
   const { receipts, rowSelectionModel } = use(DeleteButtonContext);
-  const { guildId, eventId } = useParams();
   const fetcher = useFetcher();
 
   const searchParams = useMemo(() => {
@@ -151,9 +150,9 @@ function DeleteButton() {
 
     fetcher.submit(null, {
       method: "DELETE",
-      action: `/${guildId}/${eventId}/receipts?${searchParams}`,
+      action: `?${searchParams}`,
     });
-  }, [fetcher, guildId, eventId, searchParams]);
+  }, [fetcher, searchParams]);
 
   return (
     <ToolbarButton

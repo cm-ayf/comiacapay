@@ -6,12 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material-pigment-css/Box";
 import { Suspense, useCallback, useState } from "react";
-import {
-  useFetcher,
-  useParams,
-  useRevalidator,
-  useRouteLoaderData,
-} from "react-router";
+import { useFetcher, useLoaderData, useRevalidator } from "react-router";
 import Summary from "./Summary";
 import type { action } from "./action";
 import type { clientLoader } from "./clientLoader";
@@ -68,20 +63,15 @@ function Buttons() {
 
 function PushButton() {
   // this button is rendered outside of the route context
-  const data = useRouteLoaderData<typeof loader | typeof clientLoader>(
-    "routes/$guildId.$eventId.receipts._index",
-  );
-  const { guildId, eventId } = useParams();
+  const data = useLoaderData<typeof loader | typeof clientLoader>();
   const fetcher = useFetcher<typeof action>();
   const onClick = useCallback(() => {
     if (!data) return;
     fetcher.submit(data.receiptsToBePushed, {
       method: "POST",
-      // this button is rendered outside of the route context
-      action: `/${guildId}/${eventId}/receipts`,
       encType: "application/json",
     });
-  }, [fetcher, guildId, eventId, data]);
+  }, [fetcher, data]);
 
   if (!data) return null;
 
