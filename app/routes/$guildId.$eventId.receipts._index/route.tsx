@@ -62,7 +62,6 @@ function Buttons() {
 }
 
 function PushButton() {
-  // this button is rendered outside of the route context
   const data = useLoaderData<typeof loader | typeof clientLoader>();
   const fetcher = useFetcher<typeof action>();
   const onClick = useCallback(() => {
