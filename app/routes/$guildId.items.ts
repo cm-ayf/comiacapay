@@ -13,7 +13,6 @@ import { Snowflake } from "~/lib/snowflake";
 const resolver = valibotResolver(CreateItem);
 
 export async function action({ request, params }: Route.ActionArgs) {
-  if (request.method !== "POST") throw data(null, 405);
   const { userId } = await getSessionOr401(request);
   const { guildId } = params;
   await getMemberOr4xx(userId, guildId, "write");
@@ -28,5 +27,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       });
       return data(item, 201);
     }
+    default:
+      throw data(null, 405);
   }
 }
