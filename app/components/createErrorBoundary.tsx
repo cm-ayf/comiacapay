@@ -52,7 +52,6 @@ function ForbiddenError({ error }: { error: ErrorResponse }) {
     return (
       <Typography>
         {output.permission.toUpperCase()}権限がありません。
-        <Link to="/help/permissions">権限について</Link>を確認してください。
       </Typography>
     );
   } else {
