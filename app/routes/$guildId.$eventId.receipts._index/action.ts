@@ -37,7 +37,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     case "DELETE": {
       const url = new URL(request.url);
       const targetIds = url.searchParams.getAll("id");
-      if (targetIds.length === 0) throw data(null, 400);
+      if (targetIds.length === 0) throw data({ code: "BAD_REQUEST" }, 400);
 
       await prisma.$transaction([
         prisma.record.deleteMany({

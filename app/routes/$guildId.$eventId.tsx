@@ -40,7 +40,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   switch (request.method) {
     case "PATCH": {
       const body = await getValidatedBodyOr400(request, resolver);
-      if ("clone" in body) throw data(null, 400);
+      if ("clone" in body) throw data({ code: "BAD_REQUEST" }, 400);
 
       return await prisma.event.update({
         where: { id: eventId, guildId },

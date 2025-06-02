@@ -22,7 +22,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const session = await getSessionOr401(request);
   const { guildId } = params;
   const member = await freshMember(session, guildId);
-  if (!member.read) throw data(null, 403);
+  if (!member.read) throw data({ code: "FORBIDDEN", permission: "read" }, 403);
 
   const guild = await prisma.guild.findUniqueOrThrow({
     where: { id: guildId },

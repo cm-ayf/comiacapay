@@ -8,7 +8,7 @@ export async function getSessionOr401(request: Request): Promise<SessionData> {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId");
   const tokenResult = session.get("tokenResult");
-  if (!userId || !tokenResult) throw data(null, 401);
+  if (!userId || !tokenResult) throw data({ code: "UNAUTHORIZED" }, 401);
   return { userId, tokenResult };
 }
 
@@ -22,7 +22,7 @@ export async function getMemberOr4xx(
       userId_guildId: { userId, guildId },
     },
   });
-  if (!member[permission]) throw data(null, 403);
+  if (!member[permission]) throw data({ code: "FORBIDDEN", permission }, 403);
   return member;
 }
 
@@ -31,6 +31,6 @@ export async function getValidatedBodyOr400<T extends FieldValues>(
   resolver: Resolver<T>,
 ) {
   const { errors, data: body } = await getValidatedBody<T>(request, resolver);
-  if (errors) throw data(errors, 400);
+  if (errors) throw data({ code: "BAD_REQUEST", errors }, 400);
   return body!;
 }
