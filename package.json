@@ -52,6 +52,7 @@
   "devDependencies": {
     "@eslint/compat": "1.2.9",
     "@pigment-css/vite-plugin": "0.0.30",
+    "@prisma/generator-helper": "6.9.0",
     "@react-router/dev": "7.6.2",
     "@remix-pwa/dev": "4.0.0-dev.3",
     "@tsconfig/node22": "22.0.2",
