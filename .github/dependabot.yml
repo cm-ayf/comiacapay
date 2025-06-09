@@ -41,6 +41,7 @@ updates:
       dev-minor-patch:
         update-types: ["minor", "patch"]
         dependency-type: "development"
+    open-pull-requests-limit: 20
 
   - package-ecosystem: "github-actions"
     directory: "/"
