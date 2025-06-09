@@ -24,7 +24,7 @@
     "start": "PORT=5173 react-router-serve ./build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js"
   },
   "dependencies": {
-    "@hookform/resolvers": "5.0.1",
+    "@hookform/resolvers": "5.1.1",
     "@mui/icons-material": "7.1.1",
     "@mui/lab": "7.0.0-beta.13",
     "@mui/material": "7.1.1",
