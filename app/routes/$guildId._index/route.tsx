@@ -100,6 +100,7 @@ function Events() {
         <IconButton
           color="primary"
           onClick={() => setOpen(true)}
+          aria-label="イベントを追加"
           disabled={!me.write}
         >
           <Add />
@@ -145,6 +146,7 @@ function Items() {
           color="primary"
           onClick={() => setOpen(true)}
           disabled={!me.write}
+          aria-label="商品を追加"
         >
           <Add />
         </IconButton>

@@ -9,7 +9,7 @@ export default function ItemCard({
   ...props
 }: ClickableCardProps & { item: ClientItem }) {
   return (
-    <ClickableCard {...props}>
+    <ClickableCard {...props} aria-label={item.name}>
       <CardItemPicture item={item} />
       <CardContent
         sx={(theme) => ({

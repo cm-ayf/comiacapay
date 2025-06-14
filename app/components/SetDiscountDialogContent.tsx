@@ -4,7 +4,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useRemixFormContext } from "remix-hook-form";
 import type { CreateSetDiscountInput, ClientDisplay } from "~/lib/schema";
 
@@ -26,6 +26,8 @@ export default function SetDiscountDialogContent({
   // for rendering <Select>
   const [itemIds, setItemIds] = useState<string[]>(() => getValues("itemIds"));
 
+  const selectLabelId = useId();
+
   return (
     <DialogContent
       sx={{
@@ -36,7 +38,7 @@ export default function SetDiscountDialogContent({
       }}
     >
       <FormControl sx={{ mt: 2 }}>
-        <InputLabel>商品の組み合わせ</InputLabel>
+        <InputLabel id={selectLabelId}>商品の組み合わせ</InputLabel>
         <Select
           {...register("itemIds", { required: true, setValueAs: toSplitArray })}
           {...(errors.itemIds && {
@@ -45,6 +47,7 @@ export default function SetDiscountDialogContent({
           })}
           value={itemIds}
           onChange={(e) => setItemIds(toSplitArray(e.target.value))}
+          labelId={selectLabelId}
           label="商品の組み合わせ"
           multiple
           fullWidth

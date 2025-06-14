@@ -5,6 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import type { Event } from "@prisma/client";
+import { useId } from "react";
 import { useRemixFormContext } from "remix-hook-form";
 import type { CreateEventInput, UpdateEventInput } from "~/lib/schema";
 
@@ -17,6 +18,7 @@ export default function EventDialogContent({
     register,
     formState: { errors },
   } = useRemixFormContext<CreateEventInput | UpdateEventInput>();
+  const selectLabeltId = useId();
   return (
     <DialogContent
       sx={{
@@ -49,8 +51,9 @@ export default function EventDialogContent({
       />
       {events && (
         <FormControl sx={{ mt: 2 }}>
-          <InputLabel>お品書きをコピー</InputLabel>
+          <InputLabel id={selectLabeltId}>お品書きをコピー</InputLabel>
           <Select
+            labelId={selectLabeltId}
             label="お品書きをコピー"
             {...register("clone", { setValueAs: (v) => v || null })}
           >
