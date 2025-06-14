@@ -21,7 +21,10 @@
     "fix": "run-s fix:*",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
-    "start": "PORT=5173 react-router-serve ./build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js"
+    "start": "PORT=5173 react-router-serve ./build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "@hookform/resolvers": "5.1.1",
@@ -52,6 +55,7 @@
   "devDependencies": {
     "@eslint/compat": "1.2.9",
     "@pigment-css/vite-plugin": "0.0.30",
+    "@playwright/test": "1.53.0",
     "@prisma/generator-helper": "6.9.0",
     "@react-router/dev": "7.6.2",
     "@remix-pwa/dev": "4.0.0-dev.3",
