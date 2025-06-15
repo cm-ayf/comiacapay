@@ -4,17 +4,10 @@ on:
   pull_request:
 
 jobs:
-  get-playwright-version:
-    runs-on: ubuntu-latest
-    outputs:
-      playwright-version: ${{ steps.jq.outputs.version }}
-    steps:
-      - uses: actions/checkout@v4
-      - id: jq
-        run: echo version=`jq '.devDependencies["@playwright/test"]' -r package.json` > $GITHUB_OUTPUT
-
   build:
     runs-on: ubuntu-latest
+    outputs:
+      playwright-version: ${{ steps.get-playwright-version.outputs.playwright-version }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -27,12 +20,14 @@ jobs:
         with:
           name: build
           path: build
+      - id: get-playwright-version
+        run: echo "playwright-version=$(jq '.devDependencies["@playwright/test"]' -r package.json)" >> $GITHUB_OUTPUT
 
   check:
     runs-on: ubuntu-latest
-    needs: [get-playwright-version, build]
+    needs: build
     container:
-      image: mcr.microsoft.com/playwright:v${{ needs.get-playwright-version.outputs.playwright-version }}
+      image: mcr.microsoft.com/playwright:v${{ needs.build.outputs.playwright-version }}
       options: --user 1001
     services:
       postgres:
