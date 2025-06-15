@@ -7,11 +7,11 @@ jobs:
   get-playwright-version:
     runs-on: ubuntu-latest
     outputs:
-      playwright-version: ${{ steps.jq.outputs.result }}
+      playwright-version: ${{ steps.jq.outputs.version }}
     steps:
       - uses: actions/checkout@v4
       - id: jq
-        run: jq '.devDependencies["@playwright/test"]' -r package.json
+        run: echo version=`jq '.devDependencies["@playwright/test"]' -r package.json` > $GITHUB_OUTPUT
 
   build:
     runs-on: ubuntu-latest
