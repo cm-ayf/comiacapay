@@ -20,6 +20,7 @@ export default function SetDiscountDialogContent({
   const {
     register,
     getValues,
+    setValue,
     formState: { errors },
   } = useRemixFormContext<CreateSetDiscountInput>();
 
@@ -46,7 +47,11 @@ export default function SetDiscountDialogContent({
             helperText: errors.itemIds.message,
           })}
           value={itemIds}
-          onChange={(e) => setItemIds(toSplitArray(e.target.value))}
+          onChange={(e) => {
+            const itemIds = toSplitArray(e.target.value);
+            setItemIds(itemIds);
+            setValue("itemIds", itemIds);
+          }}
           labelId={selectLabelId}
           label="商品の組み合わせ"
           multiple
