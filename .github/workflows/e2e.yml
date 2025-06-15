@@ -43,7 +43,7 @@ jobs:
     env:
       DISCORD_CLIENT_ID: ""
       DISCORD_CLIENT_SECRET: ""
-      DISCORD_OAUTH2_ORIGIN: ""
+      DISCORD_OAUTH2_ORIGIN: "http://localhost:5173"
       POSTGRES_PRISMA_URL: postgres://postgres:postgres@localhost:5432/postgres
 
     steps:
