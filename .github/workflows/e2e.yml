@@ -60,6 +60,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: build
+      - run: ls -R
       - run: npm run migrate:deploy
       - run: npm run test:e2e -- --project=${{ matrix.project }}
       - uses: actions/upload-artifact@v4
