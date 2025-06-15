@@ -19,10 +19,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: build
-          path: |
-            node_modules
-            build
-            package.json
+          path: build
       - id: get-playwright-version
         run: echo "playwright-version=$(jq '.devDependencies["@playwright/test"]' -r package.json)" >> $GITHUB_OUTPUT
 
@@ -57,11 +54,17 @@ jobs:
       POSTGRES_URL_NON_POOLING: postgres://postgres:postgres@postgres:5432/postgres
 
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: npm
+      - run: npm ci
+      - run: npm run migrate:deploy
       - uses: actions/download-artifact@v4
         with:
           name: build
-      - run: ls -R
-      - run: npm run migrate:deploy
+          path: build
       - run: npm run test:e2e -- --project=${{ matrix.project }}
       - uses: actions/upload-artifact@v4
         with:
