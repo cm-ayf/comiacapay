@@ -19,7 +19,10 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: build
-          path: build
+          path: |
+            node_modules
+            build
+            package.json
       - id: get-playwright-version
         run: echo "playwright-version=$(jq '.devDependencies["@playwright/test"]' -r package.json)" >> $GITHUB_OUTPUT
 
@@ -40,6 +43,12 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+    strategy:
+      matrix:
+        project: [Chrome, Safari, iPhone, Pixel]
+      max-parallel: 4
+      fail-fast: false
+
     env:
       DISCORD_CLIENT_ID: ""
       DISCORD_CLIENT_SECRET: ""
@@ -48,19 +57,12 @@ jobs:
       POSTGRES_URL_NON_POOLING: postgres://postgres:postgres@postgres:5432/postgres
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: package.json
-          cache: npm
-      - run: npm ci
       - uses: actions/download-artifact@v4
         with:
           name: build
-          path: build
       - run: npm run migrate:deploy
-      - run: npm run test:e2e
+      - run: npm run test:e2e -- --project=${{ matrix.project }}
       - uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.project }}
           path: playwright-report
