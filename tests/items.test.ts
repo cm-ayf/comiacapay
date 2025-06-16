@@ -1,25 +1,11 @@
-import { expect, test } from "@playwright/test";
-import { up, down } from "./init";
-
-test.beforeEach(async ({ page }) => {
-  const { session, guild } = await up();
-  await page.context().addCookies([
-    {
-      name: "session",
-      value: Buffer.from(JSON.stringify(session.sid)).toString("base64url"),
-      domain: "localhost",
-      path: "/",
-    },
-  ]);
-  await page.goto(`/${guild.id}`);
-});
-
-test.afterEach(async () => {
-  await down();
-});
+import { expect } from "@playwright/test";
+import { test } from "./fixtures";
 
 test.describe("docs/items.md", () => {
-  test("商品の追加", async ({ page }) => {
+  test("商品の追加", async ({ page, user, guild }) => {
+    await user.signin();
+    await page.goto(`/${guild.id}`);
+
     // Click add item button
     await page.getByRole("button", { name: "商品を追加" }).click();
 
@@ -37,17 +23,12 @@ test.describe("docs/items.md", () => {
     await expect(page.getByLabel("Test Item")).toBeVisible();
   });
 
-  test("商品の編集", async ({ page }) => {
-    await page.getByRole("button", { name: "商品を追加" }).click();
-    await page.getByRole("textbox", { name: "商品名" }).fill("Item to Edit");
-    await page
-      .getByRole("textbox", { name: "商品画像URL" })
-      .fill("https://example.com/old.jpg");
-    await page.getByRole("textbox", { name: "発行日" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
+  test("商品の編集", async ({ page, user, guild, items: [item1] }) => {
+    await user.signin();
+    await page.goto(`/${guild.id}`);
 
     // Click the item card to edit
-    await page.getByRole("button", { name: "Item to Edit" }).click();
+    await page.getByRole("button", { name: item1.name }).click();
 
     // Update item details
     await page.getByRole("textbox", { name: "商品名" }).fill("Updated Item");
@@ -58,57 +39,34 @@ test.describe("docs/items.md", () => {
 
     // Verify item was updated
     await expect(page.getByLabel("Updated Item")).toBeVisible();
-    await expect(page.getByLabel("Item to Edit")).not.toBeVisible();
+    await expect(page.getByLabel(item1.name)).not.toBeVisible();
   });
 
   test("すでにいずれかのイベントのお品書きに登録されている商品は削除できません", async ({
     page,
+    user,
+    guild,
+    items: [item1],
+    displays: _, // depends on existence
   }) => {
-    await page.getByRole("button", { name: "商品を追加" }).click();
-    await page.getByRole("textbox", { name: "商品名" }).fill("Item in Display");
-    await page
-      .getByRole("textbox", { name: "商品画像URL" })
-      .fill("https://example.com/display.jpg");
-    await page.getByRole("textbox", { name: "発行日" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-
-    // Create an event and add the item to its display
-    await page.getByRole("button", { name: "イベントを追加" }).click();
-    await page.getByRole("textbox", { name: "イベント名" }).fill("Test Event");
-    await page.getByRole("textbox", { name: "日付" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-    await page.waitForURL(/\/\d+\/\d+/);
-    await page.reload();
-
-    // Add item to event display
-    await page.getByRole("combobox", { name: "お品書きを追加" }).click();
-    await page.getByRole("option", { name: "Item in Display" }).click();
-    await page
-      .getByRole("spinbutton", { name: "価格", exact: true })
-      .fill("1000");
-    await page.getByRole("button", { name: "保存" }).click();
+    await user.signin();
+    await page.goto(`/${guild.id}`);
 
     // Try to delete the item
-    await page.goBack();
-    await page.getByRole("button", { name: "Item in Display" }).click();
+    await page.getByRole("button", { name: item1.name }).click();
 
     await expect(page.getByRole("button", { name: "削除" })).toBeDisabled();
   });
 
-  test("商品の削除", async ({ page }) => {
-    await page.getByRole("button", { name: "商品を追加" }).click();
-    await page.getByRole("textbox", { name: "商品名" }).fill("Deletable Item");
-    await page
-      .getByRole("textbox", { name: "商品画像URL" })
-      .fill("https://example.com/delete.jpg");
-    await page.getByRole("textbox", { name: "発行日" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
+  test("商品の削除", async ({ page, user, guild, items: [item1] }) => {
+    await user.signin();
+    await page.goto(`/${guild.id}`);
 
     // Delete the item
-    await page.getByRole("button", { name: "Deletable Item" }).click();
+    await page.getByRole("button", { name: item1.name }).click();
     await page.getByRole("button", { name: "削除" }).click();
 
     // Verify item was deleted
-    await expect(page.getByLabel("Deletable Item")).not.toBeVisible();
+    await expect(page.getByLabel(item1.name)).not.toBeVisible();
   });
 });

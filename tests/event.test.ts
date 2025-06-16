@@ -1,27 +1,11 @@
-import { expect, test } from "@playwright/test";
-import { up, down } from "./init";
-
-test.beforeEach(async ({ page }) => {
-  const { session, guild } = await up();
-  await page.context().addCookies([
-    {
-      name: "session",
-      value: Buffer.from(JSON.stringify(session.sid)).toString("base64url"),
-      domain: "localhost",
-      path: "/",
-    },
-  ]);
-  await page.goto(`/${guild.id}`);
-  // Wait for page to be ready
-  await page.waitForLoadState("networkidle");
-});
-
-test.afterEach(async () => {
-  await down();
-});
+import { expect } from "@playwright/test";
+import { test } from "./fixtures";
 
 test.describe("docs/event.md", () => {
-  test("イベントの追加 - basic", async ({ page }) => {
+  test("イベントの追加 - basic", async ({ page, user, guild }) => {
+    await user.signin();
+    await page.goto(`/${guild.id}`);
+
     // Click add event button
     await page.getByRole("button", { name: "イベントを追加" }).click();
 
@@ -41,64 +25,47 @@ test.describe("docs/event.md", () => {
     ).toBeVisible();
   });
 
-  test("イベントの追加 - お品書きをコピー", async ({ page }) => {
-    // Create first event with a display
-    await page.getByRole("button", { name: "商品を追加" }).click();
-    await page.getByRole("textbox", { name: "商品名" }).fill("Test Item");
-    await page
-      .getByRole("textbox", { name: "商品画像URL" })
-      .fill("https://example.com/image.jpg");
-    await page.getByRole("textbox", { name: "発行日" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-
-    await page.getByRole("button", { name: "イベントを追加" }).click();
-    await page.getByRole("textbox", { name: "イベント名" }).fill("First Event");
-    await page.getByRole("textbox", { name: "日付" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-
-    await page.waitForURL(/\/\d+\/\d+/);
-    await page.reload();
-
-    await page.getByRole("combobox", { name: "お品書きを追加" }).click();
-    await page.getByRole("option", { name: "Test Item" }).click();
-    await page
-      .getByRole("spinbutton", { name: "価格", exact: true })
-      .fill("1000");
-    await page.getByRole("button", { name: "保存" }).click();
+  test("イベントの追加 - お品書きをコピー", async ({
+    page,
+    user,
+    guild,
+    event,
+    items: [item1],
+    displays: [display1],
+  }) => {
+    await user.signin();
+    await page.goto(`/${guild.id}`);
+    await page.waitForLoadState("networkidle");
 
     // Go back and create second event copying displays from first
-    await page.goBack();
     await page.getByRole("button", { name: "イベントを追加" }).click();
-    await page
-      .getByRole("textbox", { name: "イベント名" })
-      .fill("Second Event");
+    await page.getByRole("textbox", { name: "イベント名" }).fill("Event 2");
     await page.getByRole("textbox", { name: "日付" }).fill("2025-06-14");
     await page.getByRole("combobox", { name: "お品書きをコピー" }).click();
-    await page.getByRole("option", { name: "First Event" }).click();
+    await page.getByRole("option", { name: event.name }).click();
     await page.getByRole("button", { name: "保存" }).click();
 
     // Verify copied display exists
     await page.waitForURL(/\/\d+\/\d+/);
     await page.reload();
 
-    await expect(page.getByText("Test Item")).toBeVisible();
+    await expect(page.getByText(item1.name)).toBeVisible();
     // Price might be displayed in different formats
-    await expect(page.getByText("¥1000")).toBeVisible();
+    await expect(page.getByText(`¥${display1.price}`)).toBeVisible();
   });
 
-  test("「イベント名」と「日付」の編集", async ({ page }) => {
-    // Create event
-    await page.getByRole("button", { name: "イベントを追加" }).click();
-    await page
-      .getByRole("textbox", { name: "イベント名" })
-      .fill("Event to Edit");
-    await page.getByRole("textbox", { name: "日付" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-    await page.waitForURL(/\/\d+\/\d+/);
-    await page.reload();
+  test("「イベント名」と「日付」の編集", async ({
+    page,
+    user,
+    guild,
+    event,
+  }) => {
+    await user.signin();
+    await page.goto(`/${guild.id}/${event.id}`);
+    await page.waitForLoadState("networkidle");
 
     // Edit event details
-    await page.getByRole("button", { name: "Event to Edit" }).click();
+    await page.getByRole("button", { name: event.name }).click();
     await page
       .getByRole("textbox", { name: "イベント名" })
       .fill("Updated Event");
@@ -113,40 +80,35 @@ test.describe("docs/event.md", () => {
     await expect(page.getByText("2025/6/14")).toBeVisible();
   });
 
-  test("お品書きの追加と編集と削除", async ({ page }) => {
-    // Create item and event
-    await page.getByRole("button", { name: "商品を追加" }).click();
-    await page.getByRole("textbox", { name: "商品名" }).fill("Test Item");
-    await page
-      .getByRole("textbox", { name: "商品画像URL" })
-      .fill("https://example.com/image.jpg");
-    await page.getByRole("textbox", { name: "発行日" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-
-    await page.getByRole("button", { name: "イベントを追加" }).click();
-    await page.getByRole("textbox", { name: "イベント名" }).fill("Test Event");
-    await page.getByRole("textbox", { name: "日付" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-    await page.waitForURL(/\/\d+\/\d+/);
-    await page.reload();
+  test("お品書きの追加と編集と削除", async ({
+    page,
+    user,
+    guild,
+    event,
+    items: [item1],
+  }) => {
+    await user.signin();
+    await page.goto(`/${guild.id}/${event.id}`);
+    await page.waitForLoadState("networkidle");
 
     // Add display
     await page.getByRole("combobox", { name: "お品書きを追加" }).click();
-    await page.getByRole("option", { name: "Test Item" }).click();
+    await page.getByRole("option", { name: item1.name }).click();
     await page
       .getByRole("spinbutton", { name: "価格", exact: true })
       .fill("1000");
     await page.getByRole("spinbutton", { name: "部内頒布価格" }).fill("500");
     await page.getByRole("button", { name: "保存" }).click();
     await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(100); // TODO: fix app so that this is not needed
 
     // Verify display was added
-    await expect(page.getByText("Test Item")).toBeVisible();
+    await expect(page.getByText(item1.name)).toBeVisible();
     await expect(page.getByText("¥1000")).toBeVisible();
 
     // Edit display
     await page
-      .locator("div", { hasText: "Test Item" })
+      .locator("div", { hasText: item1.name })
       .getByRole("button", { name: "編集" })
       .click();
     await page
@@ -161,7 +123,7 @@ test.describe("docs/event.md", () => {
 
     // Delete display
     await page
-      .locator("div", { hasText: "Test Item" })
+      .locator("div", { hasText: item1.name })
       .getByRole("button", { name: "編集" })
       .click();
     await page.getByRole("button", { name: "削除" }).click();
@@ -169,53 +131,31 @@ test.describe("docs/event.md", () => {
     await page.waitForLoadState("networkidle");
 
     // Verify display was removed
-    await expect(page.getByText("Test Item")).not.toBeVisible();
+    await expect(page.getByText(item1.name)).not.toBeVisible();
     await expect(page.getByText("¥1200")).not.toBeVisible();
     await expect(page.getByText("¥600")).not.toBeVisible();
   });
 
-  test("セット割引の追加と削除", async ({ page }) => {
-    // Create items and event with displays
-    await page.getByRole("button", { name: "商品を追加" }).click();
-    await page.getByRole("textbox", { name: "商品名" }).fill("Item 1");
-    await page.getByRole("textbox", { name: "発行日" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-
-    await page.getByRole("button", { name: "商品を追加" }).click();
-    await page.getByRole("textbox", { name: "商品名" }).fill("Item 2");
-    await page.getByRole("textbox", { name: "発行日" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-
-    await page.getByRole("button", { name: "イベントを追加" }).click();
-    await page.getByRole("textbox", { name: "イベント名" }).fill("Test Event");
-    await page.getByRole("textbox", { name: "日付" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-    await page.waitForURL(/\/\d+\/\d+/);
-    await page.reload();
-
-    // Add displays
-    await page.getByRole("combobox", { name: "お品書きを追加" }).click();
-    await page.getByRole("option", { name: "Item 1" }).click();
-    await page
-      .getByRole("spinbutton", { name: "価格", exact: true })
-      .fill("1000");
-    await page.getByRole("button", { name: "保存" }).click();
-
-    await page.getByRole("combobox", { name: "お品書きを追加" }).click();
-    await page.getByRole("option", { name: "Item 2" }).click();
-    await page
-      .getByRole("spinbutton", { name: "価格", exact: true })
-      .fill("1000");
-    await page.getByRole("button", { name: "保存" }).click();
+  test("セット割引の追加と削除", async ({
+    page,
+    user,
+    guild,
+    event,
+    items: [item1, item2],
+    displays: _, // depends on existence
+  }) => {
+    await user.signin();
+    await page.goto(`/${guild.id}/${event.id}`);
+    await page.waitForLoadState("networkidle");
 
     // Add set discount
     await page.getByRole("combobox", { name: "割引等を追加" }).click();
     await page.getByRole("option", { name: "セット割引" }).click();
 
     await page.getByRole("combobox", { name: "商品の組み合わせ" }).click();
-    await page.getByRole("option", { name: "Item 1" }).click();
-    await page.getByRole("option", { name: "Item 2" }).click();
-    await page.keyboard.press("Tab"); // TODO: better way with better accessibility
+    await page.getByRole("option", { name: item1.name }).click();
+    await page.getByRole("option", { name: item2.name }).click();
+    await page.keyboard.press("Tab"); // TODO: better way test better accessibility
     await page.getByRole("spinbutton", { name: "割引額" }).fill("500");
 
     await page.getByRole("button", { name: "保存" }).click();
@@ -231,66 +171,35 @@ test.describe("docs/event.md", () => {
     await expect(page.getByText("- ¥500")).not.toBeVisible();
   });
 
-  test("イベントの削除", async ({ page }) => {
-    // Create event without displays
-    await page.getByRole("button", { name: "イベントを追加" }).click();
-    await page
-      .getByRole("textbox", { name: "イベント名" })
-      .fill("Deletable Event");
-    await page.getByRole("textbox", { name: "日付" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-    await page.waitForURL(/\/\d+\/\d+/);
-    await page.reload();
+  test("イベントの削除", async ({ page, user, guild, event }) => {
+    await user.signin();
+    await page.goto(`/${guild.id}/${event.id}`);
+    await page.waitForLoadState("networkidle");
 
     // Delete event
-    await page.getByRole("button", { name: "Deletable Event" }).click();
+    await page.getByRole("button", { name: event.name }).click();
     await page.getByRole("button", { name: "削除" }).click();
 
     // Verify event was deleted
     await page.waitForLoadState("networkidle");
     await expect(
-      page.getByRole("heading", { name: /Deletable Event$/ }),
+      page.getByRole("heading", { name: event.name }),
     ).not.toBeVisible();
   });
 
   test("すでに売上が登録されているイベントは削除できません．", async ({
     page,
+    user,
+    guild,
+    event,
+    receipts: _, // depends on existence
   }) => {
-    // Create event with a display
-    await page.getByRole("button", { name: "商品を追加" }).click();
-    await page.getByRole("textbox", { name: "商品名" }).fill("Item to Sell");
-    await page.getByRole("textbox", { name: "発行日" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-
-    await page.getByRole("button", { name: "イベントを追加" }).click();
-    await page
-      .getByRole("textbox", { name: "イベント名" })
-      .fill("Event with Sales");
-    await page.getByRole("textbox", { name: "日付" }).fill("2025-06-13");
-    await page.getByRole("button", { name: "保存" }).click();
-    await page.waitForURL(/\/\d+\/\d+/);
-    await page.reload();
-
-    // Add display
-    await page.getByRole("combobox", { name: "お品書きを追加" }).click();
-    await page.getByRole("option", { name: "Item to Sell" }).click();
-    await page
-      .getByRole("spinbutton", { name: "価格", exact: true })
-      .fill("1000");
-    await page.getByRole("button", { name: "保存" }).click();
+    await user.signin();
+    await page.goto(`/${guild.id}/${event.id}`);
     await page.waitForLoadState("networkidle");
-
-    // Simulate sales registration
-    await page.getByRole("link", { name: "レジを起動" }).click();
-    await page.waitForURL(/\/\d+\/\d+\/register/);
-    await page.getByRole("button", { name: "1" }).click();
-    await page.getByRole("button", { name: "登録" }).click();
-    await page.waitForTimeout(100); // TODO: fix app so that this is not needed
-    await page.waitForLoadState("networkidle");
-    await page.goBack();
 
     // Try to delete event
-    await page.getByRole("button", { name: "Event with Sales" }).click();
+    await page.getByRole("button", { name: event.name }).click();
 
     // Verify delete button is disabled
     await expect(page.getByRole("button", { name: "削除" })).toBeDisabled();
