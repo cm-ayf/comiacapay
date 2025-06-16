@@ -18,7 +18,7 @@ export default function EventDialogContent({
     register,
     formState: { errors },
   } = useRemixFormContext<CreateEventInput | UpdateEventInput>();
-  const selectLabeltId = useId();
+  const selectLabelId = useId();
   return (
     <DialogContent
       sx={{
@@ -51,9 +51,9 @@ export default function EventDialogContent({
       />
       {events && (
         <FormControl sx={{ mt: 2 }}>
-          <InputLabel id={selectLabeltId}>お品書きをコピー</InputLabel>
+          <InputLabel id={selectLabelId}>お品書きをコピー</InputLabel>
           <Select
-            labelId={selectLabeltId}
+            labelId={selectLabelId}
             label="お品書きをコピー"
             {...register("clone", { setValueAs: (v) => v || null })}
           >
