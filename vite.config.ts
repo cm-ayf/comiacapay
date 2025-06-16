@@ -20,11 +20,6 @@ export default defineConfig({
     surpressNodeModulesWarning(),
     bundleRootChunks(),
   ],
-  resolve: {
-    alias: {
-      "use-sync-external-store/shim": "react",
-    },
-  },
   ssr: {
     noExternal: [/^@mui\/(?!x-)/, "@pigment-css/react"],
   },
