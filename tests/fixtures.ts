@@ -100,6 +100,17 @@ export const test = base.extend<Fixtures>({
     await use({ ...user, signin });
 
     // Cleanup
+    const receipts = await prisma.receipt.findMany({
+      where: { userId: user.id },
+    });
+    await prisma.record.deleteMany({
+      where: {
+        receiptId: { in: receipts.map((r) => r.id) },
+      },
+    });
+    await prisma.receipt.deleteMany({
+      where: { userId: user.id },
+    });
     await prisma.session.deleteMany({
       where: { userId: user.id },
     });
@@ -218,17 +229,6 @@ export const test = base.extend<Fixtures>({
       ],
     });
     await use(receipts);
-
-    // Cleanup; dependency to User should be removed ahead of deleting User (not just Guild)
-    await prisma.record.deleteMany({
-      where: {
-        receiptId: { in: receipts.map((r) => r.id) },
-      },
-    });
-    await prisma.receipt.deleteMany({
-      where: {
-        id: { in: receipts.map((r) => r.id) },
-      },
-    });
+    // Cleanup by guild or user fixture
   },
 });
