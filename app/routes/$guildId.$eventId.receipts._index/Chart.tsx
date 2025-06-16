@@ -8,7 +8,7 @@ import Switch from "@mui/material/Switch";
 import Box from "@mui/material-pigment-css/Box";
 import { LineChart } from "@mui/x-charts/LineChart";
 import type { LineSeriesType } from "@mui/x-charts/models/seriesType";
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useLoaderData } from "react-router";
 import { useDisplays } from "../$guildId.$eventId";
 import type { clientLoader } from "./clientLoader";
@@ -86,6 +86,8 @@ export default function Chart() {
     return series;
   }, [displays, showRevenue, selectedItemIds]);
 
+  const selectLabelId = useId();
+
   return (
     <Box
       sx={{
@@ -107,8 +109,9 @@ export default function Chart() {
           label="売上を表示"
         />
         <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>商品を表示</InputLabel>
+          <InputLabel id={selectLabelId}>商品を表示</InputLabel>
           <Select
+            labelId={selectLabelId}
             multiple
             value={selectedItemIds}
             onChange={(e) => {

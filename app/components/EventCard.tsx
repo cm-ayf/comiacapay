@@ -12,7 +12,7 @@ export default function EventCard({
   event: Omit<ClientEvent, "displays">;
 }) {
   return (
-    <ClickableCard {...props}>
+    <ClickableCard {...props} aria-label={event.name}>
       <CardContent sx={{ textAlign: "center", textTransform: "none" }}>
         {guild && (
           <Typography sx={{ fontSize: "1.5em" }}>{guild.name}</Typography>
