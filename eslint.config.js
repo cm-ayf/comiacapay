@@ -51,7 +51,10 @@ export default tseslint.config(
     },
   },
   react.configs.flat["jsx-runtime"],
-  reactHooks.configs["recommended-latest"],
+  {
+    ignores: ["tests/**"],
+    ...reactHooks.configs["recommended-latest"],
+  },
   {
     plugins: {
       "mui-path-imports": muiPathImports,

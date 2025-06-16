@@ -42,7 +42,7 @@ export default function Navigation({ user }: NavigationProps) {
     <AppBar ref={ref} sx={{ height: 48 }}>
       <Toolbar variant="dense">
         {breadcrumbs.length > 0 ? (
-          <IconButton onClick={() => setOpen("breadcrumb")}>
+          <IconButton onClick={() => setOpen("breadcrumb")} aria-label="戻る">
             <KeyboardArrowLeftIcon sx={{ color: "var(--AppBar-color)" }} />
           </IconButton>
         ) : (

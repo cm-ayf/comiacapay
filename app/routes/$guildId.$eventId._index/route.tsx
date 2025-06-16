@@ -8,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material-pigment-css/Grid";
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useId, useMemo, useState, type ReactNode } from "react";
 import { href, Link, useFetcher, useParams } from "react-router";
 import { useMember } from "../$guildId";
 import { useDisplays, useEvent } from "../$guildId.$eventId";
@@ -134,10 +134,11 @@ function CreateDisplaySelect({
   items: ClientItem[];
   setDisplay: (display: { item: ClientItem; create: true }) => void;
 }) {
+  const selectLabelId = useId();
   return (
     <FormControl sx={{ width: "100%" }}>
-      <InputLabel>追加</InputLabel>
-      <Select label="追加" value="">
+      <InputLabel id={selectLabelId}>お品書きを追加</InputLabel>
+      <Select labelId={selectLabelId} label="お品書きを追加" value="">
         {items.map((item) => (
           <MenuItem
             key={item.id}
@@ -191,10 +192,11 @@ function CreateDiscountSelect({
 }: {
   setType: (typename: string) => void;
 }) {
+  const selectLabelId = useId();
   return (
     <FormControl sx={{ width: "100%" }}>
-      <InputLabel>追加</InputLabel>
-      <Select<string> label="追加" value="">
+      <InputLabel id={selectLabelId}>割引等を追加</InputLabel>
+      <Select labelId={selectLabelId} label="割引等を追加" value="">
         <MenuItem value="SetDiscount" onClick={() => setType("SetDiscount")}>
           セット割引
         </MenuItem>
