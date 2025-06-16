@@ -183,7 +183,7 @@ export const test = base.extend<Fixtures>({
   },
 
   // Receipts fixture
-  receipts: async ({ user, event, displays: [display1, _display2] }, use) => {
+  receipts: async ({ user, event, displays: [display1, display2] }, use) => {
     const receipts: [Receipt, Receipt, Receipt] = [
       {
         id: Snowflake.generate().toString(),
@@ -225,6 +225,13 @@ export const test = base.extend<Fixtures>({
           itemId: display1.itemId,
           receiptId: receipts[2].id,
           count: 3,
+        },
+        {
+          eventId: event.id,
+          itemId: display2.itemId,
+          receiptId: receipts[2].id,
+          count: 1,
+          dedication: true,
         },
       ],
     });
