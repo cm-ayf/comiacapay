@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [
     pigment({
       theme: createTheme(),
-      transformLibraries: ["@mui/material", "@mui/icons-material", "@mui/lab"],
+      transformLibraries: ["@mui/material", "@mui/icons-material"],
       displayName: process.env["NODE_ENV"] !== "production",
     }),
     reactRouter(),
@@ -21,7 +21,7 @@ export default defineConfig({
     bundleRootChunks(),
   ],
   ssr: {
-    noExternal: [/^@mui\/(?!x-)/, "@pigment-css/react"],
+    noExternal: [/^@mui\/(?!x-|lab)/, "@pigment-css/react"],
   },
   define: {
     "process.env.NODE_ENV": JSON.stringify(process.env["NODE_ENV"]),
