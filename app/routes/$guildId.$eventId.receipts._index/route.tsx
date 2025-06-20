@@ -1,6 +1,7 @@
+import styled from "@emotion/styled";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
+import MuiTabPanel from "@mui/lab/TabPanel";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Tab from "@mui/material/Tab";
@@ -20,6 +21,7 @@ export { clientLoader } from "./clientLoader";
 
 const Table = dynamic(() => import("./Table"));
 const Chart = dynamic(() => import("./Chart"));
+const TabPanel = styled(MuiTabPanel)({ padding: 0, height: "100%" });
 export default function Page() {
   const [tab, setTab] = useState<"summary" | "table" | "chart">("summary");
   return (
@@ -40,15 +42,15 @@ export default function Page() {
         </TabList>
         <Buttons />
       </Box>
-      <TabPanel value="summary" sx={{ p: 0, height: "100%" }}>
+      <TabPanel value="summary">
         <Summary />
       </TabPanel>
-      <TabPanel value="table" sx={{ p: 0, height: "100%" }}>
+      <TabPanel value="table">
         <Suspense fallback={<CircularProgress />}>
           <Table />
         </Suspense>
       </TabPanel>
-      <TabPanel value="chart" sx={{ p: 0, height: "100%" }}>
+      <TabPanel value="chart">
         <Suspense fallback={<CircularProgress />}>
           <Chart />
         </Suspense>
