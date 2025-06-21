@@ -42,19 +42,24 @@ export default function Page() {
         </TabList>
         <Buttons />
       </Box>
-      <Suspense
-        fallback={<CircularProgress sx={{ m: 4, alignSelf: "center" }} />}
-      >
-        <TabPanel value="summary">
-          <Summary />
-        </TabPanel>
-        <TabPanel value="table">
+
+      <TabPanel value="summary">
+        <Summary />
+      </TabPanel>
+      <TabPanel value="table">
+        <Suspense
+          fallback={<CircularProgress sx={{ m: 4, alignSelf: "center" }} />}
+        >
           <Table />
-        </TabPanel>
-        <TabPanel value="chart">
+        </Suspense>
+      </TabPanel>
+      <TabPanel value="chart">
+        <Suspense
+          fallback={<CircularProgress sx={{ m: 4, alignSelf: "center" }} />}
+        >
           <Chart />
-        </TabPanel>
-      </Suspense>
+        </Suspense>
+      </TabPanel>
     </TabContext>
   );
 }
