@@ -28,7 +28,7 @@ export default function Page() {
     <TabContext value={tab}>
       <Box
         sx={{
-          marginBlock: -2,
+          marginTop: -2,
           marginInline: -3,
           display: "flex",
           flexDirection: "row",
@@ -42,19 +42,19 @@ export default function Page() {
         </TabList>
         <Buttons />
       </Box>
-      <TabPanel value="summary">
-        <Summary />
-      </TabPanel>
-      <TabPanel value="table">
-        <Suspense fallback={<CircularProgress />}>
+      <Suspense
+        fallback={<CircularProgress sx={{ m: 4, alignSelf: "center" }} />}
+      >
+        <TabPanel value="summary">
+          <Summary />
+        </TabPanel>
+        <TabPanel value="table">
           <Table />
-        </Suspense>
-      </TabPanel>
-      <TabPanel value="chart">
-        <Suspense fallback={<CircularProgress />}>
+        </TabPanel>
+        <TabPanel value="chart">
           <Chart />
-        </Suspense>
-      </TabPanel>
+        </TabPanel>
+      </Suspense>
     </TabContext>
   );
 }

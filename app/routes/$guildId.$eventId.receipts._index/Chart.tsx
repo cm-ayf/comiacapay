@@ -95,7 +95,6 @@ export default function Chart() {
         display: "flex",
         flexDirection: "column",
         gap: "16px",
-        padding: "16px",
       }}
     >
       <Box sx={{ display: "flex", gap: "16px" }}>
