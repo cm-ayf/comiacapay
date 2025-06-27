@@ -26,6 +26,14 @@ updates:
       remix-pwa:
         patterns:
           - "@remix-pwa/*"
+      typescript:
+        patterns:
+          - "typescript"
+          - "typescript-eslint"
+      eslint:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
 
       patch:
         update-types: ["patch"]
@@ -33,6 +41,7 @@ updates:
       dev-minor-patch:
         update-types: ["minor", "patch"]
         dependency-type: "development"
+    open-pull-requests-limit: 20
 
   - package-ecosystem: "github-actions"
     directory: "/"

@@ -31,7 +31,7 @@ export const unstable_middleware = [memberMiddleware];
 export async function loader({ context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);
   const member = context.get(memberContext);
-  if (!member.read) throw data(null, 403);
+  if (!member.read) throw data({ code: "FORBIDDEN", permission: "read" }, 403);
 
   const guild = await prisma.guild.findUniqueOrThrow({
     where: { id: member.guildId },

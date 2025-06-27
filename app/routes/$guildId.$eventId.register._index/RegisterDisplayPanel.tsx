@@ -79,6 +79,7 @@ function Counter({ itemId }: { itemId: string }) {
           else setRecord(({ count }) => ({ count: Math.max(count + 1, 2) }));
         }}
         sx={{ height: "100%", display: "flex", flexDirection: "row" }}
+        aria-label="売上数"
       >
         <ToggleButton size="large" value={0}>
           0
@@ -99,6 +100,7 @@ function Counter({ itemId }: { itemId: string }) {
             sx: { height: "100%", maxWidth: 80 },
           },
         }}
+        label="売上数"
       />
     </Box>
   );

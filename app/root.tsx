@@ -77,14 +77,17 @@ const sessionMiddleware: Route.unstable_MiddlewareFunction = async (
   const userId = session.get("userId");
   const tokenResult = session.get("tokenResult");
   if (!userId || !tokenResult) {
-    throw data(null, {
-      status: 401,
-      headers: {
-        "Set-Cookie": await commitSession(session, {
-          secure: url.protocol === "https",
-        }),
+    throw data(
+      { code: "UNAUTHORIZED" },
+      {
+        status: 401,
+        headers: {
+          "Set-Cookie": await commitSession(session, {
+            secure: url.protocol === "https",
+          }),
+        },
       },
-    });
+    );
   }
 
   context.set(sessionContext, { userId, tokenResult });
@@ -161,8 +164,6 @@ function AppLayout({
   user,
 }: PropsWithChildren<{ user: User | undefined }>) {
   installPWAGlobals();
-  const PageContextProvider = useHandleValue("PageContextProvider", Fragment);
-  const TopComponent = useHandleValue("TopComponent", Fragment);
   const ButtomComponent = useHandleValue("ButtomComponent", Fragment);
   const maxWidth = useHandleValue("containerMaxWidth", "lg");
 
@@ -170,15 +171,12 @@ function AppLayout({
     <>
       <Navigation user={user} />
       <Toolbar variant="dense" />
-      <PageContextProvider>
-        <TopComponent />
-        <AlertProvider>
-          <Container maxWidth={maxWidth ?? "lg"} component="main">
-            {children}
-          </Container>
-        </AlertProvider>
-        <ButtomComponent />
-      </PageContextProvider>
+      <AlertProvider>
+        <Container maxWidth={maxWidth ?? "lg"} component="main">
+          {children}
+        </Container>
+      </AlertProvider>
+      <ButtomComponent />
     </>
   );
 }

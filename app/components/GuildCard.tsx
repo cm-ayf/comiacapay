@@ -11,7 +11,7 @@ export default function GuildCard({
   ...props
 }: ClickableCardProps & { guild: Guild; member: Member }) {
   return (
-    <ClickableCard {...props}>
+    <ClickableCard {...props} aria-label={guild.name}>
       <CardContent sx={{ textAlign: "center", textTransform: "none" }}>
         <Typography sx={{ fontSize: "1.5em", fontWeight: "bold" }}>
           {guild.name}

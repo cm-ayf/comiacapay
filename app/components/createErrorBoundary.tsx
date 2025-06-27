@@ -5,6 +5,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
 import { isRouteErrorResponse, Link, type ErrorResponse } from "react-router";
+import { enum_, literal, object, safeParse } from "valibot";
 import { useUrlWithRedirectTo } from "~/lib/location";
 
 export default function createErrorBoundary({
@@ -15,6 +16,7 @@ export default function createErrorBoundary({
   default?: (props: { error: unknown }) => ReactNode;
 } = {}) {
   components[401] ??= UnauthorizedError;
+  components[403] ??= ForbiddenError;
   return function ErrorBoundary({ error }: { error: unknown }) {
     if (isRouteErrorResponse(error)) {
       const Component = components[error.status] ?? Fallback;
@@ -32,6 +34,29 @@ function UnauthorizedError() {
       <Link to={signinUrl}>サインイン</Link>してください
     </Typography>
   );
+}
+
+const Forbidden = object({
+  code: literal("FORBIDDEN"),
+  permission: enum_({
+    read: "read",
+    register: "register",
+    write: "write",
+    admin: "admin",
+  }),
+});
+
+function ForbiddenError({ error }: { error: ErrorResponse }) {
+  const { success, output } = safeParse(Forbidden, error.data);
+  if (success) {
+    return (
+      <Typography>
+        {output.permission.toUpperCase()}権限がありません。
+      </Typography>
+    );
+  } else {
+    return <UnknownError error={error} />;
+  }
 }
 
 function UnknownError({ error }: { error: unknown }) {

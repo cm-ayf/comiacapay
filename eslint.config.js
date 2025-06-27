@@ -51,7 +51,10 @@ export default tseslint.config(
     },
   },
   react.configs.flat["jsx-runtime"],
-  reactHooks.configs["recommended-latest"],
+  {
+    ignores: ["tests/**"],
+    ...reactHooks.configs["recommended-latest"],
+  },
   {
     plugins: {
       "mui-path-imports": muiPathImports,
@@ -62,7 +65,7 @@ export default tseslint.config(
   },
   muiPigmentCss,
   {
-    ignores: ["build/**", ".react-router/**", "public/entry/worker.js"],
+    ignores: ["build/**", ".react-router/**", "public/entry.worker.js"],
   },
   {
     rules: {

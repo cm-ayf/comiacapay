@@ -1,5 +1,5 @@
 import type { Breakpoint } from "@mui/material-pigment-css";
-import { useMemo, type FC, type PropsWithChildren } from "react";
+import { useMemo, type FC } from "react";
 import {
   useLoaderData,
   useLocation,
@@ -11,8 +11,6 @@ type SerializeFrom<AppData> = ReturnType<typeof useLoaderData<AppData>>;
 
 export interface Handle<AppData> {
   containerMaxWidth?: Breakpoint | false;
-  PageContextProvider?: FC<PropsWithChildren>;
-  TopComponent?: FC;
   ButtomComponent?: FC;
   title?: string;
   getName?: (data: SerializeFrom<AppData> | undefined) => string | undefined;
