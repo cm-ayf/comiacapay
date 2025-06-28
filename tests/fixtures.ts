@@ -1,4 +1,5 @@
 import { test as base } from "@playwright/test";
+import { PrismaClient } from "@prisma/client";
 import type {
   Guild,
   Event,
@@ -7,7 +8,6 @@ import type {
   Receipt,
   User,
 } from "@prisma/client";
-import { prisma } from "~/lib/prisma.server";
 import { Snowflake } from "~/lib/snowflake";
 
 type Fixtures = {
@@ -18,6 +18,8 @@ type Fixtures = {
   displays: [Display, Display];
   receipts: [Receipt, Receipt, Receipt];
 };
+
+const prisma = new PrismaClient();
 
 export const test = base.extend<Fixtures>({
   // Guild fixture
