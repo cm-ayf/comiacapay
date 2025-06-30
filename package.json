@@ -42,14 +42,14 @@
     "@remix-pwa/manifest": "3.0.1-dev.2",
     "@remix-pwa/sw": "4.0.0-dev.3",
     "@remix-pwa/worker-runtime": "3.0.0-dev.1",
-    "discord-api-types": "0.38.12",
+    "discord-api-types": "0.38.13",
     "idb": "^8.0.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "7.59.0",
     "react-router": "7.6.3",
     "remix-hook-form": "7.1.0",
-    "ua-parser-js": "^2.0.3",
+    "ua-parser-js": "^2.0.4",
     "valibot": "1.1.0"
   },
   "devDependencies": {
