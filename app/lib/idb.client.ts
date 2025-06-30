@@ -2,11 +2,12 @@ import { type IDBPDatabase, type DBSchema, openDB } from "idb";
 import type { ClientReceipt, CreateReceiptOutput } from "./schema";
 import { Snowflake } from "./snowflake";
 
-export interface IDBReceipt extends CreateReceiptOutput {
+// fetcher.submit(receipts) requires implicit index signature for string
+export type IDBReceipt = CreateReceiptOutput & {
   eventId: string;
   pushed: boolean;
   deleted?: boolean;
-}
+};
 
 interface DB extends DBSchema {
   Receipt: {
