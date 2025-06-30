@@ -23,9 +23,6 @@ updates:
         patterns:
           - "prisma"
           - "@prisma/*"
-      remix-pwa:
-        patterns:
-          - "@remix-pwa/*"
       typescript:
         patterns:
           - "typescript"
