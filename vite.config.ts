@@ -1,11 +1,28 @@
 import { createTheme } from "@mui/material/styles";
 import { pigment } from "@pigment-css/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
-import { reactRouterPWA } from "@remix-pwa/dev";
 import { defineConfig } from "vite";
+import { VitePWA, type VitePWAOptions } from "vite-plugin-pwa";
 import tsconfigPaths from "vite-tsconfig-paths";
 import bundleRootChunks from "./plugins/bundle-root-chunks";
 import surpressNodeModulesWarning from "./plugins/surpress-node-modules-warning";
+
+const runtimeCaching = [
+  {
+    urlPattern: /\/\d+\/\d+\/register\.data/,
+    handler: "NetworkFirst",
+    options: { networkTimeoutSeconds: 5 },
+  },
+  {
+    urlPattern: /\/assets\//,
+    handler: "CacheFirst",
+  },
+  {
+    urlPattern: "/__manifest",
+    handler: "NetworkFirst",
+    options: { networkTimeoutSeconds: 5 },
+  },
+] satisfies VitePWAOptions["workbox"]["runtimeCaching"];
 
 export default defineConfig({
   plugins: [
@@ -16,7 +33,23 @@ export default defineConfig({
     }),
     reactRouter(),
     tsconfigPaths(),
-    reactRouterPWA(),
+    VitePWA({
+      workbox: {
+        runtimeCaching,
+        navigateFallback: null,
+      },
+      manifest: {
+        lang: "ja",
+        theme_color: "#1976d2",
+        background_color: "#1976d2",
+        name: "Comiacapay",
+        short_name: "Comiacapay",
+      },
+      registerType: "autoUpdate",
+      devOptions: {
+        enabled: true,
+      },
+    }),
     surpressNodeModulesWarning(),
     bundleRootChunks(),
   ],

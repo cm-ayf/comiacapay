@@ -1,12 +1,12 @@
 node_modules
 
 /.cache
+/dev-dist
 /build
 .env
 
 /.vercel
 /.react-router
-/public/entry.worker.js
 
 /test-results
 /playwright-report

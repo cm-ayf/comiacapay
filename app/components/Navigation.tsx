@@ -12,8 +12,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import type { User } from "@prisma/client";
-import { useNetworkConnectivity } from "@remix-pwa/client";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useSyncExternalStore } from "react";
 import {
   Link,
   useFetcher,
@@ -154,6 +153,22 @@ function SigninButton() {
     <Button component={Link} color="inherit" to={signinUrl} reloadDocument>
       サインイン
     </Button>
+  );
+}
+
+// https://github.com/remix-pwa/monorepo/blob/6fa72a544991a59f8b384a733746a6ec65af75f5/packages/client/hooks/useNetworkConnectivity.ts#L17
+function useNetworkConnectivity() {
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      window.addEventListener("online", onStoreChange);
+      window.addEventListener("offline", onStoreChange);
+      return () => {
+        window.removeEventListener("online", onStoreChange);
+        window.removeEventListener("offline", onStoreChange);
+      };
+    },
+    () => navigator.onLine,
+    () => false,
   );
 }
 
