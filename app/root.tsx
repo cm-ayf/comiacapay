@@ -3,11 +3,10 @@ import "@mui/material-pigment-css/styles.css";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material-pigment-css/Container";
 import type { User } from "@prisma/client";
-import { ManifestLink } from "@remix-pwa/manifest";
-import { installPWAGlobals } from "@remix-pwa/sw/install-pwa-globals";
 import { Fragment, type PropsWithChildren } from "react";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
-import { UAParser } from "ua-parser-js";
+import { pwaInfo } from "virtual:pwa-info";
+import { useRegisterSW } from "virtual:pwa-register/react";
 import type { Route } from "./+types/root";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
@@ -27,11 +26,9 @@ export const handle: Handle<typeof loader> = {
 };
 
 const prefetchedLinks = new Set<string>();
-function handlePrefetchLinksOnSafari(head: HTMLHeadElement) {
-  const parser = new UAParser();
-  if (!parser.getBrowser().is("safari")) return;
-
-  const links = head.querySelectorAll<HTMLLinkElement>(`link[rel=prefetch]`);
+function handlePrefetchLinks() {
+  const links =
+    document.head.querySelectorAll<HTMLLinkElement>(`link[rel=prefetch]`);
   for (const link of links) {
     if (prefetchedLinks.has(link.href)) continue;
     prefetchedLinks.add(link.href);
@@ -40,22 +37,28 @@ function handlePrefetchLinksOnSafari(head: HTMLHeadElement) {
 }
 
 export function Layout({ children }: PropsWithChildren) {
-  installPWAGlobals();
   const title = useTitle();
   return (
     <html lang="ja">
-      <head
-        ref={(head) => {
-          if (head) handlePrefetchLinksOnSafari(head);
-        }}
-      >
+      <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#1976d2" />
+        <link rel="manifest" href={pwaInfo?.webManifest.href} />
+        {/* TODO: add icons
+        <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="apple-touch-icon"
+          href="/apple-touch-icon.png"
+          sizes="180x180"
+        />
+        <link rel="mask-icon" href="/mask-icon.svg" color="#FFFFFF" /> 
+        */}
         <meta name="emotion-insertion-point" content="" />
-        <ManifestLink href="/manifest.webmanifest" />
         <Meta />
         <Links />
-        <title>{title}</title>
+        <title>{title ?? "Comiacapay"}</title>
+        <meta name="description" content="同人即売会用のレジアプリ" />
       </head>
       <body>
         {children}
@@ -70,7 +73,12 @@ function AppLayout({
   children,
   user,
 }: PropsWithChildren<{ user: User | undefined }>) {
-  installPWAGlobals();
+  useRegisterSW({
+    onRegisteredSW() {
+      handlePrefetchLinks();
+    },
+  });
+
   const ButtomComponent = useHandleValue("ButtomComponent", Fragment);
   const maxWidth = useHandleValue("containerMaxWidth", "lg");
 
