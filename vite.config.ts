@@ -2,27 +2,10 @@ import { createTheme } from "@mui/material/styles";
 import { pigment } from "@pigment-css/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
-import { VitePWA, type VitePWAOptions } from "vite-plugin-pwa";
+import { VitePWA } from "vite-plugin-pwa";
 import tsconfigPaths from "vite-tsconfig-paths";
 import bundleRootChunks from "./plugins/bundle-root-chunks";
 import surpressNodeModulesWarning from "./plugins/surpress-node-modules-warning";
-
-const runtimeCaching = [
-  {
-    urlPattern: /\/\d+\/\d+\/register\.data/,
-    handler: "NetworkFirst",
-    options: { networkTimeoutSeconds: 5 },
-  },
-  {
-    urlPattern: /\/assets\//,
-    handler: "CacheFirst",
-  },
-  {
-    urlPattern: "/__manifest",
-    handler: "NetworkFirst",
-    options: { networkTimeoutSeconds: 5 },
-  },
-] satisfies VitePWAOptions["workbox"]["runtimeCaching"];
 
 export default defineConfig({
   plugins: [
@@ -35,7 +18,14 @@ export default defineConfig({
     tsconfigPaths(),
     VitePWA({
       workbox: {
-        runtimeCaching,
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              /^\/\d+\/\d+\/register\.data$/.test(url.pathname),
+            handler: "NetworkFirst",
+            options: { networkTimeoutSeconds: 5 },
+          },
+        ],
         navigateFallback: null,
       },
       manifest: {

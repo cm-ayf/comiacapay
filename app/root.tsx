@@ -3,7 +3,7 @@ import "@mui/material-pigment-css/styles.css";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material-pigment-css/Container";
 import type { User } from "@prisma/client";
-import { Fragment, type PropsWithChildren } from "react";
+import { Fragment, useRef, type PropsWithChildren } from "react";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { pwaInfo } from "virtual:pwa-info";
 import { useRegisterSW } from "virtual:pwa-register/react";
@@ -25,22 +25,45 @@ export const handle: Handle<typeof loader> = {
   getName: () => "TOP",
 };
 
-const prefetchedLinks = new Set<string>();
-function handlePrefetchLinks() {
-  const links =
-    document.head.querySelectorAll<HTMLLinkElement>(`link[rel=prefetch]`);
-  for (const link of links) {
-    if (prefetchedLinks.has(link.href)) continue;
-    prefetchedLinks.add(link.href);
-    fetch(link.href, { priority: "low" }).catch(() => {});
+class Prefetcher {
+  #head?: HTMLHeadElement | null;
+  #registration?: ServiceWorkerRegistration | undefined;
+
+  headRef(head: HTMLHeadElement | null) {
+    this.#head = head;
+    this.prefetch();
+  }
+
+  onRegisteredSW(registration: ServiceWorkerRegistration | undefined) {
+    this.#registration = registration;
+    this.prefetch();
+  }
+
+  prefetch() {
+    if (!this.#head || !this.#registration) return;
+
+    this.#head
+      .querySelectorAll<HTMLLinkElement>(`link[rel=prefetch]`)
+      .forEach((link) => {
+        fetch(link.href, {
+          priority: "low",
+          cache: "force-cache",
+        }).catch(() => {});
+      });
   }
 }
 
 export function Layout({ children }: PropsWithChildren) {
   const title = useTitle();
+  const prefetcherRef = useRef(new Prefetcher());
+  useRegisterSW({
+    onRegisteredSW(_, registration) {
+      prefetcherRef.current.onRegisteredSW(registration);
+    },
+  });
   return (
     <html lang="ja">
-      <head>
+      <head ref={(head) => prefetcherRef.current.headRef(head)}>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#1976d2" />
@@ -73,12 +96,6 @@ function AppLayout({
   children,
   user,
 }: PropsWithChildren<{ user: User | undefined }>) {
-  useRegisterSW({
-    onRegisteredSW() {
-      handlePrefetchLinks();
-    },
-  });
-
   const ButtomComponent = useHandleValue("ButtomComponent", Fragment);
   const maxWidth = useHandleValue("containerMaxWidth", "lg");
 
