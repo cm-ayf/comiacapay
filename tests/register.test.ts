@@ -130,4 +130,57 @@ test.describe("docs/register.md", () => {
     await page.waitForLoadState("networkidle");
     await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(`¥0`);
   });
+
+  test("オフラインでの機能", async ({
+    browserName,
+    context,
+    page,
+    user,
+    guild,
+    event,
+    items: [item1],
+    displays: [display1],
+  }) => {
+    test.skip(
+      browserName !== "chromium",
+      "https://playwright.dev/docs/service-workers-experimental is only supported in Chromium",
+    );
+
+    await user.signin();
+    await page.goto(`/`);
+    await page.waitForLoadState("networkidle");
+
+    await context.setOffline(true);
+
+    await page.getByRole("link", { name: event.name }).click();
+    await page.waitForURL(`/${guild.id}/${event.id}/register`);
+    await page.waitForLoadState("networkidle");
+
+    await page
+      .locator("div.MuiPaper-root", { hasText: item1.name })
+      .getByRole("button", { name: "1" })
+      .click();
+
+    const total = 1 * display1.price;
+    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(
+      `¥${total}`,
+    );
+
+    await page.getByRole("button", { name: "登録" }).click();
+    await page.waitForLoadState("networkidle");
+    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(`¥0`);
+
+    await context.setOffline(false);
+
+    await page.goto(`/${guild.id}/${event.id}/receipts`);
+    await page.waitForLoadState("networkidle");
+
+    const syncButton = page.getByRole("button", { name: "同期" });
+    await expect(syncButton).toBeEnabled();
+
+    await syncButton.click();
+    await page.waitForLoadState("networkidle");
+
+    await expect(syncButton).toBeDisabled();
+  });
 });

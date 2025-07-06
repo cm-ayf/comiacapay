@@ -152,7 +152,7 @@ export const test = base.extend<Fixtures>({
         id: Snowflake.generate().toString(),
         guildId: guild.id,
         name: "Event 1",
-        date: new Date("2025-06-13"),
+        date: new Date(),
       },
     });
     await use(event);
