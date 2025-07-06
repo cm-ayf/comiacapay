@@ -74,7 +74,7 @@
     "npm-run-all2": "8.0.4",
     "prettier": "3.6.2",
     "prisma": "6.11.1",
-    "prisma-json-types-generator": "3.5.0",
+    "prisma-json-types-generator": "3.5.1",
     "typescript": "5.8.3",
     "typescript-eslint": "8.35.1",
     "vite": "6.3.5",
