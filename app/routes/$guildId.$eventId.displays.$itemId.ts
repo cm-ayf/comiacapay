@@ -20,11 +20,17 @@ export async function action({ request, params }: Route.ActionArgs) {
     case "PUT": {
       const body = await getValidatedBodyOr400(request, resolver);
 
+      // check parent resource belonging guild
+      await prisma.item.findUniqueOrThrow({
+        where: { id: itemId, guildId },
+      });
+      await prisma.event.findUniqueOrThrow({
+        where: { id: eventId, guildId },
+      });
+
       const display = await prisma.display.upsert({
         where: {
           eventId_itemId: { eventId, itemId },
-          event: { guildId },
-          item: { guildId },
         },
         create: { eventId, itemId, ...body },
         update: body,

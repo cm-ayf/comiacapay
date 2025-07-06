@@ -19,14 +19,21 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   switch (request.method) {
     case "POST": {
-      const { records, ...rest } = await getValidatedBodyOr400(
+      const { id, total, records } = await getValidatedBodyOr400(
         request,
         resolver,
       );
 
-      const receipt = await prisma.receipt.create({
-        data: {
-          ...rest,
+      // check parent resource belonging guild
+      await prisma.event.findUniqueOrThrow({
+        where: { id: eventId, guildId },
+      });
+
+      const receipt = await prisma.receipt.upsert({
+        where: { id },
+        create: {
+          id,
+          total,
           eventId,
           userId,
           records: {
@@ -37,6 +44,7 @@ export async function action({ request, params }: Route.ActionArgs) {
             },
           },
         },
+        update: {},
       });
 
       return data({ ...receipt, records }, 201);

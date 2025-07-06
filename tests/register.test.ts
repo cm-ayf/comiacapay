@@ -175,12 +175,8 @@ test.describe("docs/register.md", () => {
     await page.goto(`/${guild.id}/${event.id}/receipts`);
     await page.waitForLoadState("networkidle");
 
-    const syncButton = page.getByRole("button", { name: "同期" });
-    await expect(syncButton).toBeEnabled();
-
-    await syncButton.click();
-    await page.waitForLoadState("networkidle");
-
-    await expect(syncButton).toBeDisabled();
+    await expect(page.getByRole("cell").getByText("¥")).toHaveText(
+      `¥${total.toLocaleString()}`,
+    );
   });
 });
