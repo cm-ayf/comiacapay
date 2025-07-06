@@ -15,10 +15,15 @@ updates:
           - "react-dom"
           - "@types/react"
           - "@types/react-dom"
+      mui-x:
+        patterns:
+          - "@mui/x-*"
       mui:
         patterns:
           - "@mui/*"
           - "@pigment-css/*"
+        exclude-patterns:
+          - "@mui/x-*"
       prisma:
         patterns:
           - "prisma"
