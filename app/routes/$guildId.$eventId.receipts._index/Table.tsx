@@ -49,7 +49,7 @@ export default function Table() {
         type: "number",
         width: 90,
         align: "right",
-        valueFormatter: (value: number) => `¥${value.toLocaleString()}`,
+        valueFormatter: (value: number) => `¥${value}`,
       },
       {
         field: "pushed",

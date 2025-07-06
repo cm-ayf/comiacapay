@@ -25,6 +25,16 @@ export default defineConfig({
             handler: "NetworkFirst",
             options: { networkTimeoutSeconds: 5 },
           },
+          {
+            urlPattern: ({ url }) =>
+              /^\/\d+\/\d+\/register\.data$/.test(url.pathname),
+            // FIXME: not good to expect body-keyed idempotency with POST request
+            method: "POST",
+            handler: "NetworkOnly",
+            options: {
+              backgroundSync: { name: "register" },
+            },
+          },
         ],
         navigateFallback: null,
       },
