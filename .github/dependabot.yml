@@ -23,6 +23,7 @@ updates:
         patterns:
           - "prisma"
           - "@prisma/*"
+          - "prisma-*"
       typescript:
         patterns:
           - "typescript"
