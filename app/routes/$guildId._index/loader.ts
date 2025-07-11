@@ -4,7 +4,7 @@ import { prismaContext } from "~/root";
 
 export async function loader({ context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);
-  const { guildId, read } = context.get(memberContext);
+  const { guildId, read } = await context.get(memberContext);
   if (!read) throw Response.json(null, { status: 403 });
 
   return await prisma.event.findMany({

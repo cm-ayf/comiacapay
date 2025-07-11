@@ -12,6 +12,7 @@ import {
   Scripts,
   ScrollRestoration,
   unstable_createContext,
+  unstable_RouterContextProvider,
 } from "react-router";
 import { pwaInfo } from "virtual:pwa-info";
 import { useRegisterSW } from "virtual:pwa-register/react";
@@ -21,6 +22,7 @@ import Navigation from "./components/Navigation";
 import createErrorBoundary from "./components/createErrorBoundary";
 import { sidCookie } from "./lib/cookie.server";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
+import { createThenable, type Thenable } from "./lib/middleware.server";
 import {
   createPrismaSessionStorage,
   type SessionData,
@@ -57,14 +59,11 @@ function mapKnownError(error: Prisma.PrismaClientKnownRequestError) {
   return error;
 }
 
-export const sessionContext = unstable_createContext<SessionData>();
-const sessionMiddleware: Route.unstable_MiddlewareFunction = async (
-  { request, context },
-  next,
-) => {
+async function initSession(
+  request: Request,
+  context: unstable_RouterContextProvider,
+) {
   const url = new URL(request.url);
-  if (url.pathname === "/auth/signin" || url.pathname === "/auth/callback")
-    return next();
 
   const prisma = context.get(prismaContext);
   const { getSession, commitSession } = createPrismaSessionStorage(
@@ -89,17 +88,24 @@ const sessionMiddleware: Route.unstable_MiddlewareFunction = async (
     );
   }
 
-  context.set(sessionContext, { userId, tokenResult });
+  return { userId, tokenResult };
+}
+
+export const sessionContext = unstable_createContext<Thenable<SessionData>>();
+const sessionMiddleware: Route.unstable_MiddlewareFunction = async (
+  { request, context },
+  next,
+) => {
+  context.set(sessionContext, createThenable(initSession, request, context));
   return next();
 };
 
-export const userContext = unstable_createContext<User>();
+export const userContext = unstable_createContext<Thenable<User>>();
 const userMiddleware: Route.unstable_MiddlewareFunction = async (
   { context },
   next,
 ) => {
-  const user = await freshUser(context);
-  context.set(userContext, user);
+  context.set(userContext, createThenable(freshUser, context));
   return next();
 };
 

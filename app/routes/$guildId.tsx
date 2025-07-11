@@ -12,17 +12,20 @@ import type { Route } from "./+types/$guildId";
 import createErrorBoundary from "~/components/createErrorBoundary";
 import { getValidatedBodyOr400 } from "~/lib/body.server";
 import type { Handle } from "~/lib/handle";
+import { createThenable, type Thenable } from "~/lib/middleware.server";
 import { UpdateGuild } from "~/lib/schema";
 import { freshMember } from "~/lib/sync/member.server";
 import { prismaContext } from "~/root";
 
-export const memberContext = unstable_createContext<Member>();
+export const memberContext = unstable_createContext<Thenable<Member>>();
 const memberMiddleware: Route.unstable_MiddlewareFunction = async (
   { context, params },
   next,
 ) => {
-  const member = await freshMember(context, params.guildId);
-  context.set(memberContext, member);
+  context.set(
+    memberContext,
+    createThenable(freshMember, context, params.guildId),
+  );
   return next();
 };
 
@@ -30,7 +33,7 @@ export const unstable_middleware = [memberMiddleware];
 
 export async function loader({ context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);
-  const member = context.get(memberContext);
+  const member = await context.get(memberContext);
   if (!member.read) throw data({ code: "FORBIDDEN", permission: "read" }, 403);
 
   const guild = await prisma.guild.findUniqueOrThrow({
@@ -49,7 +52,7 @@ const resolver = valibotResolver(UpdateGuild);
 
 export async function action({ request, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
-  const member = context.get(memberContext);
+  const member = await context.get(memberContext);
   if (!member.admin) throw Response.json(null, { status: 403 });
 
   const data = await getValidatedBodyOr400(request, resolver);

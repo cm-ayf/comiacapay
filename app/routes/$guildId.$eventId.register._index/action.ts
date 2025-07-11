@@ -11,7 +11,7 @@ const resolver = valibotResolver(CreateReceipt);
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
-  const { userId, register } = context.get(memberContext);
+  const { userId, guildId, register } = await context.get(memberContext);
   if (!register) throw data(null, 403);
 
   const { eventId } = params;
