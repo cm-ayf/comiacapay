@@ -6,14 +6,14 @@ import { prismaContext, sessionContext } from "~/root";
 
 const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 
-export function freshMember(
+export async function freshMember(
   context: unstable_RouterContextProvider,
   guildId: string,
 ) {
   const prisma = context.get(prismaContext);
-  const { userId, tokenResult } = context.get(sessionContext);
+  const { userId, tokenResult } = await context.get(sessionContext);
 
-  return prisma.$transaction(async (prisma) => {
+  return await prisma.$transaction(async (prisma) => {
     const { guild, ...member } = await prisma.member.findUniqueOrThrow({
       where: {
         userId_guildId: { userId, guildId },

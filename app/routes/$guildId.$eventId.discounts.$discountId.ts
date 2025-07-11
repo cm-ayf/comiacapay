@@ -5,7 +5,7 @@ import { prismaContext } from "~/root";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
-  const { write } = context.get(memberContext);
+  const { write } = await context.get(memberContext);
   if (!write) throw data(null, 403);
 
   const { guildId, eventId, discountId } = params;

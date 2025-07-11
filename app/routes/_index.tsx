@@ -11,7 +11,7 @@ import { prismaContext, sessionContext } from "~/root";
 
 export async function loader({ context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);
-  const { userId } = context.get(sessionContext);
+  const { userId } = await context.get(sessionContext);
 
   const members = await prisma.member.findMany({
     where: { userId },
