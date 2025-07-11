@@ -14,7 +14,7 @@ const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 
 export async function freshUser(context: Readonly<RouterContextProvider>) {
   const prisma = context.get(prismaContext);
-  const { userId, tokenResult } = context.get(sessionContext);
+  const { userId, tokenResult } = await context.get(sessionContext);
   return await prisma.$transaction(async (prisma) => {
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: userId },
