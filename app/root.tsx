@@ -13,6 +13,7 @@ import {
   Scripts,
   ScrollRestoration,
   createContext,
+  RouterContextProvider,
 } from "react-router";
 import { pwaInfo } from "virtual:pwa-info";
 import { useRegisterSW } from "virtual:pwa-register/react";
@@ -23,6 +24,7 @@ import createErrorBoundary from "./components/createErrorBoundary";
 import { sidCookie } from "./lib/cookie.server";
 import { env } from "./lib/env.server";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
+import { createThenable, type Thenable } from "./lib/middleware.server";
 import {
   createPrismaSessionStorage,
   type SessionData,
@@ -85,14 +87,11 @@ function mapKnownError(error: Prisma.PrismaClientKnownRequestError) {
   return error;
 }
 
-export const sessionContext = createContext<SessionData>();
-const sessionMiddleware: Route.MiddlewareFunction = async (
-  { request, context },
-  next,
-) => {
+async function initSession(
+  request: Request,
+  context: Readonly<RouterContextProvider>,
+) {
   const url = new URL(request.url);
-  if (url.pathname === "/auth/signin" || url.pathname === "/auth/callback")
-    return next();
 
   const prisma = context.get(prismaContext);
   const { getSession, commitSession } = createPrismaSessionStorage(
@@ -117,14 +116,21 @@ const sessionMiddleware: Route.MiddlewareFunction = async (
     );
   }
 
-  context.set(sessionContext, { userId, tokenResult });
+  return { userId, tokenResult };
+}
+
+export const sessionContext = createContext<Thenable<SessionData>>();
+const sessionMiddleware: Route.MiddlewareFunction = async (
+  { request, context },
+  next,
+) => {
+  context.set(sessionContext, createThenable(initSession, request, context));
   return next();
 };
 
-export const userContext = createContext<User>();
+export const userContext = createContext<Thenable<User>>();
 const userMiddleware: Route.MiddlewareFunction = async ({ context }, next) => {
-  const user = await freshUser(context);
-  context.set(userContext, user);
+  context.set(userContext, createThenable(freshUser, context));
   return next();
 };
 

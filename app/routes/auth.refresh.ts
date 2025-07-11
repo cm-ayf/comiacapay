@@ -3,7 +3,7 @@ import { prismaContext, sessionContext } from "~/root";
 
 export async function action({ request, context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);
-  const { userId } = context.get(sessionContext);
+  const { userId } = await context.get(sessionContext);
   await prisma.user.update({
     where: { id: userId },
     data: { freshUntil: new Date() },
