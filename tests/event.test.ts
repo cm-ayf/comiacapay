@@ -152,7 +152,6 @@ test.describe("docs/event.md", () => {
     await page.getByRole("combobox", { name: "割引等を追加" }).click();
     await page.getByRole("option", { name: "セット割引" }).click();
 
-    // Select items using checkboxes instead of combobox
     await page.getByRole("checkbox", { name: item1.name }).check();
     await page.getByRole("checkbox", { name: item2.name }).check();
     await page.getByRole("spinbutton", { name: "割引額" }).fill("500");
