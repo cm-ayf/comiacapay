@@ -27,7 +27,13 @@ export default function SetDiscountDialogContent({
         gap: 1,
       }}
     >
-      <FormControl sx={{ mt: 2 }} error={!!errors.itemIds}>
+      <FormControl
+        sx={{ mt: 2 }}
+        {...(errors.itemIds && {
+          error: true,
+          helperText: errors.itemIds.message,
+        })}
+      >
         <FormLabel component="legend">商品の組み合わせ</FormLabel>
         <FormGroup>
           {displays.map(({ item }) => (
