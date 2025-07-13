@@ -15,19 +15,8 @@ export default function SetDiscountDialogContent({
 }) {
   const {
     register,
-    watch,
-    setValue,
     formState: { errors },
   } = useRemixFormContext<CreateSetDiscountInput>();
-
-  const currentItemIds = watch("itemIds") || [];
-
-  const handleCheckboxChange = (itemId: string, checked: boolean) => {
-    const newItemIds = checked
-      ? [...currentItemIds, itemId]
-      : currentItemIds.filter((id) => id !== itemId);
-    setValue("itemIds", newItemIds);
-  };
 
   return (
     <DialogContent
@@ -44,24 +33,11 @@ export default function SetDiscountDialogContent({
           {displays.map(({ item }) => (
             <FormControlLabel
               key={item.id}
-              control={
-                <Checkbox
-                  checked={currentItemIds.includes(item.id)}
-                  onChange={(e) =>
-                    handleCheckboxChange(item.id, e.target.checked)
-                  }
-                />
-              }
+              control={<Checkbox value={item.id} {...register("itemIds")} />}
               label={item.name}
             />
           ))}
         </FormGroup>
-        {/* Hidden input for form submission */}
-        <input
-          type="hidden"
-          {...register("itemIds", { required: "商品を選択してください" })}
-          value={currentItemIds.join(",")}
-        />
       </FormControl>
       <TextField
         {...register("amount", { required: true, valueAsNumber: true })}
