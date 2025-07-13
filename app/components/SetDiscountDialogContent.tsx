@@ -39,7 +39,7 @@ export default function SetDiscountDialogContent({
           {displays.map(({ item }) => (
             <FormControlLabel
               key={item.id}
-              control={<Checkbox value={item.id} {...register("itemIds")} />}
+              control={<Checkbox {...register("itemIds")} value={item.id} />}
               label={item.name}
             />
           ))}
