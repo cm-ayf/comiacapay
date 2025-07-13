@@ -152,10 +152,8 @@ test.describe("docs/event.md", () => {
     await page.getByRole("combobox", { name: "割引等を追加" }).click();
     await page.getByRole("option", { name: "セット割引" }).click();
 
-    await page.getByRole("combobox", { name: "商品の組み合わせ" }).click();
-    await page.getByRole("option", { name: item1.name }).click();
-    await page.getByRole("option", { name: item2.name }).click();
-    await page.keyboard.press("Tab"); // TODO: better way test better accessibility
+    await page.getByRole("checkbox", { name: item1.name }).check();
+    await page.getByRole("checkbox", { name: item2.name }).check();
     await page.getByRole("spinbutton", { name: "割引額" }).fill("500");
 
     await page.getByRole("button", { name: "保存" }).click();

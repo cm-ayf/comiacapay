@@ -1,16 +1,12 @@
+import Checkbox from "@mui/material/Checkbox";
 import DialogContent from "@mui/material/DialogContent";
 import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import FormLabel from "@mui/material/FormLabel";
 import TextField from "@mui/material/TextField";
-import { useId, useState } from "react";
 import { useRemixFormContext } from "remix-hook-form";
 import type { CreateSetDiscountInput, ClientDisplay } from "~/lib/schema";
-
-function toSplitArray(v: string | string[]): string[] {
-  return Array.isArray(v) ? v : v.split(",");
-}
 
 export default function SetDiscountDialogContent({
   displays,
@@ -19,15 +15,8 @@ export default function SetDiscountDialogContent({
 }) {
   const {
     register,
-    getValues,
-    setValue,
     formState: { errors },
   } = useRemixFormContext<CreateSetDiscountInput>();
-
-  // for rendering <Select>
-  const [itemIds, setItemIds] = useState<string[]>(() => getValues("itemIds"));
-
-  const selectLabelId = useId();
 
   return (
     <DialogContent
@@ -38,31 +27,23 @@ export default function SetDiscountDialogContent({
         gap: 1,
       }}
     >
-      <FormControl sx={{ mt: 2 }}>
-        <InputLabel id={selectLabelId}>商品の組み合わせ</InputLabel>
-        <Select
-          {...register("itemIds", { required: true, setValueAs: toSplitArray })}
-          {...(errors.itemIds && {
-            error: true,
-            helperText: errors.itemIds.message,
-          })}
-          value={itemIds}
-          onChange={(e) => {
-            const itemIds = toSplitArray(e.target.value);
-            setItemIds(itemIds);
-            setValue("itemIds", itemIds);
-          }}
-          labelId={selectLabelId}
-          label="商品の組み合わせ"
-          multiple
-          fullWidth
-        >
+      <FormControl
+        sx={{ mt: 2 }}
+        {...(errors.itemIds && {
+          error: true,
+          helperText: errors.itemIds.message,
+        })}
+      >
+        <FormLabel component="legend">商品の組み合わせ</FormLabel>
+        <FormGroup>
           {displays.map(({ item }) => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name}
-            </MenuItem>
+            <FormControlLabel
+              key={item.id}
+              control={<Checkbox {...register("itemIds")} value={item.id} />}
+              label={item.name}
+            />
           ))}
-        </Select>
+        </FormGroup>
       </FormControl>
       <TextField
         {...register("amount", { required: true, valueAsNumber: true })}
