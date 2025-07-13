@@ -1,16 +1,12 @@
+import Checkbox from "@mui/material/Checkbox";
 import DialogContent from "@mui/material/DialogContent";
 import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import FormLabel from "@mui/material/FormLabel";
 import TextField from "@mui/material/TextField";
-import { useId, useState } from "react";
 import { useRemixFormContext } from "remix-hook-form";
 import type { CreateSetDiscountInput, ClientDisplay } from "~/lib/schema";
-
-function toSplitArray(v: string | string[]): string[] {
-  return Array.isArray(v) ? v : v.split(",");
-}
 
 export default function SetDiscountDialogContent({
   displays,
@@ -19,15 +15,19 @@ export default function SetDiscountDialogContent({
 }) {
   const {
     register,
-    getValues,
+    watch,
     setValue,
     formState: { errors },
   } = useRemixFormContext<CreateSetDiscountInput>();
 
-  // for rendering <Select>
-  const [itemIds, setItemIds] = useState<string[]>(() => getValues("itemIds"));
+  const currentItemIds = watch("itemIds") || [];
 
-  const selectLabelId = useId();
+  const handleCheckboxChange = (itemId: string, checked: boolean) => {
+    const newItemIds = checked
+      ? [...currentItemIds, itemId]
+      : currentItemIds.filter((id) => id !== itemId);
+    setValue("itemIds", newItemIds);
+  };
 
   return (
     <DialogContent
@@ -38,31 +38,30 @@ export default function SetDiscountDialogContent({
         gap: 1,
       }}
     >
-      <FormControl sx={{ mt: 2 }}>
-        <InputLabel id={selectLabelId}>商品の組み合わせ</InputLabel>
-        <Select
-          {...register("itemIds", { required: true, setValueAs: toSplitArray })}
-          {...(errors.itemIds && {
-            error: true,
-            helperText: errors.itemIds.message,
-          })}
-          value={itemIds}
-          onChange={(e) => {
-            const itemIds = toSplitArray(e.target.value);
-            setItemIds(itemIds);
-            setValue("itemIds", itemIds);
-          }}
-          labelId={selectLabelId}
-          label="商品の組み合わせ"
-          multiple
-          fullWidth
-        >
+      <FormControl sx={{ mt: 2 }} error={!!errors.itemIds}>
+        <FormLabel component="legend">商品の組み合わせ</FormLabel>
+        <FormGroup>
           {displays.map(({ item }) => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name}
-            </MenuItem>
+            <FormControlLabel
+              key={item.id}
+              control={
+                <Checkbox
+                  checked={currentItemIds.includes(item.id)}
+                  onChange={(e) =>
+                    handleCheckboxChange(item.id, e.target.checked)
+                  }
+                />
+              }
+              label={item.name}
+            />
           ))}
-        </Select>
+        </FormGroup>
+        {/* Hidden input for form submission */}
+        <input
+          type="hidden"
+          {...register("itemIds", { required: "商品を選択してください" })}
+          value={currentItemIds.join(",")}
+        />
       </FormControl>
       <TextField
         {...register("amount", { required: true, valueAsNumber: true })}
