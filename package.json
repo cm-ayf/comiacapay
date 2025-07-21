@@ -31,7 +31,7 @@
     "@mui/lab": "7.0.0-beta.14",
     "@mui/material": "7.2.0",
     "@mui/material-pigment-css": "7.2.0",
-    "@mui/x-charts": "8.8.0",
+    "@mui/x-charts": "8.9.0",
     "@mui/x-data-grid": "8.8.0",
     "@pigment-css/react": "0.0.30",
     "@prisma/client": "6.11.1",
