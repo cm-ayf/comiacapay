@@ -2,7 +2,7 @@ import "./global.css";
 import "@mui/material-pigment-css/styles.css";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material-pigment-css/Container";
-import { Prisma, PrismaClient, type User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import { Fragment, useRef, type PropsWithChildren } from "react";
 import {
   data,
@@ -24,40 +24,24 @@ import { sidCookie } from "./lib/cookie.server";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
 import { createThenable, type Thenable } from "./lib/middleware.server";
 import {
+  createPrismaClient,
+  type PrismaClientWithExtensions,
+} from "./lib/prisma.server";
+import {
   createPrismaSessionStorage,
   type SessionData,
 } from "./lib/session.server";
 import { freshUser } from "./lib/sync/user.server";
 
-export const prismaContext = unstable_createContext<PrismaClient>();
+export const prismaContext =
+  unstable_createContext<PrismaClientWithExtensions>();
 const prismaMiddleware: Route.unstable_MiddlewareFunction = async (
   { context },
   next,
 ) => {
-  context.set(prismaContext, new PrismaClient());
-  try {
-    return await next();
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      error = mapKnownError(error);
-    }
-    throw error;
-  }
+  context.set(prismaContext, createPrismaClient());
+  return await next();
 };
-
-function mapKnownError(error: Prisma.PrismaClientKnownRequestError) {
-  switch (error.code) {
-    case "P2001": // record does not exist
-    case "P2025": // no record found
-      return data({ code: "NOT_FOUND", meta: error.meta }, 404);
-    case "P2002": // unique constraint failed
-    case "P2003": // foreign key constraint failed
-    case "P2014": // would violate required relation
-      return data({ code: "CONFLICT", meta: error.meta }, 409);
-  }
-
-  return error;
-}
 
 async function initSession(
   request: Request,
