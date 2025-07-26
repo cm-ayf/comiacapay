@@ -2,8 +2,6 @@ import "./global.css";
 import "@mui/material-pigment-css/styles.css";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material-pigment-css/Container";
-import { PrismaPg } from "@prisma/adapter-pg";
-import type { PoolConfig } from "pg";
 import { Fragment, useRef, type PropsWithChildren } from "react";
 import {
   data,
@@ -22,70 +20,27 @@ import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
 import createErrorBoundary from "./components/createErrorBoundary";
 import { sidCookie } from "./lib/cookie.server";
-import { env } from "./lib/env.server";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
 import { createThenable, type Thenable } from "./lib/middleware.server";
+import {
+  createPrismaClient,
+  type PrismaClientWithExtensions,
+} from "./lib/prisma.server";
 import {
   createPrismaSessionStorage,
   type SessionData,
 } from "./lib/session.server";
 import { freshUser } from "./lib/sync/user.server";
-import { Prisma, PrismaClient } from "~/generated/prisma/client";
 import type { User } from "~/generated/prisma/client";
 
-async function createPgAdapter() {
-  const url = new URL(env.POSTGRES_PRISMA_URL);
-  const options: PoolConfig = {};
-
-  if (env.POSTGRES_CA_URL) {
-    // https://node-postgres.com/features/ssl#usage-with-connectionstring
-    for (const key of url.searchParams.keys()) {
-      if (key.startsWith("ssl")) url.searchParams.delete(key);
-    }
-    options.connectionString = url.toString();
-
-    const res = await fetch(env.POSTGRES_CA_URL);
-    if (!res.ok) throw new Error("Failed to fetch POSTGRES_CA_URL");
-
-    options.ssl = {};
-    options.ssl.ca = await res.text();
-  } else {
-    options.connectionString = url.toString();
-  }
-
-  return new PrismaPg(options);
-}
-
-export const prismaContext = createContext<PrismaClient>();
+export const prismaContext = createContext<PrismaClientWithExtensions>();
 const prismaMiddleware: Route.MiddlewareFunction = async (
   { context },
   next,
 ) => {
-  const adapter = await createPgAdapter();
-  context.set(prismaContext, new PrismaClient({ adapter }));
-  try {
-    return await next();
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      error = mapKnownError(error);
-    }
-    throw error;
-  }
+  context.set(prismaContext, await createPrismaClient());
+  return await next();
 };
-
-function mapKnownError(error: Prisma.PrismaClientKnownRequestError) {
-  switch (error.code) {
-    case "P2001": // record does not exist
-    case "P2025": // no record found
-      return data({ code: "NOT_FOUND", meta: error.meta }, 404);
-    case "P2002": // unique constraint failed
-    case "P2003": // foreign key constraint failed
-    case "P2014": // would violate required relation
-      return data({ code: "CONFLICT", meta: error.meta }, 409);
-  }
-
-  return error;
-}
 
 async function initSession(
   request: Request,
