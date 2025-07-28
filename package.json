@@ -58,7 +58,7 @@
     "@types/node": "22.15.2",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
-    "@types/serviceworker": "0.0.144",
+    "@types/serviceworker": "0.0.147",
     "@vercel/react-router": "1.2.2",
     "eslint": "9.27.0",
     "eslint-config-prettier": "10.1.8",
