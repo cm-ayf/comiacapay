@@ -26,7 +26,7 @@
     "test:e2e:debug": "PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test --debug"
   },
   "dependencies": {
-    "@hookform/resolvers": "5.1.1",
+    "@hookform/resolvers": "5.2.0",
     "@mui/icons-material": "7.2.0",
     "@mui/lab": "7.0.0-beta.14",
     "@mui/material": "7.2.0",
