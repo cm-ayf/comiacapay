@@ -41,7 +41,7 @@
     "idb": "^8.0.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-hook-form": "7.61.1",
+    "react-hook-form": "7.62.0",
     "react-router": "7.7.1",
     "remix-hook-form": "7.1.0",
     "valibot": "1.1.0",
