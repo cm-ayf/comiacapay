@@ -11,7 +11,9 @@ import { prismaContext, sessionContext } from "~/root";
 
 const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 
-export async function freshUser(context: unstable_RouterContextProvider) {
+export async function freshUser(
+  context: Readonly<unstable_RouterContextProvider>,
+) {
   const prisma = context.get(prismaContext);
   const { userId, tokenResult } = await context.get(sessionContext);
   return await prisma.$transaction(async (prisma) => {
