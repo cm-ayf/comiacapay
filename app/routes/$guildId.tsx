@@ -1,7 +1,6 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import Typography from "@mui/material/Typography";
 import {
-  data,
   Outlet,
   createContext,
   useRouteLoaderData,
@@ -9,15 +8,14 @@ import {
 } from "react-router";
 import type { Route } from "./+types/$guildId";
 import createErrorBoundary from "~/components/createErrorBoundary";
-import type { Member } from "~/generated/prisma/client";
 import { getValidatedBodyOr400 } from "~/lib/body.server";
 import type { Handle } from "~/lib/handle";
 import { createThenable, type Thenable } from "~/lib/middleware.server";
 import { UpdateGuild } from "~/lib/schema";
-import { freshMember } from "~/lib/sync/member.server";
+import { freshMember, type MemberContext } from "~/lib/sync/member.server";
 import { prismaContext } from "~/root";
 
-export const memberContext = createContext<Thenable<Member>>();
+export const memberContext = createContext<Thenable<MemberContext>>();
 const memberMiddleware: Route.MiddlewareFunction = async (
   { context, params },
   next,
@@ -33,8 +31,8 @@ export const unstable_middleware = [memberMiddleware];
 
 export async function loader({ context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);
-  const member = await context.get(memberContext);
-  if (!member.read) throw data({ code: "FORBIDDEN", permission: "read" }, 403);
+  const { checkPermission, ...member } = await context.get(memberContext);
+  checkPermission("read");
 
   const guild = await prisma.guild.findUniqueOrThrow({
     where: { id: member.guildId },
@@ -52,8 +50,8 @@ const resolver = valibotResolver(UpdateGuild);
 
 export async function action({ request, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
-  const { guildId, admin } = await context.get(memberContext);
-  if (!admin) throw data({ code: "FORBIDDEN", permission: "admin" }, 403);
+  const { guildId, checkPermission } = await context.get(memberContext);
+  checkPermission("admin");
 
   const body = await getValidatedBodyOr400(request, resolver);
 
