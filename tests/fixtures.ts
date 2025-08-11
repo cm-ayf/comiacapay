@@ -11,6 +11,7 @@ import type {
 import { Snowflake } from "~/lib/snowflake";
 
 type Fixtures = {
+  prisma: PrismaClient;
   guild: Guild;
   user: User & { signin: () => Promise<void> };
   items: [Item, Item];
@@ -19,11 +20,16 @@ type Fixtures = {
   receipts: [Receipt, Receipt, Receipt];
 };
 
-const prisma = new PrismaClient();
-
 export const test = base.extend<Fixtures>({
+  prisma: async ({}, use) => {
+    const prisma = new PrismaClient();
+    await prisma.$connect();
+    await use(prisma);
+    await prisma.$disconnect();
+  },
+
   // Guild fixture
-  guild: async ({}, use) => {
+  guild: async ({ prisma }, use) => {
     const guild = await prisma.guild.create({
       data: {
         id: Snowflake.generate().toString(),
@@ -54,7 +60,7 @@ export const test = base.extend<Fixtures>({
   },
 
   // Session fixture
-  user: async ({ page, guild }, use) => {
+  user: async ({ page, prisma, guild }, use) => {
     const oneHourFromNow = new Date(Date.now() + 1000 * 60 * 60);
     const user = await prisma.user.create({
       data: {
@@ -129,7 +135,7 @@ export const test = base.extend<Fixtures>({
   },
 
   // Items fixture
-  items: async ({ guild }, use) => {
+  items: async ({ prisma, guild }, use) => {
     const items: [Item, Item] = [
       {
         id: Snowflake.generate().toString(),
@@ -152,7 +158,7 @@ export const test = base.extend<Fixtures>({
   },
 
   // Event fixture
-  event: async ({ guild }, use) => {
+  event: async ({ prisma, guild }, use) => {
     const event = await prisma.event.create({
       data: {
         id: Snowflake.generate().toString(),
@@ -166,7 +172,7 @@ export const test = base.extend<Fixtures>({
   },
 
   // Displays fixture
-  displays: async ({ event, items: [item1, item2] }, use) => {
+  displays: async ({ prisma, event, items: [item1, item2] }, use) => {
     const displays: [Display, Display] = [
       {
         itemId: item1.id,
@@ -189,7 +195,10 @@ export const test = base.extend<Fixtures>({
   },
 
   // Receipts fixture
-  receipts: async ({ user, event, displays: [display1, display2] }, use) => {
+  receipts: async (
+    { prisma, user, event, displays: [display1, display2] },
+    use,
+  ) => {
     const receipts: [Receipt, Receipt, Receipt] = [
       {
         id: Snowflake.generate().toString(),
