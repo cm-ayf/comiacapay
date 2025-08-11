@@ -52,14 +52,14 @@ const resolver = valibotResolver(UpdateGuild);
 
 export async function action({ request, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
-  const member = await context.get(memberContext);
-  if (!member.admin) throw Response.json(null, { status: 403 });
+  const { guildId, admin } = await context.get(memberContext);
+  if (!admin) throw data({ code: "FORBIDDEN", permission: "admin" }, 403);
 
-  const data = await getValidatedBodyOr400(request, resolver);
+  const body = await getValidatedBodyOr400(request, resolver);
 
   return await prisma.guild.update({
-    where: { id: member.guildId },
-    data,
+    where: { id: guildId },
+    data: body,
   });
 }
 
