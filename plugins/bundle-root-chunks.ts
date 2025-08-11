@@ -13,15 +13,21 @@ export default function bundleRootChunks({
         build: {
           rollupOptions: {
             output: {
-              manualChunks(id, { getModuleInfo }) {
-                const moduleInfo = getModuleInfo(id)!;
-                if (chunks.has(moduleInfo.id)) {
-                  for (const resolvedId of moduleInfo.importedIdResolutions)
-                    chunks.add(resolvedId.id);
-                  for (const resolvedId of moduleInfo.dynamicallyImportedIdResolutions)
-                    chunks.add(resolvedId.id);
-                  return "root";
-                } else return;
+              advancedChunks: {
+                groups: [
+                  {
+                    name(moduleId, ctx) {
+                      const moduleInfo = ctx.getModuleInfo(moduleId)!;
+                      if (chunks.has(moduleId)) {
+                        for (const importedId of moduleInfo.importedIds)
+                          chunks.add(importedId);
+                        for (const importedId of moduleInfo.dynamicallyImportedIds)
+                          chunks.add(importedId);
+                        return "root";
+                      } else return null;
+                    },
+                  },
+                ],
               },
             },
           },
