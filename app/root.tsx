@@ -46,8 +46,6 @@ async function initSession(
   request: Request,
   context: Readonly<RouterContextProvider>,
 ) {
-  const url = new URL(request.url);
-
   const prisma = context.get(prismaContext);
   const { getSession, commitSession } = createPrismaSessionStorage(
     prisma,
@@ -64,7 +62,7 @@ async function initSession(
         status: 401,
         headers: {
           "Set-Cookie": await commitSession(session, {
-            secure: url.protocol === "https",
+            secure: request.url.startsWith("https://"),
           }),
         },
       },
