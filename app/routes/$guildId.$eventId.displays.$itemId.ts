@@ -10,8 +10,8 @@ const resolver = valibotResolver(UpsertDisplay);
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
-  const { write } = await context.get(memberContext);
-  if (!write) throw data({ code: "FORBIDDEN", permission: "write" }, 403);
+  const { checkPermission } = await context.get(memberContext);
+  checkPermission("write");
 
   const { guildId, eventId, itemId } = params;
   switch (request.method) {

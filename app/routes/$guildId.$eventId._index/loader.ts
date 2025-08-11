@@ -1,12 +1,11 @@
-import { data } from "react-router";
 import { memberContext } from "../$guildId";
 import type { Route } from "./+types/route";
 import { prismaContext } from "~/root";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);
-  const { read } = await context.get(memberContext);
-  if (!read) throw data({ code: "FORBIDDEN", permission: "read" }, 403);
+  const { checkPermission } = await context.get(memberContext);
+  checkPermission("read");
 
   const { guildId, eventId } = params;
   const receipt = await prisma.receipt.findFirst({
