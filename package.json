@@ -41,6 +41,7 @@
     "@react-router/serve": "7.9.4",
     "discord-api-types": "0.38.31",
     "idb": "^8.0.3",
+    "isbot": "5.1.31",
     "patch-package": "8.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
