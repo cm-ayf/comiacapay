@@ -49,7 +49,6 @@ export async function loader({ request, context }: Route.LoaderArgs) {
     return redirectDocument(state.searchParams.get("redirect_to") ?? "/", {
       headers: {
         "Set-Cookie": await commitSession(session, {
-          maxAge: tokenResult.expires_in,
           secure: request.url.startsWith("https://"),
         }),
       },
