@@ -127,7 +127,7 @@ test.describe("docs/event.md", () => {
       .getByRole("button", { name: "編集" })
       .click();
     await page.getByRole("button", { name: "削除" }).click();
-    await page.waitForTimeout(100); // TODO: fix app so that this is not needed
+    await page.waitForTimeout(250); // TODO: fix app so that this is not needed
     await page.waitForLoadState("networkidle");
 
     // Verify display was removed
