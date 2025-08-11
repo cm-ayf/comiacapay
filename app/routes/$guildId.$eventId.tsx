@@ -17,8 +17,8 @@ import { prismaContext } from "~/root";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);
-  const { read } = await context.get(memberContext);
-  if (!read) throw data({ code: "FORBIDDEN", permission: "read" }, 403);
+  const { checkPermission } = await context.get(memberContext);
+  checkPermission("read");
 
   const { guildId, eventId } = params;
   return await prisma.event.findUniqueOrThrow({
@@ -31,8 +31,8 @@ const resolver = valibotResolver(UpdateEvent);
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
-  const { write } = await context.get(memberContext);
-  if (!write) throw data({ code: "FORBIDDEN", permission: "write" }, 403);
+  const { checkPermission } = await context.get(memberContext);
+  checkPermission("write");
 
   const { guildId, eventId } = params;
   switch (request.method) {

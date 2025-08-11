@@ -11,8 +11,8 @@ const resolver = valibotResolver(CreateItem);
 
 export async function action({ request, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
-  const { guildId, write } = await context.get(memberContext);
-  if (!write) throw data({ code: "FORBIDDEN", permission: "write" }, 403);
+  const { guildId, checkPermission } = await context.get(memberContext);
+  checkPermission("write");
 
   switch (request.method) {
     case "POST": {
