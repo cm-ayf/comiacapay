@@ -7,11 +7,11 @@ import { href, Link, useLoaderData } from "react-router";
 import type { Route } from "./+types/_index";
 import EventCard from "~/components/EventCard";
 import GuildCard from "~/components/GuildCard";
-import { getSessionOr401 } from "~/lib/middleware.server";
-import { prisma } from "~/lib/prisma.server";
+import { prismaContext, sessionContext } from "~/root";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const { userId } = await getSessionOr401(request);
+export async function loader({ context }: Route.LoaderArgs) {
+  const prisma = context.get(prismaContext);
+  const { userId } = await context.get(sessionContext);
 
   const members = await prisma.member.findMany({
     where: { userId },

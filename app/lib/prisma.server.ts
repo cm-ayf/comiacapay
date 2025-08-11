@@ -55,6 +55,8 @@ const mapKnownErrorExtension = Prisma.defineExtension({
   },
 });
 
-export const { prisma } = Object.assign(global, {
-  prisma: new PrismaClient().$extends(mapKnownErrorExtension),
-});
+export function createPrismaClient() {
+  return new PrismaClient().$extends(mapKnownErrorExtension);
+}
+
+export type PrismaClientWithExtensions = ReturnType<typeof createPrismaClient>;

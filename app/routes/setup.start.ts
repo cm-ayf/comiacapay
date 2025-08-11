@@ -2,12 +2,12 @@ import { redirectDocument } from "react-router";
 import type { Route } from "./+types/setup.start";
 import { OAuth2Error } from "~/lib/oauth2/error";
 import { authorizeBotUrl } from "~/lib/oauth2/setup.server";
-import { getSession } from "~/lib/session.server";
+import { sessionContext } from "~/root";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-  const userId = session.get("userId");
-  if (!userId) {
+export async function loader({ request, context }: Route.LoaderArgs) {
+  try {
+    context.get(sessionContext);
+  } catch {
     const error = new OAuth2Error("invalid_request");
     return redirectDocument(error.toRedirectLocation());
   }

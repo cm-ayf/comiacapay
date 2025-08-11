@@ -65,7 +65,13 @@ export default tseslint.config(
   },
   muiPigmentCss,
   {
-    ignores: ["build/**", ".react-router/**", "public/entry.worker.js"],
+    ignores: [
+      ".react-router/**",
+      "build/**",
+      "dev-dist/**",
+      "playwright-report/**",
+      "public/entry.worker.js",
+    ],
   },
   {
     rules: {
