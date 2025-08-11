@@ -34,7 +34,11 @@ import { sessionContext } from "~/root";
 const resolver = valibotResolver(UpdateGuild);
 
 export async function loader({ request, context }: Route.LoaderArgs) {
-  context.get(sessionContext);
+  try {
+    context.get(sessionContext);
+  } catch {
+    return redirectDocument("/");
+  }
 
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
