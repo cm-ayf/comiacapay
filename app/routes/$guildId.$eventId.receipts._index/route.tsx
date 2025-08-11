@@ -19,8 +19,8 @@ export { clientAction } from "./clientAction";
 export { loader } from "./loader";
 export { clientLoader } from "./clientLoader";
 
-const Table = dynamic(() => import("./Table"));
-const Chart = dynamic(() => import("./Chart"));
+const Table = dynamic(() => import("./Table.client"));
+const Chart = dynamic(() => import("./Chart.client"));
 const TabPanel = styled(MuiTabPanel)({ padding: 0, height: "100%" });
 export default function Page() {
   const [tab, setTab] = useState<"summary" | "table" | "chart">("summary");

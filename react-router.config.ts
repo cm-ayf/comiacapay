@@ -4,4 +4,10 @@ import { vercelPreset } from "@vercel/react-router/vite";
 export default {
   ssr: true,
   presets: [vercelPreset()],
+  routeDiscovery: { mode: "initial" },
+  future: {
+    unstable_optimizeDeps: true,
+    unstable_subResourceIntegrity: true,
+    unstable_viteEnvironmentApi: true,
+  },
 } satisfies Config;

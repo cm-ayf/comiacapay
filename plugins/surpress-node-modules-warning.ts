@@ -7,9 +7,9 @@ export default function surpressNodeModulesWarning(): Plugin {
       return {
         build: {
           rollupOptions: {
-            onwarn(warning, defaultHandler) {
-              if (warning.id?.includes("/node_modules")) return;
-              defaultHandler(warning);
+            onLog(level, log, defaultHandler) {
+              if (log.id?.includes("/node_modules")) return;
+              defaultHandler(level, log);
             },
           },
         },
