@@ -1,13 +1,14 @@
 import { data } from "react-router";
+import { memberContext } from "./$guildId";
 import type { Route } from "./+types/$guildId.$eventId.discounts.$discountId";
-import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
-import { prisma } from "~/lib/prisma.server";
+import { prismaContext } from "~/root";
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { userId } = await getSessionOr401(request);
+export async function action({ request, params, context }: Route.ActionArgs) {
+  const prisma = context.get(prismaContext);
+  const { checkPermission } = await context.get(memberContext);
+  checkPermission("write");
+
   const { guildId, eventId, discountId } = params;
-  await getMemberOr4xx(userId, guildId, "write");
-
   switch (request.method) {
     case "DELETE": {
       const discount = await prisma.$transaction(async (prisma) => {
