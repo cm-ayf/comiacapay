@@ -99,10 +99,37 @@ export default tseslint.config(
   {
     ignores: [
       "**/generated/**",
-      "dev-dist/**",
-      "build/**",
       ".react-router/**",
+      "build/**",
+      "dev-dist/**",
+      "playwright-report/**",
       "public/entry.worker.js",
     ],
+  },
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
+  },
+  {
+    files: ["app/entry.client.tsx"],
+    languageOptions: {
+      globals: globals.browser,
+    },
+  },
+  {
+    files: ["app/entry.server.tsx"],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
+    files: ["app/entry.worker.ts"],
+    languageOptions: {
+      globals: globals.serviceworker,
+    },
   },
 );
