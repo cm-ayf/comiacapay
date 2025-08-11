@@ -49,11 +49,12 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
+      outDir: "build/client",
     }),
     surpressNodeModulesWarning(),
     bundleRootChunks(),
   ],
-  ssr: {
+  resolve: {
     noExternal: [/^@mui\/(?!x-|lab)/, "@pigment-css/react"],
   },
   define: {
