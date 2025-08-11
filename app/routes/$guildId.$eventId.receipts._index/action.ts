@@ -12,7 +12,7 @@ const resolver = valibotResolver(CreateReceipts);
 export async function action({ request, params, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
   const { userId, register } = await context.get(memberContext);
-  if (!register) throw data(null, 403);
+  if (!register) throw data({ code: "FORBIDDEN", permission: "register" }, 403);
 
   const { eventId } = params;
   switch (request.method) {
