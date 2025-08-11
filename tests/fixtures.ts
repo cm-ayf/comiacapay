@@ -33,21 +33,23 @@ export const test = base.extend<Fixtures>({
 
     await use(guild);
 
-    const events = await prisma.event.findMany({
-      where: { guildId: guild.id },
-    });
-    const eventIdInEvents = { eventId: { in: events.map((e) => e.id) } };
-    await prisma.record.deleteMany({ where: eventIdInEvents });
-    await prisma.receipt.deleteMany({ where: eventIdInEvents });
-    await prisma.display.deleteMany({ where: eventIdInEvents });
-    await prisma.event.deleteMany({
-      where: { guildId: guild.id },
-    });
-    await prisma.item.deleteMany({
-      where: { guildId: guild.id },
-    });
-    await prisma.guild.delete({
-      where: { id: guild.id },
+    await prisma.$transaction(async (prisma) => {
+      const events = await prisma.event.findMany({
+        where: { guildId: guild.id },
+      });
+      const eventIdInEvents = { eventId: { in: events.map((e) => e.id) } };
+      await prisma.record.deleteMany({ where: eventIdInEvents });
+      await prisma.receipt.deleteMany({ where: eventIdInEvents });
+      await prisma.display.deleteMany({ where: eventIdInEvents });
+      await prisma.event.deleteMany({
+        where: { guildId: guild.id },
+      });
+      await prisma.item.deleteMany({
+        where: { guildId: guild.id },
+      });
+      await prisma.guild.delete({
+        where: { id: guild.id },
+      });
     });
   },
 
@@ -102,25 +104,27 @@ export const test = base.extend<Fixtures>({
     await use({ ...user, signin });
 
     // Cleanup
-    const receipts = await prisma.receipt.findMany({
-      where: { userId: user.id },
-    });
-    await prisma.record.deleteMany({
-      where: {
-        receiptId: { in: receipts.map((r) => r.id) },
-      },
-    });
-    await prisma.receipt.deleteMany({
-      where: { userId: user.id },
-    });
-    await prisma.session.deleteMany({
-      where: { userId: user.id },
-    });
-    await prisma.member.deleteMany({
-      where: { userId: user.id },
-    });
-    await prisma.user.delete({
-      where: { id: user.id },
+    await prisma.$transaction(async (prisma) => {
+      const receipts = await prisma.receipt.findMany({
+        where: { userId: user.id },
+      });
+      await prisma.record.deleteMany({
+        where: {
+          receiptId: { in: receipts.map((r) => r.id) },
+        },
+      });
+      await prisma.receipt.deleteMany({
+        where: { userId: user.id },
+      });
+      await prisma.session.deleteMany({
+        where: { userId: user.id },
+      });
+      await prisma.member.deleteMany({
+        where: { userId: user.id },
+      });
+      await prisma.user.delete({
+        where: { id: user.id },
+      });
     });
   },
 
