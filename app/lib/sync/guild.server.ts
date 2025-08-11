@@ -9,7 +9,7 @@ import { getCurrentUser } from "../oauth2/auth.server";
 import { prismaContext } from "~/root";
 
 export async function upsertGuildAndMember(
-  context: unstable_RouterContextProvider,
+  context: Readonly<unstable_RouterContextProvider>,
   {
     guild,
     ...tokenResult

@@ -45,7 +45,7 @@ const prismaMiddleware: Route.unstable_MiddlewareFunction = async (
 
 async function initSession(
   request: Request,
-  context: unstable_RouterContextProvider,
+  context: Readonly<unstable_RouterContextProvider>,
 ) {
   const url = new URL(request.url);
 

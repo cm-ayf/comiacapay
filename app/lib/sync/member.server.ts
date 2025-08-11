@@ -7,7 +7,7 @@ import { prismaContext, sessionContext } from "~/root";
 const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 
 export async function freshMember(
-  context: unstable_RouterContextProvider,
+  context: Readonly<unstable_RouterContextProvider>,
   guildId: string,
 ) {
   const prisma = context.get(prismaContext);
