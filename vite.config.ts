@@ -3,7 +3,6 @@ import { pigment } from "@pigment-css/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
-import bundleRootChunks from "./plugins/bundle-root-chunks";
 import surpressNodeModulesWarning from "./plugins/surpress-node-modules-warning";
 
 export default defineConfig({
@@ -50,7 +49,6 @@ export default defineConfig({
       outDir: "build/client",
     }),
     surpressNodeModulesWarning(),
-    bundleRootChunks(),
   ],
   resolve: {
     noExternal: [/^@mui\/(?!x-|lab)/, "@pigment-css/react"],
@@ -58,6 +56,9 @@ export default defineConfig({
   },
   define: {
     "process.env.NODE_ENV": JSON.stringify(process.env["NODE_ENV"]),
+  },
+  build: {
+    cssCodeSplit: false,
   },
   experimental: {
     enableNativePlugin: true,
