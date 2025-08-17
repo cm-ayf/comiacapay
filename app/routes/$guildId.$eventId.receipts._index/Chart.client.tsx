@@ -107,7 +107,7 @@ export default function Chart() {
           }
           label="売上を表示"
         />
-        <FormControl sx={{ minWidth: 200 }}>
+        <FormControl fullWidth sx={{ flex: 1 }}>
           <InputLabel id={selectLabelId}>商品を表示</InputLabel>
           <Select
             labelId={selectLabelId}
@@ -130,7 +130,15 @@ export default function Chart() {
         </FormControl>
       </Box>
 
-      <Box sx={{ flex: 1 }}>
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          alignItems: "flex-start",
+          overflowX: "scroll",
+          paddingBottom: "10%",
+        }}
+      >
         <LineChart
           dataset={dataset}
           series={series}
@@ -161,14 +169,13 @@ export default function Chart() {
               position: "right",
             },
           ]}
-          height={400}
-          margin={{ left: 70 }}
           slotProps={{
             legend: {
               direction: "horizontal",
               position: { vertical: "top", horizontal: "center" },
             },
           }}
+          sx={{ minWidth: 800, height: "90%" }}
         />
       </Box>
     </Box>
