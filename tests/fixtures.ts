@@ -1,4 +1,5 @@
 import { test as base } from "@playwright/test";
+import { PrismaClient } from "@prisma/client";
 import type {
   Guild,
   Event,
@@ -7,10 +8,10 @@ import type {
   Receipt,
   User,
 } from "@prisma/client";
-import { prisma } from "~/lib/prisma.server";
 import { Snowflake } from "~/lib/snowflake";
 
 type Fixtures = {
+  prisma: PrismaClient;
   guild: Guild;
   user: User & { signin: () => Promise<void> };
   items: [Item, Item];
@@ -20,8 +21,15 @@ type Fixtures = {
 };
 
 export const test = base.extend<Fixtures>({
+  prisma: async ({}, use) => {
+    const prisma = new PrismaClient();
+    await prisma.$connect();
+    await use(prisma);
+    await prisma.$disconnect();
+  },
+
   // Guild fixture
-  guild: async ({}, use) => {
+  guild: async ({ prisma }, use) => {
     const guild = await prisma.guild.create({
       data: {
         id: Snowflake.generate().toString(),
@@ -31,26 +39,28 @@ export const test = base.extend<Fixtures>({
 
     await use(guild);
 
-    const events = await prisma.event.findMany({
-      where: { guildId: guild.id },
-    });
-    const eventIdInEvents = { eventId: { in: events.map((e) => e.id) } };
-    await prisma.record.deleteMany({ where: eventIdInEvents });
-    await prisma.receipt.deleteMany({ where: eventIdInEvents });
-    await prisma.display.deleteMany({ where: eventIdInEvents });
-    await prisma.event.deleteMany({
-      where: { guildId: guild.id },
-    });
-    await prisma.item.deleteMany({
-      where: { guildId: guild.id },
-    });
-    await prisma.guild.delete({
-      where: { id: guild.id },
+    await prisma.$transaction(async (prisma) => {
+      const events = await prisma.event.findMany({
+        where: { guildId: guild.id },
+      });
+      const eventIdInEvents = { eventId: { in: events.map((e) => e.id) } };
+      await prisma.record.deleteMany({ where: eventIdInEvents });
+      await prisma.receipt.deleteMany({ where: eventIdInEvents });
+      await prisma.display.deleteMany({ where: eventIdInEvents });
+      await prisma.event.deleteMany({
+        where: { guildId: guild.id },
+      });
+      await prisma.item.deleteMany({
+        where: { guildId: guild.id },
+      });
+      await prisma.guild.delete({
+        where: { id: guild.id },
+      });
     });
   },
 
   // Session fixture
-  user: async ({ page, guild }, use) => {
+  user: async ({ page, prisma, guild }, use) => {
     const oneHourFromNow = new Date(Date.now() + 1000 * 60 * 60);
     const user = await prisma.user.create({
       data: {
@@ -100,30 +110,32 @@ export const test = base.extend<Fixtures>({
     await use({ ...user, signin });
 
     // Cleanup
-    const receipts = await prisma.receipt.findMany({
-      where: { userId: user.id },
-    });
-    await prisma.record.deleteMany({
-      where: {
-        receiptId: { in: receipts.map((r) => r.id) },
-      },
-    });
-    await prisma.receipt.deleteMany({
-      where: { userId: user.id },
-    });
-    await prisma.session.deleteMany({
-      where: { userId: user.id },
-    });
-    await prisma.member.deleteMany({
-      where: { userId: user.id },
-    });
-    await prisma.user.delete({
-      where: { id: user.id },
+    await prisma.$transaction(async (prisma) => {
+      const receipts = await prisma.receipt.findMany({
+        where: { userId: user.id },
+      });
+      await prisma.record.deleteMany({
+        where: {
+          receiptId: { in: receipts.map((r) => r.id) },
+        },
+      });
+      await prisma.receipt.deleteMany({
+        where: { userId: user.id },
+      });
+      await prisma.session.deleteMany({
+        where: { userId: user.id },
+      });
+      await prisma.member.deleteMany({
+        where: { userId: user.id },
+      });
+      await prisma.user.delete({
+        where: { id: user.id },
+      });
     });
   },
 
   // Items fixture
-  items: async ({ guild }, use) => {
+  items: async ({ prisma, guild }, use) => {
     const items: [Item, Item] = [
       {
         id: Snowflake.generate().toString(),
@@ -146,7 +158,7 @@ export const test = base.extend<Fixtures>({
   },
 
   // Event fixture
-  event: async ({ guild }, use) => {
+  event: async ({ prisma, guild }, use) => {
     const event = await prisma.event.create({
       data: {
         id: Snowflake.generate().toString(),
@@ -160,7 +172,7 @@ export const test = base.extend<Fixtures>({
   },
 
   // Displays fixture
-  displays: async ({ event, items: [item1, item2] }, use) => {
+  displays: async ({ prisma, event, items: [item1, item2] }, use) => {
     const displays: [Display, Display] = [
       {
         itemId: item1.id,
@@ -183,7 +195,10 @@ export const test = base.extend<Fixtures>({
   },
 
   // Receipts fixture
-  receipts: async ({ user, event, displays: [display1, display2] }, use) => {
+  receipts: async (
+    { prisma, user, event, displays: [display1, display2] },
+    use,
+  ) => {
     const receipts: [Receipt, Receipt, Receipt] = [
       {
         id: Snowflake.generate().toString(),
