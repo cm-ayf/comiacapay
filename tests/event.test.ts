@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures";
+import { formatPrice } from "~/lib/price";
 
 test.describe("docs/event.md", () => {
   test("イベントの追加 - basic", async ({ page, user, guild }) => {
@@ -51,7 +52,7 @@ test.describe("docs/event.md", () => {
 
     await expect(page.getByText(item1.name)).toBeVisible();
     // Price might be displayed in different formats
-    await expect(page.getByText(`¥${display1.price}`)).toBeVisible();
+    await expect(page.getByText(formatPrice(display1.price))).toBeVisible();
   });
 
   test("「イベント名」と「日付」の編集", async ({
@@ -104,7 +105,7 @@ test.describe("docs/event.md", () => {
 
     // Verify display was added
     await expect(page.getByText(item1.name)).toBeVisible();
-    await expect(page.getByText("¥1000")).toBeVisible();
+    await expect(page.getByText(formatPrice(1000))).toBeVisible();
 
     // Edit display
     await page
@@ -118,8 +119,8 @@ test.describe("docs/event.md", () => {
     await page.getByRole("button", { name: "保存" }).click();
 
     // Verify changes
-    await expect(page.getByText("¥1200")).toBeVisible();
-    await expect(page.getByText("¥600")).toBeVisible();
+    await expect(page.getByText(formatPrice(1200))).toBeVisible();
+    await expect(page.getByText(formatPrice(600))).toBeVisible();
 
     // Delete display
     await page
@@ -132,8 +133,8 @@ test.describe("docs/event.md", () => {
 
     // Verify display was removed
     await expect(page.getByText(item1.name)).not.toBeVisible();
-    await expect(page.getByText("¥1200")).not.toBeVisible();
-    await expect(page.getByText("¥600")).not.toBeVisible();
+    await expect(page.getByText(formatPrice(1200))).not.toBeVisible();
+    await expect(page.getByText(formatPrice(600))).not.toBeVisible();
   });
 
   test("セット割引の追加と削除", async ({
@@ -160,13 +161,13 @@ test.describe("docs/event.md", () => {
     await page.waitForLoadState("networkidle");
 
     // Verify discount was added
-    await expect(page.getByText("- ¥500")).toBeVisible();
+    await expect(page.getByText("- " + formatPrice(500))).toBeVisible();
 
     // Delete discount
     await page.getByRole("button", { name: "割引を削除" }).click();
 
     // Verify discount was removed
-    await expect(page.getByText("- ¥500")).not.toBeVisible();
+    await expect(page.getByText("- " + formatPrice(500))).not.toBeVisible();
   });
 
   test("イベントの削除", async ({ page, user, guild, event }) => {
