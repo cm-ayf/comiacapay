@@ -136,7 +136,6 @@ export default function Chart() {
           display: "flex",
           alignItems: "flex-start",
           overflowX: "scroll",
-          paddingBottom: "10%",
         }}
       >
         <LineChart
@@ -175,7 +174,7 @@ export default function Chart() {
               position: { vertical: "top", horizontal: "center" },
             },
           }}
-          sx={{ minWidth: 800, height: "90%" }}
+          sx={{ minWidth: 800, mb: "10%" }}
         />
       </Box>
     </Box>
