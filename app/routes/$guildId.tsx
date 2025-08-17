@@ -45,10 +45,18 @@ export async function action({ request, params }: Route.ActionArgs) {
 
   const data = await getValidatedBodyOr400(request, resolver);
 
-  return await prisma.guild.update({
+  const guild = await prisma.guild.update({
     where: { id: guildId },
     data,
   });
+
+  // any guild member should refresh permissions after role update
+  await prisma.member.updateMany({
+    where: { guildId },
+    data: { freshUntil: new Date() },
+  });
+
+  return guild;
 }
 
 export const handle: Handle<typeof loader> = {
