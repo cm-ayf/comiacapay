@@ -174,7 +174,8 @@ export default function Chart() {
               position: { vertical: "top", horizontal: "center" },
             },
           }}
-          sx={{ minWidth: 800, mb: "10%" }}
+          // sx here causes memory leak on build
+          style={{ minWidth: 800, marginBottom: "10%" }}
         />
       </Box>
     </Box>
