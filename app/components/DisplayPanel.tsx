@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import type { PropsWithChildren } from "react";
 import CardItemPicture from "./CardItemPicture";
+import { formatPrice } from "~/lib/price";
 import type { ClientDisplay } from "~/lib/schema";
 
 export default function DisplayPanel({
@@ -27,9 +28,14 @@ export default function DisplayPanel({
           <Typography sx={{ fontSize: "1.5em" }}>
             {display.item.name}
           </Typography>
-          <Typography sx={{ fontSize: "1.5em" }}>¥{display.price}</Typography>
+          <Typography sx={{ fontSize: "1.5em" }}>
+            {formatPrice(display.price)}
+          </Typography>
           {display.internalPrice !== null && (
-            <Typography>¥{display.internalPrice}（部内）</Typography>
+            <Typography>
+              {formatPrice(display.internalPrice)}
+              （部内）
+            </Typography>
           )}
           {display.dedication && <Typography>献本あり</Typography>}
         </CardContent>

@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { useLoaderData } from "react-router";
 import { useDisplays } from "../$guildId.$eventId";
 import type { clientLoader } from "./clientLoader";
+import { formatPrice } from "~/lib/price";
 
 export default function Summary() {
   const { displays } = useDisplays();
@@ -30,14 +31,7 @@ export default function Summary() {
       <TableBody>
         <TableRow>
           <TableCell>売上</TableCell>
-          <TableCell>
-            {total
-              .toLocaleString("ja-JP", {
-                style: "currency",
-                currency: "JPY",
-              })
-              .replace("￥", "¥")}
-          </TableCell>
+          <TableCell>{formatPrice(total)}</TableCell>
         </TableRow>
         {displays.map(({ item }) => (
           <TableRow key={item.id}>

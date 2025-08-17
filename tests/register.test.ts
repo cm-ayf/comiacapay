@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures";
+import { formatPrice } from "~/lib/price";
 
 test.describe("docs/register.md", () => {
   test("一連の流れ - 1", async ({
@@ -19,13 +20,15 @@ test.describe("docs/register.md", () => {
       .click();
 
     const total = 1 * display1.price;
-    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(
-      `¥${total}`,
-    );
+    await expect(
+      page.getByRole("contentinfo").getByText(formatPrice(total)),
+    ).toBeVisible();
 
     await page.getByRole("button", { name: "登録" }).click();
     await page.waitForLoadState("networkidle");
-    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(`¥0`);
+    await expect(
+      page.getByRole("contentinfo").getByText(formatPrice(0)),
+    ).toBeVisible();
   });
 
   test("一連の流れ - 2", async ({
@@ -57,13 +60,15 @@ test.describe("docs/register.md", () => {
     ).toHaveValue("3");
 
     const total = 1 * display1.price + 3 * display2.price;
-    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(
-      `¥${total}`,
-    );
+    await expect(
+      page.getByRole("contentinfo").getByText(formatPrice(total)),
+    ).toBeVisible();
 
     await page.getByRole("button", { name: "登録" }).click();
     await page.waitForLoadState("networkidle");
-    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(`¥0`);
+    await expect(
+      page.getByRole("contentinfo").getByText(formatPrice(0)),
+    ).toBeVisible();
   });
 
   test("一連の流れ - 3", async ({
@@ -83,13 +88,16 @@ test.describe("docs/register.md", () => {
       .fill("5");
 
     const total = 5 * display1.price;
-    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(
-      `¥${total}`,
-    );
+    await expect(
+      page.getByRole("contentinfo").getByText(formatPrice(total)),
+    ).toBeVisible();
 
     // Clear all
     await page.getByRole("button", { name: "登録" }).click();
-    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(`¥0`);
+    await page.waitForLoadState("networkidle");
+    await expect(
+      page.getByRole("contentinfo").getByText(formatPrice(0)),
+    ).toBeVisible();
   });
 
   test("一連の流れ - 4", async ({
@@ -123,12 +131,14 @@ test.describe("docs/register.md", () => {
 
     const total = 1 * display1.internalPrice!;
 
-    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(
-      `¥${total}`,
-    );
+    await expect(
+      page.getByRole("contentinfo").getByText(formatPrice(total)),
+    ).toBeVisible();
     await page.getByRole("button", { name: "登録" }).click();
     await page.waitForLoadState("networkidle");
-    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(`¥0`);
+    await expect(
+      page.getByRole("contentinfo").getByText(formatPrice(0)),
+    ).toBeVisible();
   });
 
   test("オフラインでの機能", async ({
@@ -162,21 +172,23 @@ test.describe("docs/register.md", () => {
       .click();
 
     const total = 1 * display1.price;
-    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(
-      `¥${total}`,
-    );
+    await expect(
+      page.getByRole("contentinfo").getByText(formatPrice(total)),
+    ).toBeVisible();
 
     await page.getByRole("button", { name: "登録" }).click();
     await page.waitForLoadState("networkidle");
-    await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(`¥0`);
+    await expect(
+      page.getByRole("contentinfo").getByText(formatPrice(0)),
+    ).toBeVisible();
 
     await context.setOffline(false);
 
     await page.goto(`/${guild.id}/${event.id}/receipts`);
     await page.waitForLoadState("networkidle");
 
-    await expect(page.getByRole("cell").getByText("¥")).toHaveText(
-      `¥${total.toLocaleString()}`,
-    );
+    await expect(
+      page.getByRole("cell").getByText(formatPrice(total)),
+    ).toBeVisible();
   });
 });

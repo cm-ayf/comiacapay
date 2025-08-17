@@ -19,6 +19,7 @@ import UpsertDisplayDialog, {
 } from "./UpsertDisplayDialog";
 import DisplayCard from "~/components/DisplayPanel";
 import EventCard from "~/components/EventCard";
+import { formatPrice } from "~/lib/price";
 import type { ClientEvent, ClientItem } from "~/lib/schema";
 
 export { loader } from "./loader";
@@ -227,13 +228,15 @@ function SetDiscountCard({
     );
 
     const itemSummaries = targetDisplays.map((display) =>
-      display ? `${display.item.name} (¥${display.price})` : "不明 (¥0)",
+      display
+        ? `${display.item.name} (${formatPrice(display.price)})`
+        : `不明 (${formatPrice(0)})`,
     );
     const price = targetDisplays.reduce(
       (acc, display) => (display ? acc + display.price : acc),
       -discount.amount,
     );
-    return `${itemSummaries.join(" + ")} - ¥${discount.amount} = ¥${price}`;
+    return `${itemSummaries.join(" + ")} - ${formatPrice(discount.amount)} = ${formatPrice(price)}`;
   }, [displays, discount]);
 
   return (

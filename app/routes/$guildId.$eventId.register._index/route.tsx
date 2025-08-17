@@ -6,6 +6,7 @@ import { useDisplays } from "../$guildId.$eventId";
 import { CreateReceiptButton } from "./CreateReceiptButton";
 import { RegisterDisplayPanel } from "./RegisterDisplayPanel";
 import type { Handle } from "~/lib/handle";
+import { formatPrice } from "~/lib/price";
 import { useTotal } from "~/lib/register";
 
 export { action } from "./action";
@@ -51,11 +52,11 @@ function RegisterConsole() {
 }
 
 function Price() {
-  const price = useTotal();
+  const total = useTotal();
 
   return (
     <Typography variant="caption" sx={{ px: 2, fontSize: "3em" }}>
-      ¥{price}
+      {formatPrice(total)}
     </Typography>
   );
 }

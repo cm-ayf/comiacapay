@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures";
+import { formatPrice } from "~/lib/price";
 
 test.describe("docs/receipts.md", () => {
   test("「概要」タブ", async ({
@@ -13,7 +14,7 @@ test.describe("docs/receipts.md", () => {
     await page.goto(`/${guild.id}/${event.id}/receipts`);
 
     const total = receipt1.total + receipt2.total + receipt3.total;
-    await expect(page.getByText(`¥${total.toLocaleString()}`)).toBeVisible();
+    await expect(page.getByText(formatPrice(total))).toBeVisible();
 
     const screenshot = await page.screenshot();
     await testInfo.attach("「概要」タブ", {

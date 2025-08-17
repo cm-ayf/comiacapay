@@ -23,6 +23,7 @@ import { useMember } from "../$guildId";
 import { useDisplays } from "../$guildId.$eventId";
 import type { clientLoader } from "./clientLoader";
 import type { IDBReceipt } from "~/lib/idb.client";
+import { formatPrice } from "~/lib/price";
 import { Snowflake } from "~/lib/snowflake";
 
 const DeleteButtonContext = createContext<{
@@ -49,7 +50,7 @@ export default function Table() {
         type: "number",
         width: 90,
         align: "right",
-        valueFormatter: (value: number) => `¥${value}`,
+        valueFormatter: formatPrice,
       },
       {
         field: "pushed",
