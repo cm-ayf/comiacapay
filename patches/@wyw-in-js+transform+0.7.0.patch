@@ -1,0 +1,14 @@
+diff --git a/node_modules/@wyw-in-js/transform/lib/module.js b/node_modules/@wyw-in-js/transform/lib/module.js
+index 5e4c1c8..ba723c7 100644
+--- a/node_modules/@wyw-in-js/transform/lib/module.js
++++ b/node_modules/@wyw-in-js/transform/lib/module.js
+@@ -210,7 +210,8 @@ class Module {
+     } catch (e) {
+       this.isEvaluated = false;
+       if (evaluatedCreated) {
+-        this.cache.add('entrypoints', entrypoint.name, cached);
++        if (cached) this.cache.add('entrypoints', entrypoint.name, cached);
++        else this.cache.delete('entrypoints', entrypoint.name);
+       }
+       if ((0, _UnprocessedEntrypointError.isUnprocessedEntrypointError)(e)) {
+         // It will be handled by evalFile scenario
