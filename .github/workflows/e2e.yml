@@ -9,7 +9,7 @@ jobs:
     outputs:
       playwright-version: ${{ steps.get-playwright-version.outputs.playwright-version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version-file: package.json
@@ -54,7 +54,7 @@ jobs:
       POSTGRES_URL_NON_POOLING: postgres://postgres:postgres@postgres:5432/postgres
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version-file: package.json
@@ -83,7 +83,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version-file: package.json
