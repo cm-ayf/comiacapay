@@ -1,4 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
+import { useImperativeHandle, useState } from "react";
 import { useLoaderData, useParams } from "react-router";
 import type { action } from "../$guildId.$eventId.displays.$itemId";
 import type { loader } from "./loader";
@@ -22,14 +23,12 @@ export type UpsertDisplayDialogInput =
   | { item: ClientItem; create: true };
 
 export interface UpsertDisplayDialogProps {
-  display: UpsertDisplayDialogInput | undefined;
-  onClose: () => void;
+  ref: React.Ref<{ open: (display: UpsertDisplayDialogInput) => void }>;
 }
 
-export default function UpsertDisplayDialog({
-  display,
-  onClose,
-}: UpsertDisplayDialogProps) {
+export default function UpsertDisplayDialog({ ref }: UpsertDisplayDialogProps) {
+  const [display, setDisplay] = useState<UpsertDisplayDialogInput>();
+  useImperativeHandle(ref, () => ({ open: setDisplay }));
   const { guildId, eventId } = useParams();
   const { hasReceipt } = useLoaderData<typeof loader>();
   const { success } = useAlert();
@@ -38,7 +37,7 @@ export default function UpsertDisplayDialog({
   return (
     <RemixFormDialog<UpsertDisplayInput, typeof action>
       open
-      onClose={onClose}
+      onClose={() => setDisplay(undefined)}
       title={`${display.item.name}のお品書きを${display.create ? "追加" : "編集"}`}
       resolver={resolver}
       defaultValues={

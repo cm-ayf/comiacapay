@@ -1,4 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
+import { useImperativeHandle, useState, type Ref } from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router";
 import type { action } from "../$guildId.$eventId";
 import type { loader } from "./loader";
@@ -18,23 +19,23 @@ import {
 const resolver = valibotResolver(UpdateEvent);
 
 interface MutateEventDialogProps {
-  event: ClientEvent;
-  open: boolean;
-  onClose: () => void;
+  ref: Ref<{ open: (event: ClientEvent) => void }>;
 }
 
-export default function MutateEventDialog({
-  event,
-  ...props
-}: MutateEventDialogProps) {
+export default function MutateEventDialog({ ref }: MutateEventDialogProps) {
+  const [event, setEvent] = useState<ClientEvent>();
+  useImperativeHandle(ref, () => ({ open: setEvent }));
   const { guildId } = useParams();
   const { success } = useAlert();
   const navigate = useNavigate();
   const { hasReceipt } = useLoaderData<typeof loader>();
 
+  if (!event) return null;
+
   return (
     <RemixFormDialog<UpdateEventInput, typeof action>
-      {...props}
+      open
+      onClose={() => setEvent(undefined)}
       title="イベントを編集"
       resolver={resolver}
       defaultValues={{ name: event.name, date: getISODateString(event.date) }}

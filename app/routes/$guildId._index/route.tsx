@@ -8,7 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
 import Grid from "@mui/material-pigment-css/Grid";
-import { useState } from "react";
+import { useImperativeHandle, useRef, useState } from "react";
 import { href, Link, useLoaderData } from "react-router";
 import { useGuild, useMember } from "../$guildId";
 import CreateEventDialog from "./CreateEventDialog";
@@ -36,7 +36,7 @@ export default function Page() {
 function GuildCardWrapper() {
   const guild = useGuild();
   const member = useMember();
-  const [open, setOpen] = useState(false);
+  const dialogRef = useRef<{ open: () => void }>(null);
 
   return (
     <>
@@ -45,32 +45,28 @@ function GuildCardWrapper() {
           <GuildCard
             guild={guild}
             member={member}
-            onClick={member.admin ? () => setOpen(true) : undefined}
+            onClick={member.admin ? () => dialogRef.current?.open() : undefined}
           />
         </Grid>
       </Grid>
-      {member.admin && (
-        <UpdateGuildDialog
-          open={open}
-          onClose={() => setOpen(false)}
-          guildId={guild.id}
-        />
-      )}
+      {member.admin && <UpdateGuildDialog ref={dialogRef} guildId={guild.id} />}
     </>
   );
 }
 
 function UpdateGuildDialog({
-  open,
-  onClose,
+  ref,
   guildId,
 }: {
-  open: boolean;
-  onClose: () => void;
+  ref: React.Ref<{ open: () => void }>;
   guildId: string;
 }) {
+  const [open, setOpen] = useState(false);
+  useImperativeHandle(ref, () => ({
+    open: () => setOpen(true),
+  }));
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={() => setOpen(false)}>
       <DialogTitle>サーバーの設定変更</DialogTitle>
       <DialogContent>
         <Typography variant="body1">
@@ -87,9 +83,9 @@ function UpdateGuildDialog({
 }
 
 function Events() {
-  const [open, setOpen] = useState(false);
   const events = useLoaderData<typeof loader>();
   const me = useMember();
+  const dialogRef = useRef<{ open: () => void }>(null);
 
   return (
     <>
@@ -99,7 +95,7 @@ function Events() {
         </Typography>
         <IconButton
           color="primary"
-          onClick={() => setOpen(true)}
+          onClick={() => dialogRef.current?.open()}
           aria-label="イベントを追加"
           disabled={!me.write}
         >
@@ -119,13 +115,7 @@ function Events() {
           </Grid>
         ))}
       </Grid>
-      {me.write && (
-        <CreateEventDialog
-          open={open}
-          onClose={() => setOpen(false)}
-          events={events}
-        />
-      )}
+      {me.write && <CreateEventDialog ref={dialogRef} events={events} />}
     </>
   );
 }
@@ -133,8 +123,10 @@ function Events() {
 function Items() {
   const me = useMember();
   const guild = useGuild();
-  const [open, setOpen] = useState(false);
-  const [item, setItem] = useState<ClientItem>();
+  const createItemDialogRef = useRef<{ open: () => void }>(null);
+  const mutateItemDialogRef = useRef<{ open: (item: ClientItem) => void }>(
+    null,
+  );
 
   return (
     <>
@@ -144,7 +136,7 @@ function Items() {
         </Typography>
         <IconButton
           color="primary"
-          onClick={() => setOpen(true)}
+          onClick={() => createItemDialogRef.current?.open()}
           disabled={!me.write}
           aria-label="商品を追加"
         >
@@ -156,17 +148,17 @@ function Items() {
           <Grid key={item.id}>
             <ItemCard
               item={item}
-              onClick={me.write ? () => setItem(item) : undefined}
+              onClick={
+                me.write
+                  ? () => mutateItemDialogRef.current?.open(item)
+                  : undefined
+              }
             />
           </Grid>
         ))}
       </Grid>
-      {me.write && (
-        <CreateItemDialog open={open} onClose={() => setOpen(false)} />
-      )}
-      {me.write && (
-        <MutateItemDialog item={item} onClose={() => setItem(undefined)} />
-      )}
+      {me.write && <CreateItemDialog ref={createItemDialogRef} />}
+      {me.write && <MutateItemDialog ref={mutateItemDialogRef} />}
     </>
   );
 }
