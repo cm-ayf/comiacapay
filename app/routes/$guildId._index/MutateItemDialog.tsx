@@ -37,7 +37,7 @@ export default function MutateItemDialog({ ref }: MutateItemDialogProps) {
     <RemixFormDialog<UpdateItemInput, typeof action>
       open
       onClose={() => setItem(undefined)}
-      title="商品を追加"
+      title="商品を編集"
       resolver={resolver}
       defaultValues={{
         name: item.name,
