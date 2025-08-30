@@ -1,5 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { useMemo } from "react";
+import { useImperativeHandle, useMemo, useState, type Ref } from "react";
 import { useLoaderData, useParams } from "react-router";
 import type { action } from "../$guildId.items.$itemId";
 import type { loader } from "./loader";
@@ -20,25 +20,24 @@ import {
 const resolver = valibotResolver(UpdateItem);
 
 export interface MutateItemDialogProps {
-  item: ClientItem | undefined;
-  onClose: () => void;
+  ref: Ref<{ open: (item: ClientItem) => void }>;
 }
 
-export default function MutateItemDialog({
-  item,
-  onClose,
-}: MutateItemDialogProps) {
+export default function MutateItemDialog({ ref }: MutateItemDialogProps) {
+  const [item, setItem] = useState<ClientItem>();
+  useImperativeHandle(ref, () => ({ open: setItem }));
   const { guildId } = useParams();
   const events = useLoaderData<typeof loader>();
   const usedItemIds = useMemo(() => new Set(flatItemIds(events)), [events]);
   const { success } = useAlert();
+
   if (!item) return null;
 
   return (
     <RemixFormDialog<UpdateItemInput, typeof action>
       open
-      onClose={onClose}
-      title="商品を追加"
+      onClose={() => setItem(undefined)}
+      title="商品を編集"
       resolver={resolver}
       defaultValues={{
         name: item.name,

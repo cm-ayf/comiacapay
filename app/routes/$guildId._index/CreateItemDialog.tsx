@@ -1,4 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
+import { useImperativeHandle, useState, type Ref } from "react";
 import { useParams } from "react-router";
 import { useAlert } from "~/components/Alert";
 import ItemDialogContent from "~/components/ItemDialogContent";
@@ -11,18 +12,22 @@ import { CreateItem, type CreateItemInput } from "~/lib/schema";
 
 const resolver = valibotResolver(CreateItem);
 
-interface ItemDialogContentProps {
-  open: boolean;
-  onClose: () => void;
+interface CreateItemDialogProps {
+  ref: Ref<{ open: () => void }>;
 }
 
-export default function CreateItemDialog(props: ItemDialogContentProps) {
+export default function CreateItemDialog(props: CreateItemDialogProps) {
+  const [open, setOpen] = useState(false);
+  useImperativeHandle(props.ref, () => ({
+    open: () => setOpen(true),
+  }));
   const { guildId } = useParams();
   const { success } = useAlert();
 
   return (
     <RemixFormDialog<CreateItemInput>
-      {...props}
+      open={open}
+      onClose={() => setOpen(false)}
       title="商品を追加"
       resolver={resolver}
       defaultValues={{ picture: null, issuedAt: getISODateString(new Date()) }}

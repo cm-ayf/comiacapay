@@ -1,4 +1,5 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
+import { useImperativeHandle, useState } from "react";
 import { useParams } from "react-router";
 import { useAlert } from "~/components/Alert";
 import {
@@ -15,20 +16,24 @@ import {
 const resolver = valibotResolver(CreateSetDiscount);
 
 interface CreateSetDiscountDialogProps {
-  open: boolean;
-  onClose: () => void;
+  ref: React.Ref<{ open: () => void }>;
   displays: ClientDisplay[];
 }
 
 export default function CreateSetDiscountDialog({
+  ref,
   displays,
-  ...props
 }: CreateSetDiscountDialogProps) {
+  const [open, setOpen] = useState(false);
+  useImperativeHandle(ref, () => ({
+    open: () => setOpen(true),
+  }));
   const { guildId, eventId } = useParams();
   const { success } = useAlert();
   return (
     <RemixFormDialog<CreateSetDiscountInput>
-      {...props}
+      open={open}
+      onClose={() => setOpen(false)}
       title="セット割引を追加"
       resolver={resolver}
       defaultValues={{ __typename: "SetDiscount", itemIds: [], amount: 0 }}

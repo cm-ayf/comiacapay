@@ -8,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material-pigment-css/Grid";
-import { useCallback, useId, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useId, useMemo, useRef, type ReactNode } from "react";
 import { href, Link, useFetcher, useParams } from "react-router";
 import { useMember } from "../$guildId";
 import { useDisplays, useEvent } from "../$guildId.$eventId";
@@ -36,7 +36,7 @@ export default function Page() {
 function About() {
   const event = useEvent();
   const me = useMember();
-  const [open, setOpen] = useState(false);
+  const dialogRef = useRef<{ open: (event: ClientEvent) => void }>(null);
 
   return (
     <>
@@ -44,7 +44,9 @@ function About() {
         <Grid size={{ xs: 12, md: 6 }}>
           <EventCard
             event={event}
-            onClick={me.write ? () => setOpen(true) : undefined}
+            onClick={
+              me.write ? () => dialogRef.current?.open(event) : undefined
+            }
           />
         </Grid>
         <Grid size={{ xs: 6, md: 3 }}>
@@ -77,13 +79,7 @@ function About() {
           </Button>
         </Grid>
       </Grid>
-      {me.write && (
-        <MutateEventDialog
-          open={open}
-          onClose={() => setOpen(false)}
-          event={event}
-        />
-      )}
+      {me.write && <MutateEventDialog ref={dialogRef} />}
     </>
   );
 }
@@ -91,7 +87,9 @@ function About() {
 function Displays() {
   const me = useMember();
   const { displays, remainingItems } = useDisplays();
-  const [display, setDisplay] = useState<UpsertDisplayDialogInput>();
+  const dialogRef = useRef<{ open: (input: UpsertDisplayDialogInput) => void }>(
+    null,
+  );
 
   return (
     <>
@@ -102,7 +100,10 @@ function Displays() {
         {displays.map((display) => (
           <Grid key={display.item.id} size={{ xs: 12, md: 6 }}>
             <DisplayCard display={display}>
-              <Button onClick={() => setDisplay(display)} disabled={!me.write}>
+              <Button
+                onClick={() => dialogRef.current?.open(display)}
+                disabled={!me.write}
+              >
                 編集
               </Button>
             </DisplayCard>
@@ -112,27 +113,22 @@ function Displays() {
           <Grid size={{ xs: 12, md: 6 }}>
             <CreateDisplaySelect
               items={remainingItems}
-              setDisplay={setDisplay}
+              open={(display) => dialogRef.current?.open(display)}
             />
           </Grid>
         )}
       </Grid>
-      {me.write && (
-        <UpsertDisplayDialog
-          display={display}
-          onClose={() => setDisplay(undefined)}
-        />
-      )}
+      {me.write && <UpsertDisplayDialog ref={dialogRef} />}
     </>
   );
 }
 
 function CreateDisplaySelect({
   items,
-  setDisplay,
+  open,
 }: {
   items: ClientItem[];
-  setDisplay: (display: { item: ClientItem; create: true }) => void;
+  open: (display: { item: ClientItem; create: true }) => void;
 }) {
   const selectLabelId = useId();
   return (
@@ -143,7 +139,7 @@ function CreateDisplaySelect({
           <MenuItem
             key={item.id}
             value={item.id}
-            onClick={() => setDisplay({ item, create: true })}
+            onClick={() => open({ item, create: true })}
           >
             {item.name}
           </MenuItem>
@@ -157,7 +153,14 @@ function Discounts() {
   const event = useEvent();
   const { displays } = useDisplays();
   const me = useMember();
-  const [type, setType] = useState<string>();
+  const setDiscountDialogRef = useRef<{ open: () => void }>(null);
+  const openDialogOfType = useCallback((type: string) => {
+    switch (type) {
+      case "SetDiscount":
+        setDiscountDialogRef.current?.open();
+        break;
+    }
+  }, []);
 
   return (
     <>
@@ -172,14 +175,13 @@ function Discounts() {
         ))}
         {me.write && (
           <Grid size={{ xs: 12, md: 6 }}>
-            <CreateDiscountSelect setType={setType} />
+            <CreateDiscountSelect open={openDialogOfType} />
           </Grid>
         )}
       </Grid>
       {me.write && (
         <CreateSetDiscountDialog
-          open={type === "SetDiscount"}
-          onClose={() => setType(undefined)}
+          ref={setDiscountDialogRef}
           displays={displays}
         />
       )}
@@ -187,17 +189,13 @@ function Discounts() {
   );
 }
 
-function CreateDiscountSelect({
-  setType,
-}: {
-  setType: (typename: string) => void;
-}) {
+function CreateDiscountSelect({ open }: { open: (typename: string) => void }) {
   const selectLabelId = useId();
   return (
     <FormControl sx={{ width: "100%" }}>
       <InputLabel id={selectLabelId}>割引等を追加</InputLabel>
       <Select labelId={selectLabelId} label="割引等を追加" value="">
-        <MenuItem value="SetDiscount" onClick={() => setType("SetDiscount")}>
+        <MenuItem value="SetDiscount" onClick={() => open("SetDiscount")}>
           セット割引
         </MenuItem>
       </Select>
