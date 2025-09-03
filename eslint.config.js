@@ -35,6 +35,21 @@ export default tseslint.config(
         "error",
         { alphabetize: { order: "asc" }, "newlines-between": "never" },
       ],
+      "import-x/no-restricted-paths": [
+        "error",
+        {
+          zones: [
+            {
+              from: ["./app/!(lib)/**/*", "./app/*"],
+              target: "./app/lib/**/*",
+            },
+            {
+              from: ["./app/routes/**/*", "./app/*"],
+              target: "./app/components/**/*",
+            },
+          ],
+        },
+      ],
     },
   },
   jsxA11y.flatConfigs.recommended,
