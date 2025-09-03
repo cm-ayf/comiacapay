@@ -13,6 +13,14 @@ import muiPigmentCss from "./eslint-plugin-mui-pigment-css/index.js";
 
 export default tseslint.config(
   ...tseslint.configs.recommended,
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
+  },
   prettier,
   importX.flatConfigs.typescript,
   importX.flatConfigs.react,
@@ -85,14 +93,6 @@ export default tseslint.config(
   muiPigmentCss,
   {
     ignores: ["build/**", ".react-router/**", "public/entry.worker.js"],
-  },
-  {
-    rules: {
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
-      ],
-    },
   },
   {
     files: ["app/entry.client.tsx"],
