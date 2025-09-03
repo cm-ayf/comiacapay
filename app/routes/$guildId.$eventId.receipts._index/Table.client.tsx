@@ -17,8 +17,7 @@ import {
 } from "@mui/x-data-grid";
 import { jaJP } from "@mui/x-data-grid/locales";
 import { createContext, use, useCallback, useMemo, useState } from "react";
-import { useLoaderData, useRevalidator } from "react-router";
-import { useFetcher } from "react-router";
+import { useFetcher, useLoaderData, useRevalidator } from "react-router";
 import { useMember } from "../$guildId";
 import { useDisplays } from "../$guildId.$eventId";
 import type { clientLoader } from "./clientLoader";

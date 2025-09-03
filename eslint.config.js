@@ -1,11 +1,12 @@
 // @ts-check
+/* eslint-disable import-x/no-named-as-default,import-x/no-named-as-default-member */
 
 import prettier from "eslint-config-prettier";
 import importX from "eslint-plugin-import-x";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import muiPathImports from "eslint-plugin-mui-path-imports";
 import react from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
+import * as reactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import muiPigmentCss from "./eslint-plugin-mui-pigment-css/index.js";
@@ -15,11 +16,11 @@ export default tseslint.config(
   prettier,
   importX.flatConfigs.typescript,
   importX.flatConfigs.react,
+  importX.flatConfigs.recommended,
   {
-    ...importX.flatConfigs.recommended,
     settings: {
       "import-x/internal-regex": "^~/",
-      "import/resolver": {
+      "import-x/resolver": {
         node: {
           extensions: [".ts", ".tsx"],
         },
@@ -29,16 +30,16 @@ export default tseslint.config(
       },
     },
     rules: {
+      "import-x/no-unresolved": ["error", { ignore: ["virtual:*"] }],
       "import-x/order": [
         "error",
         { alphabetize: { order: "asc" }, "newlines-between": "never" },
       ],
-      "react/no-unknown-property": ["error", { ignore: ["sx"] }],
     },
   },
   jsxA11y.flatConfigs.recommended,
+  react.configs.flat.recommended,
   {
-    ...react.configs.flat.recommended,
     settings: {
       react: {
         version: "detect",
@@ -48,6 +49,9 @@ export default tseslint.config(
         { name: "Link", linkAttribute: "to" },
         { name: "NavLink", linkAttribute: "to" },
       ],
+    },
+    rules: {
+      "react/no-unknown-property": ["error", { ignore: ["sx"] }],
     },
   },
   react.configs.flat["jsx-runtime"],
