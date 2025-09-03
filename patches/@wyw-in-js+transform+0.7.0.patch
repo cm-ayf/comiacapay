@@ -1,5 +1,24 @@
+diff --git a/node_modules/@wyw-in-js/transform/lib/cache.js b/node_modules/@wyw-in-js/transform/lib/cache.js
+index 0762ed7..00fe92f 100644
+--- a/node_modules/@wyw-in-js/transform/lib/cache.js
++++ b/node_modules/@wyw-in-js/transform/lib/cache.js
+@@ -85,9 +85,13 @@ class TransformCacheCollection {
+     if (fileEntrypoint) {
+       for (const [, dependency] of fileEntrypoint.dependencies) {
+         const dependencyFilename = dependency.resolved;
+-        if (dependencyFilename) {
++        if (!dependencyFilename) continue;
++        if (_nodeFs.default.existsSync(dependencyFilename)) {
+           const dependencyContent = _nodeFs.default.readFileSync(dependencyFilename, 'utf8');
+           this.invalidateIfChanged(dependencyFilename, dependencyContent);
++        } else {
++          this.contentHashes.delete(dependencyFilename);
++          this.invalidateForFile(dependencyFilename);
+         }
+       }
+     }
 diff --git a/node_modules/@wyw-in-js/transform/lib/module.js b/node_modules/@wyw-in-js/transform/lib/module.js
-index 5e4c1c8..ba723c7 100644
+index 5e4c1c8..44ff5a1 100644
 --- a/node_modules/@wyw-in-js/transform/lib/module.js
 +++ b/node_modules/@wyw-in-js/transform/lib/module.js
 @@ -210,7 +210,8 @@ class Module {
