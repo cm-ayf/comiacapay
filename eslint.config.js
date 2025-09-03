@@ -12,6 +12,11 @@ import tseslint from "typescript-eslint";
 import muiPigmentCss from "./eslint-plugin-mui-pigment-css/index.js";
 
 export default tseslint.config(
+  {
+    languageOptions: {
+      globals: globals["shared-node-browser"],
+    },
+  },
   ...tseslint.configs.recommended,
   {
     rules: {
@@ -93,23 +98,5 @@ export default tseslint.config(
   muiPigmentCss,
   {
     ignores: ["build/**", ".react-router/**", "public/entry.worker.js"],
-  },
-  {
-    files: ["app/entry.client.tsx"],
-    languageOptions: {
-      globals: globals.browser,
-    },
-  },
-  {
-    files: ["app/entry.server.tsx"],
-    languageOptions: {
-      globals: globals.node,
-    },
-  },
-  {
-    files: ["app/entry.worker.ts"],
-    languageOptions: {
-      globals: globals.serviceworker,
-    },
   },
 );
