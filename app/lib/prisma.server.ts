@@ -1,5 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
+import type { PoolConfig } from "pg";
 import { data } from "react-router";
 import { env } from "./env.server";
 import { Prisma, PrismaClient } from "~/generated/prisma/client";
@@ -57,7 +58,29 @@ const mapKnownErrorExtension = Prisma.defineExtension({
   },
 });
 
-const adapter = new PrismaPg({ connectionString: env.POSTGRES_PRISMA_URL });
+async function createPgAdapter() {
+  const url = new URL(env.POSTGRES_PRISMA_URL);
+  const options: PoolConfig = {
+    connectionString: url.toString(),
+  };
+
+  if (env.POSTGRES_CA_URL) {
+    // https://node-postgres.com/features/ssl#usage-with-connectionstring
+    for (const key of url.searchParams.keys()) {
+      if (key.startsWith("ssl")) url.searchParams.delete(key);
+    }
+
+    const res = await fetch(env.POSTGRES_CA_URL);
+    if (!res.ok) throw new Error("Failed to fetch POSTGRES_CA_URL");
+
+    options.ssl = {};
+    options.ssl.ca = await res.text();
+  }
+
+  return new PrismaPg(options);
+}
+
+const adapter = await createPgAdapter();
 export const { prisma } = Object.assign(global, {
   prisma: new PrismaClient({ adapter }).$extends(mapKnownErrorExtension),
 });
