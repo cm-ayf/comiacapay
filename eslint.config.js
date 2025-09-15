@@ -98,7 +98,7 @@ export default tseslint.config(
   muiPigmentCss,
   {
     ignores: [
-      "generated/**",
+      "**/generated/**",
       "build/**",
       ".react-router/**",
       "public/entry.worker.js",
