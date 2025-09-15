@@ -2,7 +2,6 @@ import "./global.css";
 import "@mui/material-pigment-css/styles.css";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material-pigment-css/Container";
-import type { User } from "@prisma/client";
 import { Fragment, useRef, type PropsWithChildren } from "react";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { pwaInfo } from "virtual:pwa-info";
@@ -14,6 +13,7 @@ import createErrorBoundary from "./components/createErrorBoundary";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
 import { getSessionOr401 } from "./lib/middleware.server";
 import { freshUser } from "./lib/sync/user.server";
+import type { User } from "~/generated/prisma/client";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSessionOr401(request);

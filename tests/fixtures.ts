@@ -6,7 +6,7 @@ import type {
   Display,
   Receipt,
   User,
-} from "@prisma/client";
+} from "~/generated/prisma/client";
 import { prisma } from "~/lib/prisma.server";
 import { Snowflake } from "~/lib/snowflake";
 

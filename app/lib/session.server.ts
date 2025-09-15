@@ -1,9 +1,9 @@
-import { Prisma } from "@prisma/client";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { createSessionStorage } from "react-router";
 import { sidCookie } from "./cookie.server";
 import { prisma } from "./prisma.server";
 import { Snowflake } from "./snowflake";
+import { Prisma } from "~/generated/prisma/client";
 
 export interface SessionData {
   userId: string;

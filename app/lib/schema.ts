@@ -1,11 +1,3 @@
-import type {
-  Display,
-  Event,
-  Guild,
-  Item,
-  Receipt,
-  Record,
-} from "@prisma/client";
 import type { useLoaderData } from "react-router";
 import {
   array,
@@ -28,6 +20,16 @@ import {
 } from "valibot";
 import type { BaseIssue, BaseSchema, InferInput, InferOutput } from "valibot";
 import { Snowflake } from "./snowflake";
+import type {
+  Display,
+  Event,
+  Guild,
+  Item,
+  Receipt,
+  Record,
+  Member,
+  User,
+} from "~/generated/prisma/client";
 
 type SerializeFrom<AppData> = ReturnType<typeof useLoaderData<AppData>>;
 
@@ -57,6 +59,8 @@ export function uint() {
   return pipe(number(), integer(), minValue(0));
 }
 
+export type ClientUser = SerializeFrom<User>;
+
 export type ClientGuild = SerializeFrom<Guild>;
 export const UpdateGuild = object({
   readRoleId: nullable(snowflake()),
@@ -65,6 +69,8 @@ export const UpdateGuild = object({
 });
 export type UpdateGuildInput = InferInput<typeof UpdateGuild>;
 export type UpdateGuildOutput = InferOutput<typeof UpdateGuild>;
+
+export type ClientMember = SerializeFrom<Member>;
 
 export type ClientItem = SerializeFrom<Item>;
 export const CreateItem = object({
