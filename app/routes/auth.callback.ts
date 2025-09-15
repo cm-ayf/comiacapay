@@ -50,6 +50,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     });
   } catch (e) {
     const error = OAuth2Error.fromError(e);
+    if (error.error === "server_error") console.error(e);
     return redirectDocument(error.toRedirectLocation());
   }
 }
