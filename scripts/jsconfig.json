@@ -1,3 +1,4 @@
 {
-  "extends": ["@tsconfig/strictest", "@tsconfig/node22"]
+  "extends": ["@tsconfig/strictest", "@tsconfig/node22"],
+  "include": ["*.mjs"]
 }
