@@ -43,7 +43,7 @@
 
 また，[VercelとのIntegration](https://vercel.com/integrations/supabase)が公式に提供されています．
 
-なお，[Prisma スキーマ](prisma/schema.prisma)を変更することで，他のデータベースでも動作すると考えられます．スキーマは Supabase 向けに調整されていることに注意してください．
+なお，[Prisma スキーマ](prisma/schema.prisma)などを変更することで，他のデータベースでも動作すると考えられます．スキーマは Supabase 向けに調整されていることに注意してください．
 
 以下の環境変数を設定してください：
 
