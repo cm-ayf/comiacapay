@@ -1,7 +1,7 @@
 // @ts-check
 
 import fs from "fs/promises";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../app/generated/prisma/index.js";
 
 const prisma = new PrismaClient();
 

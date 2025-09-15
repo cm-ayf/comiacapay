@@ -11,7 +11,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
-import type { User } from "@prisma/client";
 import { useCallback, useRef, useState, useSyncExternalStore } from "react";
 import {
   Link,
@@ -23,12 +22,13 @@ import {
 import { useAlert } from "./Alert";
 import { useBreadcrumbs, useTitle, type Breadcrumb } from "~/lib/handle";
 import { useLocationType, useUrlWithRedirectTo } from "~/lib/location";
+import type { ClientUser } from "~/lib/schema";
 
 export const REPOSITORY: string = "https://github.com/cm-ayf/comiacapay";
 export const DOCS = REPOSITORY + "/blob/main/docs";
 
 export interface NavigationProps {
-  user: User | undefined;
+  user: ClientUser | undefined;
 }
 
 export default function Navigation({ user }: NavigationProps) {
@@ -112,7 +112,13 @@ function NavigationLoading() {
   );
 }
 
-function UserButton({ user, onClick }: { user: User; onClick: () => void }) {
+function UserButton({
+  user,
+  onClick,
+}: {
+  user: ClientUser;
+  onClick: () => void;
+}) {
   const { name, username, picture } = user;
   return (
     <Button

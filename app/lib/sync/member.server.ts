@@ -1,8 +1,8 @@
-import type { Guild } from "@prisma/client";
 import type { APIGuildMember } from "discord-api-types/v10";
 import { getCurrentUserGuildMember } from "../oauth2/auth.server";
 import { prisma } from "../prisma.server";
 import type { SessionData } from "../session.server";
+import type { Guild } from "~/generated/prisma";
 
 const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 

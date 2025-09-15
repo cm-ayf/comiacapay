@@ -53,7 +53,7 @@ export default tseslint.config(
         {
           zones: [
             {
-              from: ["./app/!(lib)/**/*", "./app/*"],
+              from: ["./app/!(lib|generated)/**/*", "./app/*"],
               target: "./app/lib/**/*",
             },
             {
@@ -97,6 +97,11 @@ export default tseslint.config(
   },
   muiPigmentCss,
   {
-    ignores: ["build/**", ".react-router/**", "public/entry.worker.js"],
+    ignores: [
+      "generated/**",
+      "build/**",
+      ".react-router/**",
+      "public/entry.worker.js",
+    ],
   },
 );

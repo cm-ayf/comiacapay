@@ -4,15 +4,18 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
-import type { Event } from "@prisma/client";
 import { useId } from "react";
 import { useRemixFormContext } from "remix-hook-form";
-import type { CreateEventInput, UpdateEventInput } from "~/lib/schema";
+import type {
+  ClientEvent,
+  CreateEventInput,
+  UpdateEventInput,
+} from "~/lib/schema";
 
 export default function EventDialogContent({
   events,
 }: {
-  events?: Pick<Event, "id" | "name">[];
+  events?: Pick<ClientEvent, "id" | "name">[];
 }) {
   const {
     register,

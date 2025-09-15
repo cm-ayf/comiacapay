@@ -1,7 +1,7 @@
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import type { Guild, Member } from "@prisma/client";
 import ClickableCard, { type ClickableCardProps } from "./ClickableCard";
+import type { ClientGuild, ClientMember } from "~/lib/schema";
 
 const PERMISSIONS = ["register", "write", "admin"] as const;
 
@@ -9,7 +9,7 @@ export default function GuildCard({
   guild,
   member,
   ...props
-}: ClickableCardProps & { guild: Guild; member: Member }) {
+}: ClickableCardProps & { guild: ClientGuild; member: ClientMember }) {
   return (
     <ClickableCard {...props} aria-label={guild.name}>
       <CardContent sx={{ textAlign: "center", textTransform: "none" }}>
