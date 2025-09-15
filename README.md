@@ -50,6 +50,10 @@
 - `POSTGRES_PRISMA_URL`・`POSTGRES_URL_NON_POOLING`：データベースに接続する URL です．
   - Production 環境では Supabase の Integration が自動で設定します．
   - Development 環境ではどちらも `postgres://$(whoami)@localhost:5432/comiacapay` などとしてください．
+- `POSTGRES_CA_URL`：データベースとの暗号化通信において信頼するルート証明書の URL です．
+  - Supabase においては`https://supabase-downloads.s3-ap-southeast-1.amazonaws.com/prod/ssl/prod-ca-2021.crt`です．
+  - Production 環境・Preview 環境に手動で設定する必要があります．
+  - Development 環境では不要です．
 
 #### マイグレーション
 
