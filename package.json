@@ -35,6 +35,7 @@
     "@mui/x-charts": "8.11.2",
     "@mui/x-data-grid": "8.11.2",
     "@pigment-css/react": "0.0.30",
+    "@prisma/adapter-pg": "6.16.1",
     "@prisma/client": "6.16.1",
     "@react-router/fs-routes": "7.9.1",
     "@react-router/serve": "7.9.1",

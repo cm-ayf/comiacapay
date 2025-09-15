@@ -1,5 +1,7 @@
+import { PrismaPg } from "@prisma/adapter-pg";
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { data } from "react-router";
+import { env } from "./env.server";
 import { Prisma, PrismaClient } from "~/generated/prisma/client";
 
 // union of one
@@ -55,6 +57,7 @@ const mapKnownErrorExtension = Prisma.defineExtension({
   },
 });
 
+const adapter = new PrismaPg({ connectionString: env.POSTGRES_PRISMA_URL });
 export const { prisma } = Object.assign(global, {
-  prisma: new PrismaClient().$extends(mapKnownErrorExtension),
+  prisma: new PrismaClient({ adapter }).$extends(mapKnownErrorExtension),
 });
