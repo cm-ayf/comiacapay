@@ -13,7 +13,7 @@ import createErrorBoundary from "./components/createErrorBoundary";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
 import { getSessionOr401 } from "./lib/middleware.server";
 import { freshUser } from "./lib/sync/user.server";
-import type { User } from "~/generated/prisma";
+import type { User } from "~/generated/prisma/client";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSessionOr401(request);

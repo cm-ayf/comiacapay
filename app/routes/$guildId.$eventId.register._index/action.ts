@@ -1,7 +1,7 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { data } from "react-router";
 import type { Route } from "./+types/route";
-import type { Prisma } from "~/generated/prisma";
+import type { Prisma } from "~/generated/prisma/client";
 import {
   getMemberOr4xx,
   getSessionOr401,

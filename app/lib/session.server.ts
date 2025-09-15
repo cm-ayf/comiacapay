@@ -3,7 +3,7 @@ import { createSessionStorage } from "react-router";
 import { sidCookie } from "./cookie.server";
 import { prisma } from "./prisma.server";
 import { Snowflake } from "./snowflake";
-import { Prisma } from "~/generated/prisma";
+import { Prisma } from "~/generated/prisma/client";
 
 export interface SessionData {
   userId: string;

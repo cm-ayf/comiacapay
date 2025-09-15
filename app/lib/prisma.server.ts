@@ -1,6 +1,6 @@
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { data } from "react-router";
-import { Prisma, PrismaClient } from "~/generated/prisma";
+import { Prisma, PrismaClient } from "~/generated/prisma/client";
 
 // union of one
 export type Discount = SetDiscount;

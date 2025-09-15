@@ -5,7 +5,7 @@ import type {
 } from "discord-api-types/v10";
 import { getCurrentUser } from "../oauth2/auth.server";
 import { prisma } from "../prisma.server";
-import type { Prisma } from "~/generated/prisma";
+import type { Prisma } from "~/generated/prisma/client";
 
 export async function upsertGuildAndMember({
   guild,

@@ -2,9 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider   = "prisma-client-js"
-  output     = "../app/generated/prisma"
-  engineType = "client"
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+generator script_client {
+  provider = "prisma-client-js"
+  output   = "../scripts/generated/prisma"
 }
 
 generator json {

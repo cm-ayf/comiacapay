@@ -99,6 +99,7 @@ export default tseslint.config(
   {
     ignores: [
       "**/generated/**",
+      "dev-dist/**",
       "build/**",
       ".react-router/**",
       "public/entry.worker.js",
