@@ -9,7 +9,6 @@
     "**/.client/**/*.tsx",
     ".react-router/types/**/*"
   ],
-  "exclude": ["node_modules", "app/generated"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2023"],
     "types": ["vite/client", "vite-plugin-pwa/info", "vite-plugin-pwa/react"],
