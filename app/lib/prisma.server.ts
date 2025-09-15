@@ -73,7 +73,7 @@ async function createPgAdapter() {
     const res = await fetch(env.POSTGRES_CA_URL);
     if (!res.ok) throw new Error("Failed to fetch POSTGRES_CA_URL");
 
-    options.ssl = {};
+    options.ssl = { rejectUnauthorized: false };
     options.ssl.ca = await res.text();
   }
 
