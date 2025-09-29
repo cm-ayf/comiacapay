@@ -32,7 +32,7 @@
     "@mui/lab": "7.0.0-beta.17",
     "@mui/material": "7.3.2",
     "@mui/material-pigment-css": "7.3.2",
-    "@mui/x-charts": "8.11.3",
+    "@mui/x-charts": "8.12.0",
     "@mui/x-data-grid": "8.11.3",
     "@pigment-css/react": "0.0.30",
     "@prisma/adapter-pg": "6.16.2",
