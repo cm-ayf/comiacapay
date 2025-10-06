@@ -40,9 +40,30 @@ updates:
       patch:
         update-types: ["patch"]
         dependency-type: "production"
+        exclude-patterns:
+          - "react-router"
+          - "@react-router/*"
+          - "react"
+          - "react-dom"
+          - "@mui/*"
+          - "@pigment-css/*"
+          - "@prisma/*"
+
       dev-minor-patch:
         update-types: ["minor", "patch"]
         dependency-type: "development"
+        exclude-patterns:
+          - "@react-router/*"
+          - "@types/react"
+          - "@types/react-dom"
+          - "@pigment-css/*"
+          - "prisma"
+          - "@prisma/*"
+          - "typescript"
+          - "typescript-eslint"
+          - "eslint"
+          - "@eslint/*"
+
     open-pull-requests-limit: 20
 
   - package-ecosystem: "github-actions"
