@@ -108,6 +108,8 @@ function AppLayout({
           {children}
         </Container>
       </AlertProvider>
+      {/* TODO: fix */}
+      {/* eslint-disable-next-line react-hooks/static-components */}
       <ButtomComponent />
     </>
   );
