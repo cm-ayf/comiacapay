@@ -53,7 +53,7 @@
   "devDependencies": {
     "@eslint/compat": "1.4.0",
     "@pigment-css/vite-plugin": "0.0.30",
-    "@playwright/test": "1.55.1",
+    "@playwright/test": "1.56.0",
     "@prisma/generator-helper": "6.16.3",
     "@react-router/dev": "7.9.4",
     "@tsconfig/node22": "22.0.2",
@@ -75,7 +75,7 @@
     "eslint-plugin-react-hooks": "5.2.0",
     "globals": "16.4.0",
     "husky": "9.1.7",
-    "lint-staged": "16.2.3",
+    "lint-staged": "16.2.4",
     "npm-run-all2": "8.0.4",
     "prettier": "3.6.2",
     "prisma": "6.16.3",
