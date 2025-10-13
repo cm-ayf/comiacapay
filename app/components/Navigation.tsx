@@ -11,7 +11,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material-pigment-css/Box";
-import { useCallback, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 import {
   Link,
   useFetcher,
@@ -33,15 +33,31 @@ export interface NavigationProps {
 
 export default function Navigation({ user }: NavigationProps) {
   const [open, setOpen] = useState<"breadcrumb" | "menu" | false>(false);
-  const ref = useRef<HTMLDivElement>(null);
   const title = useTitle();
   const breadcrumbs = useBreadcrumbs();
 
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const openBreadcrumb = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget);
+    setOpen("breadcrumb");
+  }, []);
+
+  const openMenu = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget);
+    setOpen("menu");
+  }, []);
+
+  const close = useCallback(() => {
+    setOpen(false);
+    setAnchorEl(null);
+  }, []);
+
   return (
-    <AppBar ref={ref} sx={{ height: 48 }}>
+    <AppBar sx={{ height: 48 }}>
       <Toolbar variant="dense">
         {breadcrumbs.length > 0 ? (
-          <IconButton onClick={() => setOpen("breadcrumb")} aria-label="戻る">
+          <IconButton onClick={openBreadcrumb} aria-label="戻る">
             <KeyboardArrowLeftIcon sx={{ color: "var(--AppBar-color)" }} />
           </IconButton>
         ) : (
@@ -52,21 +68,21 @@ export default function Navigation({ user }: NavigationProps) {
         </Typography>
         <NavigationLoading />
         {user ? (
-          <UserButton user={user} onClick={() => setOpen("menu")} />
+          <UserButton user={user} onClick={openMenu} />
         ) : (
           <SigninButton />
         )}
         <ConnectivityStatus />
         <BreadcrumbsContent
           breadcrumbs={breadcrumbs}
-          anchorEl={() => ref.current}
+          anchorEl={anchorEl}
           open={open === "breadcrumb"}
-          onClose={() => setOpen(false)}
+          onClose={close}
         />
         <MenuContent
-          anchorEl={() => ref.current}
+          anchorEl={anchorEl}
           open={open === "menu"}
-          onClose={() => setOpen(false)}
+          onClose={close}
         />
       </Toolbar>
     </AppBar>
@@ -80,7 +96,7 @@ function BreadcrumbsContent({
   breadcrumbs,
 }: {
   open: boolean;
-  anchorEl: () => HTMLElement | null;
+  anchorEl: HTMLElement | null;
   onClose: () => void;
   breadcrumbs: Breadcrumb[];
 }) {
@@ -117,7 +133,7 @@ function UserButton({
   onClick,
 }: {
   user: ClientUser;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent<HTMLElement>) => void;
 }) {
   const { name, username, picture } = user;
   return (
@@ -189,7 +205,7 @@ function MenuContent({
   onClose,
 }: {
   open: boolean;
-  anchorEl: () => HTMLElement | null;
+  anchorEl: HTMLElement | null;
   onClose: () => void;
 }) {
   const { success } = useAlert();
