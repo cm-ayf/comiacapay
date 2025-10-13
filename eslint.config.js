@@ -6,7 +6,7 @@ import importX from "eslint-plugin-import-x";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import muiPathImports from "eslint-plugin-mui-path-imports";
 import react from "eslint-plugin-react";
-import * as reactHooks from "eslint-plugin-react-hooks";
+import reactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import muiPigmentCss from "./eslint-plugin-mui-pigment-css/index.js";
@@ -85,7 +85,7 @@ export default tseslint.config(
   react.configs.flat["jsx-runtime"],
   {
     ignores: ["tests/**"],
-    ...reactHooks.configs["recommended-latest"],
+    ...reactHooks.configs.flat["recommended-latest"],
   },
   {
     plugins: {

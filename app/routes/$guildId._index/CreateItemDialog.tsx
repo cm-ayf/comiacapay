@@ -16,9 +16,9 @@ interface CreateItemDialogProps {
   ref: Ref<{ open: () => void }>;
 }
 
-export default function CreateItemDialog(props: CreateItemDialogProps) {
+export default function CreateItemDialog({ ref }: CreateItemDialogProps) {
   const [open, setOpen] = useState(false);
-  useImperativeHandle(props.ref, () => ({
+  useImperativeHandle(ref, () => ({
     open: () => setOpen(true),
   }));
   const { guildId } = useParams();

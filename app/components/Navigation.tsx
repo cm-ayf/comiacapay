@@ -59,12 +59,12 @@ export default function Navigation({ user }: NavigationProps) {
         <ConnectivityStatus />
         <BreadcrumbsContent
           breadcrumbs={breadcrumbs}
-          anchorEl={ref.current}
+          anchorEl={() => ref.current}
           open={open === "breadcrumb"}
           onClose={() => setOpen(false)}
         />
         <MenuContent
-          anchorEl={ref.current}
+          anchorEl={() => ref.current}
           open={open === "menu"}
           onClose={() => setOpen(false)}
         />
@@ -80,7 +80,7 @@ function BreadcrumbsContent({
   breadcrumbs,
 }: {
   open: boolean;
-  anchorEl: HTMLElement | null;
+  anchorEl: () => HTMLElement | null;
   onClose: () => void;
   breadcrumbs: Breadcrumb[];
 }) {
@@ -189,7 +189,7 @@ function MenuContent({
   onClose,
 }: {
   open: boolean;
-  anchorEl: HTMLElement | null;
+  anchorEl: () => HTMLElement | null;
   onClose: () => void;
 }) {
   const { success } = useAlert();
