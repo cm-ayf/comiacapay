@@ -53,7 +53,7 @@
   "devDependencies": {
     "@eslint/compat": "1.4.0",
     "@pigment-css/vite-plugin": "0.0.30",
-    "@playwright/test": "1.56.0",
+    "@playwright/test": "1.56.1",
     "@prisma/generator-helper": "6.17.1",
     "@react-router/dev": "7.9.4",
     "@tsconfig/node22": "22.0.2",
