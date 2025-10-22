@@ -38,6 +38,7 @@
     "@prisma/adapter-pg": "6.17.1",
     "@prisma/client": "6.17.1",
     "@react-router/fs-routes": "7.9.4",
+    "@react-router/node": "7.9.4",
     "@react-router/serve": "7.9.4",
     "discord-api-types": "0.38.31",
     "idb": "^8.0.3",
