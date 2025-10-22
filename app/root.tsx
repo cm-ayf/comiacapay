@@ -87,11 +87,7 @@ const userMiddleware: Route.MiddlewareFunction = async ({ context }, next) => {
   return next();
 };
 
-export const unstable_middleware = [
-  prismaMiddleware,
-  sessionMiddleware,
-  userMiddleware,
-];
+export const middleware = [prismaMiddleware, sessionMiddleware, userMiddleware];
 
 export async function loader({ context }: Route.LoaderArgs) {
   return context.get(userContext);
