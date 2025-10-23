@@ -12,7 +12,7 @@ export default function vercelCustomEntrypoint({
   main = "./main.ts",
 }: Options): Plugin {
   return {
-    name: "comiacapay:vite-preview-vercel",
+    name: "comiacapay:vercel-custom-entrypoint",
     config: {
       order: "pre",
       handler() {
