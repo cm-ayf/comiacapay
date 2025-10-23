@@ -22,6 +22,7 @@ jobs:
           path: |
             build
             .vercel
+          include-hidden-files: true
       - id: get-playwright-version
         run: echo "playwright-version=$(jq '.devDependencies["@playwright/test"]' -r package.json)" >> $GITHUB_OUTPUT
 
