@@ -13,7 +13,13 @@ export async function action({ request, params, context }: Route.ActionArgs) {
   const { userId, checkPermission } = await context.get(memberContext);
   checkPermission("register");
 
-  const { eventId } = params;
+  const { guildId, eventId } = params;
+
+  // check parent resource belonging guild
+  await prisma.event.findUniqueOrThrow({
+    where: { id: eventId, guildId },
+  });
+
   switch (request.method) {
     case "POST": {
       const body = await getValidatedBodyOr400(request, resolver);
@@ -40,11 +46,13 @@ export async function action({ request, params, context }: Route.ActionArgs) {
         prisma.record.deleteMany({
           where: {
             receiptId: { in: targetIds },
+            eventId,
           },
         }),
         prisma.receipt.deleteMany({
           where: {
             id: { in: targetIds },
+            eventId,
           },
         }),
       ]);
