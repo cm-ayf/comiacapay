@@ -7,13 +7,13 @@ import {
   type ShouldRevalidateFunctionArgs,
 } from "react-router";
 import { data } from "react-router";
-import { memberContext, useGuild } from "./$guildId";
+import { useGuild } from "./$guildId";
 import type { Route } from "./+types/$guildId.$eventId";
 import createErrorBoundary from "~/components/createErrorBoundary";
 import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { memberContext, prismaContext } from "~/lib/context.server";
 import type { Handle } from "~/lib/handle";
 import { UpdateEvent, type ClientDisplay, type ClientItem } from "~/lib/schema";
-import { prismaContext } from "~/root";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);

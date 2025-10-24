@@ -1,19 +1,14 @@
-import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { createSessionStorage, type Cookie } from "react-router";
+import type { SessionContext } from "./context.server";
 import type { PrismaClientWithExtensions } from "./prisma.server";
 import { Snowflake } from "./snowflake";
 import { Prisma } from "~/generated/prisma/client";
-
-export interface SessionData {
-  userId: string;
-  tokenResult: RESTPostOAuth2AccessTokenResult;
-}
 
 export function createPrismaSessionStorage(
   prisma: PrismaClientWithExtensions,
   cookie: Cookie,
 ) {
-  return createSessionStorage<SessionData, unknown>({
+  return createSessionStorage<SessionContext, unknown>({
     cookie,
     async createData({ userId = null, tokenResult = Prisma.DbNull }, expires) {
       if (!expires) return "";
@@ -38,7 +33,7 @@ export function createPrismaSessionStorage(
         return null;
       }
 
-      const data: Partial<SessionData> = {};
+      const data: Partial<SessionContext> = {};
       if (session.userId) data.userId = session.userId;
       if (session.tokenResult) data.tokenResult = session.tokenResult;
       return data;

@@ -1,9 +1,9 @@
 import { redirectDocument } from "react-router";
 import type { Route } from "./+types/auth.signout";
+import { prismaContext } from "~/lib/context.server";
 import { sidCookie } from "~/lib/cookie.server";
 import { revokeToken } from "~/lib/oauth2/auth.server";
 import { createPrismaSessionStorage } from "~/lib/session.server";
-import { prismaContext } from "~/root";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);

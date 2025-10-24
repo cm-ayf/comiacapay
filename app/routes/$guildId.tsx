@@ -2,20 +2,21 @@ import { valibotResolver } from "@hookform/resolvers/valibot";
 import Typography from "@mui/material/Typography";
 import {
   Outlet,
-  createContext,
   useRouteLoaderData,
   type ShouldRevalidateFunctionArgs,
 } from "react-router";
 import type { Route } from "./+types/$guildId";
 import createErrorBoundary from "~/components/createErrorBoundary";
 import { getValidatedBodyOr400 } from "~/lib/body.server";
+import {
+  createThenable,
+  memberContext,
+  prismaContext,
+} from "~/lib/context.server";
 import type { Handle } from "~/lib/handle";
-import { createThenable, type Thenable } from "~/lib/middleware.server";
 import { UpdateGuild } from "~/lib/schema";
-import { freshMember, type MemberContext } from "~/lib/sync/member.server";
-import { prismaContext } from "~/root";
+import { freshMember } from "~/lib/sync/member.server";
 
-export const memberContext = createContext<Thenable<MemberContext>>();
 const memberMiddleware: Route.MiddlewareFunction = async (
   { context, params },
   next,

@@ -1,11 +1,10 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { data } from "react-router";
-import { memberContext } from "../$guildId";
 import type { Route } from "./+types/route";
 import type { Prisma } from "~/generated/prisma/client";
 import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { memberContext, prismaContext } from "~/lib/context.server";
 import { CreateReceipts, type CreateReceiptsOutput } from "~/lib/schema";
-import { prismaContext } from "~/root";
 
 const resolver = valibotResolver(CreateReceipts);
 

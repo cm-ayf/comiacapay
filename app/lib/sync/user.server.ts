@@ -6,9 +6,8 @@ import {
   type APIUser,
 } from "discord-api-types/v10";
 import type { RouterContextProvider } from "react-router";
+import { prismaContext, sessionContext } from "../context.server";
 import { getCurrentUser, getCurrentUserGuilds } from "../oauth2/auth.server";
-// eslint-disable-next-line import-x/no-restricted-paths
-import { prismaContext, sessionContext } from "~/root";
 
 const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 

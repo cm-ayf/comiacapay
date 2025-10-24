@@ -4,10 +4,9 @@ import type {
   RESTPostOAuth2AccessTokenWithBotAndGuildsScopeResult,
 } from "discord-api-types/v10";
 import type { RouterContextProvider } from "react-router";
+import { prismaContext } from "../context.server";
 import { getCurrentUser } from "../oauth2/auth.server";
 import { Prisma } from "~/generated/prisma/client";
-// eslint-disable-next-line import-x/no-restricted-paths
-import { prismaContext } from "~/root";
 
 export async function upsertGuildAndMember(
   context: Readonly<RouterContextProvider>,
