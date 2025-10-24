@@ -81,7 +81,7 @@ async function createPgAdapter() {
   return new PrismaPg(options);
 }
 
-export async function createPrismaClient() {
+async function createPrismaClient() {
   const adapter = await createPgAdapter();
   return new PrismaClient({ adapter }).$extends(mapKnownErrorExtension);
 }
@@ -89,3 +89,11 @@ export async function createPrismaClient() {
 export type PrismaClientWithExtensions = Awaited<
   ReturnType<typeof createPrismaClient>
 >;
+
+declare global {
+  var prisma: Promise<PrismaClientWithExtensions>;
+}
+
+export async function getPrismaClient(): Promise<PrismaClientWithExtensions> {
+  return (global.prisma ??= createPrismaClient());
+}

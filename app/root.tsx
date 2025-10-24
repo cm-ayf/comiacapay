@@ -26,7 +26,7 @@ import {
 } from "./lib/context.server";
 import { sidCookie } from "./lib/cookie.server";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
-import { createPrismaClient } from "./lib/prisma.server";
+import { getPrismaClient } from "./lib/prisma.server";
 import { createPrismaSessionStorage } from "./lib/session.server";
 import { freshUser } from "./lib/sync/user.server";
 import type { User } from "~/generated/prisma/client";
@@ -35,7 +35,7 @@ const prismaMiddleware: Route.MiddlewareFunction = async (
   { context },
   next,
 ) => {
-  context.set(prismaContext, await createPrismaClient());
+  context.set(prismaContext, await getPrismaClient());
   return await next();
 };
 
