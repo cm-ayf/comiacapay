@@ -35,7 +35,7 @@ const resolver = valibotResolver(UpdateGuild);
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   try {
-    context.get(sessionContext);
+    await context.get(sessionContext);
   } catch {
     return redirectDocument("/");
   }

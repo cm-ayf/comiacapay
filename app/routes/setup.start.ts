@@ -6,7 +6,7 @@ import { authorizeBotUrl } from "~/lib/oauth2/setup.server";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   try {
-    context.get(sessionContext);
+    await context.get(sessionContext);
   } catch {
     const error = new OAuth2Error("invalid_request");
     return redirectDocument(error.toRedirectLocation());
