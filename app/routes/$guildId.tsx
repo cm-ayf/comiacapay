@@ -62,7 +62,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   // any guild member should refresh permissions after role update
   await prisma.member.updateMany({
-    where: { guildId: guildId },
+    where: { guildId },
     data: { freshUntil: new Date() },
   });
 
