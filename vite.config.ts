@@ -4,6 +4,7 @@ import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import surpressNodeModulesWarning from "./plugins/surpress-node-modules-warning";
+import vercelCustomEntrypoint from "./plugins/vercel-custom-entrypoint";
 
 export default defineConfig({
   plugins: [
@@ -49,6 +50,7 @@ export default defineConfig({
       outDir: "build/client",
     }),
     surpressNodeModulesWarning(),
+    vercelCustomEntrypoint({ main: "./main.ts" }),
   ],
   resolve: {
     noExternal: [/^@mui\/(?!x-|lab)/, "@pigment-css/react"],

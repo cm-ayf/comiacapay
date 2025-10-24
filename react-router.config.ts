@@ -6,6 +6,7 @@ export default {
   presets: [vercelPreset()],
   routeDiscovery: { mode: "initial" },
   future: {
+    v8_middleware: true,
     unstable_optimizeDeps: true,
     unstable_subResourceIntegrity: true,
     unstable_viteEnvironmentApi: true,

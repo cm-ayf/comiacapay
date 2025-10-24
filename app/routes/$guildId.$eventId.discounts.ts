@@ -1,22 +1,19 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { data } from "react-router";
 import type { Route } from "./+types/$guildId.$eventId.discounts";
-import {
-  getMemberOr4xx,
-  getSessionOr401,
-  getValidatedBodyOr400,
-} from "~/lib/middleware.server";
-import { prisma } from "~/lib/prisma.server";
+import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { memberContext, prismaContext } from "~/lib/context.server";
 import { CreateDiscount } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
 
 const resolver = valibotResolver(CreateDiscount);
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { userId } = await getSessionOr401(request);
-  const { guildId, eventId } = params;
-  await getMemberOr4xx(userId, guildId, "write");
+export async function action({ request, params, context }: Route.ActionArgs) {
+  const prisma = context.get(prismaContext);
+  const { checkPermission } = await context.get(memberContext);
+  checkPermission("write");
 
+  const { guildId, eventId } = params;
   switch (request.method) {
     case "POST": {
       const body = await getValidatedBodyOr400(request, resolver);

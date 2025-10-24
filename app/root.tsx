@@ -3,21 +3,89 @@ import "@mui/material-pigment-css/styles.css";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material-pigment-css/Container";
 import { Fragment, useRef, type PropsWithChildren } from "react";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import {
+  data,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  RouterContextProvider,
+} from "react-router";
 import { pwaInfo } from "virtual:pwa-info";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import type { Route } from "./+types/root";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
 import createErrorBoundary from "./components/createErrorBoundary";
+import {
+  createThenable,
+  prismaContext,
+  sessionContext,
+  userContext,
+} from "./lib/context.server";
+import { sidCookie } from "./lib/cookie.server";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
-import { getSessionOr401 } from "./lib/middleware.server";
+import { getPrismaClient } from "./lib/prisma.server";
+import { createPrismaSessionStorage } from "./lib/session.server";
 import { freshUser } from "./lib/sync/user.server";
 import type { User } from "~/generated/prisma/client";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSessionOr401(request);
-  return await freshUser(session);
+const prismaMiddleware: Route.MiddlewareFunction = async (
+  { context },
+  next,
+) => {
+  context.set(prismaContext, await getPrismaClient());
+  return await next();
+};
+
+async function initSession(
+  request: Request,
+  context: Readonly<RouterContextProvider>,
+) {
+  const prisma = context.get(prismaContext);
+  const { getSession, commitSession } = createPrismaSessionStorage(
+    prisma,
+    sidCookie,
+  );
+
+  const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId");
+  const tokenResult = session.get("tokenResult");
+  if (!userId || !tokenResult) {
+    throw data(
+      { code: "UNAUTHORIZED" },
+      {
+        status: 401,
+        headers: {
+          "Set-Cookie": await commitSession(session, {
+            secure: request.url.startsWith("https://"),
+          }),
+        },
+      },
+    );
+  }
+
+  return { userId, tokenResult };
+}
+
+const sessionMiddleware: Route.MiddlewareFunction = async (
+  { request, context },
+  next,
+) => {
+  context.set(sessionContext, createThenable(initSession, request, context));
+  return next();
+};
+
+const userMiddleware: Route.MiddlewareFunction = async ({ context }, next) => {
+  context.set(userContext, createThenable(freshUser, context));
+  return next();
+};
+
+export const middleware = [prismaMiddleware, sessionMiddleware, userMiddleware];
+
+export async function loader({ context }: Route.LoaderArgs) {
+  return context.get(userContext);
 }
 
 export const handle: Handle<typeof loader> = {

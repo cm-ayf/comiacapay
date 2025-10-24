@@ -42,7 +42,6 @@ function upgrade(idb: IDB, oldVersion: number, newVersion: number | null) {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var idb: Promise<IDB>;
 }
 

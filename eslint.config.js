@@ -102,6 +102,7 @@ export default tseslint.config(
       "dev-dist/**",
       "build/**",
       ".react-router/**",
+      "playwright-report/**",
       "public/entry.worker.js",
     ],
   },

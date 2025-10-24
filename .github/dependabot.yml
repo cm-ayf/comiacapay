@@ -9,6 +9,7 @@ updates:
         patterns:
           - "react-router"
           - "@react-router/*"
+          - "@remix-run/*"
       react:
         patterns:
           - "react"
@@ -43,6 +44,7 @@ updates:
         exclude-patterns:
           - "react-router"
           - "@react-router/*"
+          - "@remix-run/*"
           - "react"
           - "react-dom"
           - "@mui/*"
