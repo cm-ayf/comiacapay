@@ -10,10 +10,10 @@ const resolver = valibotResolver(CreateReceipt);
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
-  const { userId, guildId, checkPermission } = await context.get(memberContext);
+  const { userId, checkPermission } = await context.get(memberContext);
   checkPermission("register");
 
-  const { eventId } = params;
+  const { guildId, eventId } = params;
   switch (request.method) {
     case "POST": {
       const { id, total, records } = await getValidatedBodyOr400(
