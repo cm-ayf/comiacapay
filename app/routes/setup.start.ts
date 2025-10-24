@@ -1,8 +1,8 @@
 import { redirectDocument } from "react-router";
 import type { Route } from "./+types/setup.start";
+import { sessionContext } from "~/lib/context.server";
 import { OAuth2Error } from "~/lib/oauth2/error";
 import { authorizeBotUrl } from "~/lib/oauth2/setup.server";
-import { sessionContext } from "~/root";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   try {

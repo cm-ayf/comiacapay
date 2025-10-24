@@ -7,7 +7,7 @@ import { href, Link, useLoaderData } from "react-router";
 import type { Route } from "./+types/_index";
 import EventCard from "~/components/EventCard";
 import GuildCard from "~/components/GuildCard";
-import { prismaContext, sessionContext } from "~/root";
+import { prismaContext, sessionContext } from "~/lib/context.server";
 
 export async function loader({ context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);

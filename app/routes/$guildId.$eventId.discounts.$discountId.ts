@@ -1,7 +1,6 @@
 import { data } from "react-router";
-import { memberContext } from "./$guildId";
 import type { Route } from "./+types/$guildId.$eventId.discounts.$discountId";
-import { prismaContext } from "~/root";
+import { memberContext, prismaContext } from "~/lib/context.server";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);

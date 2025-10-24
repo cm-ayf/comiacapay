@@ -1,7 +1,7 @@
 import type { Route } from "./+types/cron.session";
+import { prismaContext } from "~/lib/context.server";
 import { isVercelCronRequest } from "~/lib/cron.server";
 import { refreshTokens } from "~/lib/oauth2/auth.server";
-import { prismaContext } from "~/root";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);

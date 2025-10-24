@@ -1,6 +1,5 @@
-import { memberContext } from "../$guildId";
 import type { Route } from "./+types/route";
-import { prismaContext } from "~/root";
+import { memberContext, prismaContext } from "~/lib/context.server";
 
 export async function loader({ context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);

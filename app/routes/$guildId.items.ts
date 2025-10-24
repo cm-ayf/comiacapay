@@ -1,11 +1,10 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { data } from "react-router";
-import { memberContext } from "./$guildId";
 import type { Route } from "./+types/$guildId.items";
 import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { memberContext, prismaContext } from "~/lib/context.server";
 import { CreateItem } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
-import { prismaContext } from "~/root";
 
 const resolver = valibotResolver(CreateItem);
 

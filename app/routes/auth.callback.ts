@@ -1,11 +1,11 @@
 import { redirectDocument } from "react-router";
 import type { Route } from "./+types/auth.callback";
+import { prismaContext } from "~/lib/context.server";
 import { sidCookie, stateCookie } from "~/lib/cookie.server";
 import { env } from "~/lib/env.server";
 import { exchangeCode, getCurrentUser } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";
 import { createPrismaSessionStorage } from "~/lib/session.server";
-import { prismaContext } from "~/root";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);

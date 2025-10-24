@@ -1,5 +1,5 @@
 import type { Route } from "./+types/auth.refresh";
-import { prismaContext, sessionContext } from "~/root";
+import { prismaContext, sessionContext } from "~/lib/context.server";
 
 export async function action({ request, context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);

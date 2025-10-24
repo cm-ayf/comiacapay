@@ -10,7 +10,6 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  createContext,
   RouterContextProvider,
 } from "react-router";
 import { pwaInfo } from "virtual:pwa-info";
@@ -19,21 +18,19 @@ import type { Route } from "./+types/root";
 import { AlertProvider } from "./components/Alert";
 import Navigation from "./components/Navigation";
 import createErrorBoundary from "./components/createErrorBoundary";
+import {
+  createThenable,
+  prismaContext,
+  sessionContext,
+  userContext,
+} from "./lib/context.server";
 import { sidCookie } from "./lib/cookie.server";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
-import { createThenable, type Thenable } from "./lib/middleware.server";
-import {
-  createPrismaClient,
-  type PrismaClientWithExtensions,
-} from "./lib/prisma.server";
-import {
-  createPrismaSessionStorage,
-  type SessionData,
-} from "./lib/session.server";
+import { createPrismaClient } from "./lib/prisma.server";
+import { createPrismaSessionStorage } from "./lib/session.server";
 import { freshUser } from "./lib/sync/user.server";
 import type { User } from "~/generated/prisma/client";
 
-export const prismaContext = createContext<PrismaClientWithExtensions>();
 const prismaMiddleware: Route.MiddlewareFunction = async (
   { context },
   next,
@@ -72,7 +69,6 @@ async function initSession(
   return { userId, tokenResult };
 }
 
-export const sessionContext = createContext<Thenable<SessionData>>();
 const sessionMiddleware: Route.MiddlewareFunction = async (
   { request, context },
   next,
@@ -81,7 +77,6 @@ const sessionMiddleware: Route.MiddlewareFunction = async (
   return next();
 };
 
-export const userContext = createContext<Thenable<User>>();
 const userMiddleware: Route.MiddlewareFunction = async ({ context }, next) => {
   context.set(userContext, createThenable(freshUser, context));
   return next();

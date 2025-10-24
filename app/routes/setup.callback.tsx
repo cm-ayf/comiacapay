@@ -25,11 +25,11 @@ import type { action } from "./$guildId";
 import type { Route } from "./+types/setup.callback";
 import { useAlert } from "~/components/Alert";
 import createErrorBoundary from "~/components/createErrorBoundary";
+import { sessionContext } from "~/lib/context.server";
 import { useOnSubmitComplete } from "~/lib/fetcher";
 import { exchangeBotCode } from "~/lib/oauth2/setup.server";
 import { UpdateGuild, type UpdateGuildInput } from "~/lib/schema";
 import { upsertGuildAndMember } from "~/lib/sync/guild.server";
-import { sessionContext } from "~/root";
 
 const resolver = valibotResolver(UpdateGuild);
 
