@@ -1,9 +1,9 @@
 import type { Route } from "./+types/auth.refresh";
-import { getSessionOr401 } from "~/lib/middleware.server";
-import { prisma } from "~/lib/prisma.server";
+import { prismaContext, sessionContext } from "~/lib/context.server";
 
-export async function action({ request }: Route.LoaderArgs) {
-  const { userId } = await getSessionOr401(request);
+export async function action({ request, context }: Route.LoaderArgs) {
+  const prisma = context.get(prismaContext);
+  const { userId } = await context.get(sessionContext);
   await prisma.user.update({
     where: { id: userId },
     data: { freshUntil: new Date() },

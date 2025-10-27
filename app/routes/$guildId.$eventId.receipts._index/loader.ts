@@ -1,12 +1,12 @@
 import type { Route } from "./+types/route";
-import { getMemberOr4xx, getSessionOr401 } from "~/lib/middleware.server";
-import { prisma } from "~/lib/prisma.server";
+import { memberContext, prismaContext } from "~/lib/context.server";
 
-export async function loader({ request, params }: Route.LoaderArgs) {
-  const { userId } = await getSessionOr401(request);
+export async function loader({ params, context }: Route.LoaderArgs) {
+  const prisma = context.get(prismaContext);
+  const { checkPermission } = await context.get(memberContext);
+  checkPermission("read");
+
   const { guildId, eventId } = params;
-  await getMemberOr4xx(userId, guildId, "read");
-
   const receipts = await prisma.receipt.findMany({
     where: {
       event: { id: eventId, guildId },

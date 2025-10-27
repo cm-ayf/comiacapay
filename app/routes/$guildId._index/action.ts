@@ -1,31 +1,22 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
 import { data } from "react-router";
 import type { Route } from "./+types/route";
-import {
-  getMemberOr4xx,
-  getSessionOr401,
-  getValidatedBodyOr400,
-} from "~/lib/middleware.server";
-import { prisma } from "~/lib/prisma.server";
+import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { memberContext, prismaContext } from "~/lib/context.server";
 import { CreateEvent } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
 
 const resolver = valibotResolver(CreateEvent);
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { userId } = await getSessionOr401(request);
-  const { guildId } = params;
-  await getMemberOr4xx(userId, guildId, "write");
+export async function action({ request, context }: Route.ActionArgs) {
+  const prisma = context.get(prismaContext);
+  const { guildId, checkPermission } = await context.get(memberContext);
+  checkPermission("write");
 
-  const { name, date, clone } = await getValidatedBodyOr400(request, resolver);
+  const { clone, ...rest } = await getValidatedBodyOr400(request, resolver);
   const id = Snowflake.generate().toString();
   const event = await prisma.event.create({
-    data: {
-      id,
-      guildId,
-      name,
-      date: new Date(date),
-    },
+    data: { id, guildId, ...rest },
   });
 
   if (clone) {

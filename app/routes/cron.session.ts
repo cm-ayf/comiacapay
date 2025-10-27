@@ -1,9 +1,11 @@
 import type { Route } from "./+types/cron.session";
+import { prismaContext } from "~/lib/context.server";
 import { isVercelCronRequest } from "~/lib/cron.server";
 import { refreshTokens } from "~/lib/oauth2/auth.server";
-import { prisma } from "~/lib/prisma.server";
 
-export async function loader({ request }: Route.LoaderArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const prisma = context.get(prismaContext);
+
   if (!isVercelCronRequest(request))
     return new Response("Unauthorized", { status: 401 });
 

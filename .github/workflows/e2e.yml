@@ -19,7 +19,10 @@ jobs:
       - uses: actions/upload-artifact@v5
         with:
           name: build
-          path: build
+          path: |
+            build
+            .vercel
+          include-hidden-files: true
       - id: get-playwright-version
         run: echo "playwright-version=$(jq '.devDependencies["@playwright/test"]' -r package.json)" >> $GITHUB_OUTPUT
 
@@ -64,7 +67,6 @@ jobs:
       - uses: actions/download-artifact@v6
         with:
           name: build
-          path: build
       - run: npm run test:e2e -- --shard=${{ matrix.shard }}/${{ strategy.max-parallel }} --reporter=blob
         env:
           PLAYWRIGHT_BLOB_OUTPUT_FILE: blob-report/report-${{ matrix.shard }}.zip

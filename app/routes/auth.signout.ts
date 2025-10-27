@@ -1,9 +1,17 @@
 import { redirectDocument } from "react-router";
 import type { Route } from "./+types/auth.signout";
+import { prismaContext } from "~/lib/context.server";
+import { sidCookie } from "~/lib/cookie.server";
 import { revokeToken } from "~/lib/oauth2/auth.server";
-import { destroySession, getSession } from "~/lib/session.server";
+import { createPrismaSessionStorage } from "~/lib/session.server";
 
-export async function loader({ request }: Route.LoaderArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const prisma = context.get(prismaContext);
+  const { getSession, destroySession } = createPrismaSessionStorage(
+    prisma,
+    sidCookie,
+  );
+
   const session = await getSession(request.headers.get("Cookie"));
 
   try {
@@ -11,7 +19,12 @@ export async function loader({ request }: Route.LoaderArgs) {
     if (tokenResult) await revokeToken(tokenResult);
   } catch {}
 
-  return redirectDocument("/", {
-    headers: { "Set-Cookie": await destroySession(session) },
+  const url = new URL(request.url);
+  return redirectDocument(url.searchParams.get("redirect_to") ?? "/", {
+    headers: {
+      "Set-Cookie": await destroySession(session, {
+        secure: url.protocol === "https",
+      }),
+    },
   });
 }

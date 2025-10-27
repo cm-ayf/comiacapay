@@ -10,20 +10,17 @@ import { data } from "react-router";
 import { useGuild } from "./$guildId";
 import type { Route } from "./+types/$guildId.$eventId";
 import createErrorBoundary from "~/components/createErrorBoundary";
+import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { memberContext, prismaContext } from "~/lib/context.server";
 import type { Handle } from "~/lib/handle";
-import {
-  getMemberOr4xx,
-  getSessionOr401,
-  getValidatedBodyOr400,
-} from "~/lib/middleware.server";
-import { prisma } from "~/lib/prisma.server";
 import { UpdateEvent, type ClientDisplay, type ClientItem } from "~/lib/schema";
 
-export async function loader({ request, params }: Route.LoaderArgs) {
-  const { userId } = await getSessionOr401(request);
-  const { guildId, eventId } = params;
-  await getMemberOr4xx(userId, guildId, "read");
+export async function loader({ params, context }: Route.LoaderArgs) {
+  const prisma = context.get(prismaContext);
+  const { checkPermission } = await context.get(memberContext);
+  checkPermission("read");
 
+  const { guildId, eventId } = params;
   return await prisma.event.findUniqueOrThrow({
     where: { id: eventId, guildId },
     include: { displays: true },
@@ -32,11 +29,12 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
 const resolver = valibotResolver(UpdateEvent);
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { userId } = await getSessionOr401(request);
-  const { guildId, eventId } = params;
-  await getMemberOr4xx(userId, guildId, "write");
+export async function action({ request, params, context }: Route.ActionArgs) {
+  const prisma = context.get(prismaContext);
+  const { checkPermission } = await context.get(memberContext);
+  checkPermission("write");
 
+  const { guildId, eventId } = params;
   switch (request.method) {
     case "PATCH": {
       const body = await getValidatedBodyOr400(request, resolver);

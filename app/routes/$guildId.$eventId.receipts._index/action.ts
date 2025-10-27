@@ -2,20 +2,23 @@ import { valibotResolver } from "@hookform/resolvers/valibot";
 import { data } from "react-router";
 import type { Route } from "./+types/route";
 import type { Prisma } from "~/generated/prisma/client";
-import {
-  getMemberOr4xx,
-  getSessionOr401,
-  getValidatedBodyOr400,
-} from "~/lib/middleware.server";
-import { prisma } from "~/lib/prisma.server";
+import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { memberContext, prismaContext } from "~/lib/context.server";
 import { CreateReceipts, type CreateReceiptsOutput } from "~/lib/schema";
 
 const resolver = valibotResolver(CreateReceipts);
 
-export async function action({ request, params }: Route.ActionArgs) {
-  const { userId } = await getSessionOr401(request);
+export async function action({ request, params, context }: Route.ActionArgs) {
+  const prisma = context.get(prismaContext);
+  const { userId, checkPermission } = await context.get(memberContext);
+  checkPermission("register");
+
   const { guildId, eventId } = params;
-  await getMemberOr4xx(userId, guildId, "register");
+
+  // check parent resource belonging guild
+  await prisma.event.findUniqueOrThrow({
+    where: { id: eventId, guildId },
+  });
 
   switch (request.method) {
     case "POST": {
@@ -43,11 +46,13 @@ export async function action({ request, params }: Route.ActionArgs) {
         prisma.record.deleteMany({
           where: {
             receiptId: { in: targetIds },
+            eventId,
           },
         }),
         prisma.receipt.deleteMany({
           where: {
             id: { in: targetIds },
+            eventId,
           },
         }),
       ]);

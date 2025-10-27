@@ -92,8 +92,6 @@ async function oauth2Get<T>(
     cache: "no-cache",
   });
 
-  printRateLimitHeaders(response);
-
   if (response.status === 429) {
     throw data({ retryAfter: response.headers.get("Retry-After") }, 429);
   }
@@ -123,15 +121,4 @@ export async function getCurrentUserGuildMember(
   guildId: string,
 ) {
   return oauth2Get<APIGuildMember>(Routes.userGuildMember(guildId), tokenSet);
-}
-
-function printRateLimitHeaders(request: Response) {
-  console.log(request.url);
-  console.log("Retry-After:", request.headers.get("Retry-After"));
-
-  for (const [name, value] of request.headers) {
-    if (name.toLowerCase().startsWith("x-ratelimit-")) {
-      console.log(`${name}:`, value);
-    }
-  }
 }
