@@ -45,7 +45,7 @@
     "patch-package": "8.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "react-hook-form": "7.65.0",
+    "react-hook-form": "7.66.0",
     "react-router": "7.9.5",
     "remix-hook-form": "7.1.1",
     "valibot": "1.1.0"
