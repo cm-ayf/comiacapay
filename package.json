@@ -63,7 +63,7 @@
     "@types/pg": "8.15.6",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
-    "@types/serviceworker": "0.0.164",
+    "@types/serviceworker": "0.0.167",
     "@vercel/react-router": "1.2.3",
     "dotenv": "^17.2.3",
     "eslint": "9.39.0",
