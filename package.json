@@ -51,7 +51,7 @@
     "valibot": "1.1.0"
   },
   "devDependencies": {
-    "@eslint/compat": "2.0.0",
+    "@eslint/compat": "1.4.1",
     "@pigment-css/vite-plugin": "0.0.30",
     "@playwright/test": "1.56.1",
     "@prisma/generator-helper": "6.19.0",
