@@ -1,8 +1,28 @@
 diff --git a/node_modules/@wyw-in-js/transform/lib/cache.js b/node_modules/@wyw-in-js/transform/lib/cache.js
-index 0762ed7..a6b8f50 100644
+index 0762ed7..4cfbd99 100644
 --- a/node_modules/@wyw-in-js/transform/lib/cache.js
 +++ b/node_modules/@wyw-in-js/transform/lib/cache.js
-@@ -85,9 +85,13 @@ class TransformCacheCollection {
+@@ -27,11 +27,19 @@ class TransformCacheCollection {
+   add(cacheName, key, value) {
+     const cache = this[cacheName];
+     loggers[cacheName]('%s:add %s %f', (0, _getFileIdx.getFileIdx)(key), key, () => {
++      if (value === undefined) {
++        return cache.has(key) ? 'removed' : 'noop';
++      }
+       if (!cache.has(key)) {
+         return 'added';
+       }
+       return cache.get(key) === value ? 'unchanged' : 'updated';
+     });
++    if (value === undefined) {
++      cache.delete(key);
++      this.contentHashes.delete(key);
++      return;
++    }
+     cache.set(key, value);
+     if ('initialCode' in value) {
+       var _value$initialCode;
+@@ -85,9 +93,13 @@ class TransformCacheCollection {
      if (fileEntrypoint) {
        for (const [, dependency] of fileEntrypoint.dependencies) {
          const dependencyFilename = dependency.resolved;
@@ -17,17 +37,3 @@ index 0762ed7..a6b8f50 100644
          }
        }
      }
-diff --git a/node_modules/@wyw-in-js/transform/lib/module.js b/node_modules/@wyw-in-js/transform/lib/module.js
-index 5e4c1c8..44ff5a1 100644
---- a/node_modules/@wyw-in-js/transform/lib/module.js
-+++ b/node_modules/@wyw-in-js/transform/lib/module.js
-@@ -210,7 +210,8 @@ class Module {
-     } catch (e) {
-       this.isEvaluated = false;
-       if (evaluatedCreated) {
--        this.cache.add('entrypoints', entrypoint.name, cached);
-+        if (cached) this.cache.add('entrypoints', entrypoint.name, cached);
-+        else this.cache.delete('entrypoints', entrypoint.name);
-       }
-       if ((0, _UnprocessedEntrypointError.isUnprocessedEntrypointError)(e)) {
-         // It will be handled by evalFile scenario

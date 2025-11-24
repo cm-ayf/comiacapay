@@ -89,13 +89,12 @@
   "overrides": {
     "@mui/system": "^7",
     "@mui/utils": "^7",
-    "@wyw-in-js/processor-utils": "^0.7.0",
+    "@wyw-in-js/processor-utils": "^0.8.0",
     "@pigment-css/vite-plugin": {
       "vite": "^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0"
     },
-    "@wyw-in-js/shared": "^0.7.0",
-    "@wyw-in-js/transform": "^0.7.0",
-    "happy-dom": "^20.0.0"
+    "@wyw-in-js/shared": "^0.8.0",
+    "@wyw-in-js/transform": "^0.8.0"
   },
   "engines": {
     "node": "22"
