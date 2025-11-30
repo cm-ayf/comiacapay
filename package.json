@@ -48,7 +48,7 @@
     "react-hook-form": "7.66.1",
     "react-router": "7.9.6",
     "remix-hook-form": "7.1.1",
-    "valibot": "1.1.0"
+    "valibot": "1.2.0"
   },
   "devDependencies": {
     "@eslint/compat": "1.4.1",
