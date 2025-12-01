@@ -53,7 +53,7 @@
   "devDependencies": {
     "@eslint/compat": "1.4.1",
     "@pigment-css/vite-plugin": "0.0.30",
-    "@playwright/test": "1.56.1",
+    "@playwright/test": "1.57.0",
     "@prisma/generator-helper": "6.19.0",
     "@react-router/dev": "7.9.6",
     "@remix-run/node-fetch-server": "0.9.0",
@@ -78,13 +78,13 @@
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
     "npm-run-all2": "8.0.4",
-    "prettier": "3.6.2",
+    "prettier": "3.7.3",
     "prisma": "6.19.0",
     "prisma-json-types-generator": "3.6.2",
     "typescript": "5.9.3",
     "typescript-eslint": "8.47.0",
     "vite": "npm:rolldown-vite@7.1.5",
-    "vite-plugin-pwa": "1.1.0"
+    "vite-plugin-pwa": "1.2.0"
   },
   "overrides": {
     "@mui/system": "^7",
