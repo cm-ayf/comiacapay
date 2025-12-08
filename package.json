@@ -39,7 +39,7 @@
     "@prisma/client": "6.19.0",
     "@react-router/fs-routes": "7.10.1",
     "@react-router/node": "7.10.1",
-    "discord-api-types": "0.38.35",
+    "discord-api-types": "0.38.36",
     "idb": "^8.0.3",
     "isbot": "5.1.32",
     "patch-package": "8.0.1",
