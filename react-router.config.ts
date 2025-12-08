@@ -7,8 +7,8 @@ export default {
   routeDiscovery: { mode: "initial" },
   future: {
     v8_middleware: true,
+    v8_viteEnvironmentApi: true,
     unstable_optimizeDeps: true,
     unstable_subResourceIntegrity: true,
-    unstable_viteEnvironmentApi: true,
   },
 } satisfies Config;
