@@ -51,7 +51,7 @@
     "valibot": "1.2.0"
   },
   "devDependencies": {
-    "@eslint/compat": "1.4.1",
+    "@eslint/compat": "2.0.0",
     "@pigment-css/vite-plugin": "0.0.30",
     "@playwright/test": "1.57.0",
     "@prisma/generator-helper": "6.19.0",
@@ -66,7 +66,7 @@
     "@types/serviceworker": "0.0.168",
     "@vercel/react-router": "1.2.4",
     "dotenv": "^17.2.3",
-    "eslint": "9.39.1",
+    "eslint": "9.39.2",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-import-x": "4.16.1",
