@@ -1,3 +1,4 @@
+import { getInputProps } from "@conform-to/react";
 import Checkbox from "@mui/material/Checkbox";
 import DialogContent from "@mui/material/DialogContent";
 import FormControl from "@mui/material/FormControl";
@@ -5,18 +6,16 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import FormLabel from "@mui/material/FormLabel";
 import TextField from "@mui/material/TextField";
-import { useRemixFormContext } from "remix-hook-form";
-import type { CreateSetDiscountInput, ClientDisplay } from "~/lib/schema";
+import { useFormFields } from "~/components/RemixFormDialog";
+import type { ClientDisplay } from "~/lib/schema";
 
 export default function SetDiscountDialogContent({
   displays,
 }: {
   displays: ClientDisplay[];
 }) {
-  const {
-    register,
-    formState: { errors },
-  } = useRemixFormContext<CreateSetDiscountInput>();
+  const fields = useFormFields();
+  const itemIdsField = fields["itemIds"];
 
   return (
     <DialogContent
@@ -27,30 +26,43 @@ export default function SetDiscountDialogContent({
         gap: 1,
       }}
     >
-      <FormControl
-        sx={{ mt: 2 }}
-        {...(errors.itemIds && {
-          error: true,
-          helperText: errors.itemIds.message,
-        })}
-      >
-        <FormLabel component="legend">商品の組み合わせ</FormLabel>
-        <FormGroup>
-          {displays.map(({ item }) => (
-            <FormControlLabel
-              key={item.id}
-              control={<Checkbox {...register("itemIds")} value={item.id} />}
-              label={item.name}
-            />
-          ))}
-        </FormGroup>
-      </FormControl>
+      {itemIdsField && (
+        <FormControl
+          sx={{ mt: 2 }}
+          error={!!itemIdsField.errors}
+        >
+          <FormLabel component="legend">商品の組み合わせ</FormLabel>
+          <FormGroup>
+            {displays.map(({ item }) => {
+              const initialValueArray = itemIdsField.initialValue as string[] | undefined;
+              const isChecked = initialValueArray?.includes(item.id) ?? false;
+              return (
+                <FormControlLabel
+                  key={item.id}
+                  control={
+                    <Checkbox
+                      name={itemIdsField.name}
+                      value={item.id}
+                      defaultChecked={isChecked}
+                    />
+                  }
+                  label={item.name}
+                />
+              );
+            })}
+          </FormGroup>
+          {itemIdsField.errors && (
+            <div style={{ color: "red", fontSize: "0.75rem" }}>
+              {itemIdsField.errors[0]}
+            </div>
+          )}
+        </FormControl>
+      )}
       <TextField
-        {...register("amount", { required: true, valueAsNumber: true })}
-        {...(errors.amount && {
-          error: true,
-          helperText: errors.amount.message,
-        })}
+        {...getInputProps(fields["amount"]!, { type: "number" })}
+        key={fields["amount"]?.key}
+        error={!!fields["amount"]?.errors}
+        helperText={fields["amount"]?.errors?.[0]}
         label="割引額"
         type="number"
         variant="standard"

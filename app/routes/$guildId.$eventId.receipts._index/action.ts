@@ -1,12 +1,9 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { data } from "react-router";
 import type { Route } from "./+types/route";
 import type { Prisma } from "~/generated/prisma/client";
 import { getValidatedBodyOr400 } from "~/lib/body.server";
 import { memberContext, prismaContext } from "~/lib/context.server";
 import { CreateReceipts, type CreateReceiptsOutput } from "~/lib/schema";
-
-const resolver = valibotResolver(CreateReceipts);
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
@@ -22,7 +19,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 
   switch (request.method) {
     case "POST": {
-      const body = await getValidatedBodyOr400(request, resolver);
+      const body = await getValidatedBodyOr400(request, CreateReceipts);
 
       const [receipt] = await prisma.$transaction([
         prisma.receipt.createMany({

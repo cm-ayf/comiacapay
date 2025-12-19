@@ -1,4 +1,3 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useImperativeHandle, useState } from "react";
 import { useLoaderData, useParams } from "react-router";
 import type { action } from "../$guildId.$eventId.displays.$itemId";
@@ -16,8 +15,6 @@ import {
   type UpsertDisplayInput,
 } from "~/lib/schema";
 
-const resolver = valibotResolver(UpsertDisplay);
-
 export type UpsertDisplayDialogInput =
   | (ClientDisplay & { create?: never })
   | { item: ClientItem; create: true };
@@ -34,21 +31,21 @@ export default function UpsertDisplayDialog({ ref }: UpsertDisplayDialogProps) {
   const { success } = useAlert();
   if (!display) return null;
 
+  const defaultValue: UpsertDisplayInput | undefined = display.create
+    ? undefined
+    : {
+        price: display.price,
+        internalPrice: display.internalPrice,
+        dedication: display.dedication,
+      };
+
   return (
     <RemixFormDialog<UpsertDisplayInput, typeof action>
       open
       onClose={() => setDisplay(undefined)}
       title={`${display.item.name}のお品書きを${display.create ? "追加" : "編集"}`}
-      resolver={resolver}
-      defaultValues={
-        display.create
-          ? {}
-          : {
-              price: display.price,
-              internalPrice: display.internalPrice,
-              dedication: display.dedication,
-            }
-      }
+      schema={UpsertDisplay}
+      defaultValue={defaultValue}
       onSubmitComplete={(data) => {
         if (!data) return;
         if ("delete" in data) {

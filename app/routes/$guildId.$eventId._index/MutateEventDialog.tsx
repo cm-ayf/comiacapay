@@ -1,4 +1,3 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useImperativeHandle, useState, type Ref } from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router";
 import type { action } from "../$guildId.$eventId";
@@ -15,8 +14,6 @@ import {
   type ClientEvent,
   type UpdateEventInput,
 } from "~/lib/schema";
-
-const resolver = valibotResolver(UpdateEvent);
 
 interface MutateEventDialogProps {
   ref: Ref<{ open: (event: ClientEvent) => void }>;
@@ -37,8 +34,8 @@ export default function MutateEventDialog({ ref }: MutateEventDialogProps) {
       open
       onClose={() => setEvent(undefined)}
       title="イベントを編集"
-      resolver={resolver}
-      defaultValues={{ name: event.name, date: getISODateString(event.date) }}
+      schema={UpdateEvent}
+      defaultValue={{ name: event.name, date: getISODateString(event.date) }}
       submitConfig={{
         method: "PATCH",
         action: `/${guildId}/${event.id}`,
