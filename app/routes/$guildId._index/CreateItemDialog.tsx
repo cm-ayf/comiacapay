@@ -1,4 +1,3 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useImperativeHandle, useState, type Ref } from "react";
 import { useParams } from "react-router";
 import { useAlert } from "~/components/Alert";
@@ -9,8 +8,6 @@ import {
 } from "~/components/RemixFormDialog";
 import { getISODateString } from "~/lib/date";
 import { CreateItem, type CreateItemInput } from "~/lib/schema";
-
-const resolver = valibotResolver(CreateItem);
 
 interface CreateItemDialogProps {
   ref: Ref<{ open: () => void }>;
@@ -25,12 +22,12 @@ export default function CreateItemDialog({ ref }: CreateItemDialogProps) {
   const { success } = useAlert();
 
   return (
-    <RemixFormDialog<CreateItemInput>
+    <RemixFormDialog<CreateItemInput, unknown>
       open={open}
       onClose={() => setOpen(false)}
       title="商品を追加"
-      resolver={resolver}
-      defaultValues={{ picture: null, issuedAt: getISODateString(new Date()) }}
+      schema={CreateItem}
+      defaultValue={{ picture: null, issuedAt: getISODateString(new Date()) }}
       submitConfig={{ method: "POST", action: `/${guildId}/items` }}
       onSubmitComplete={(data) => {
         if (!data) return;

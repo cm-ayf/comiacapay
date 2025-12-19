@@ -1,34 +1,55 @@
-import type { FieldErrors, FieldValues, Resolver } from "react-hook-form";
-import { getValidatedFormData, validateFormData } from "remix-hook-form";
+import { parseWithValibot } from "@conform-to/valibot";
+import type { BaseSchema, InferOutput } from "valibot";
 
-export async function getValidatedBody<T extends FieldValues>(
+export async function getValidatedBody<T extends BaseSchema<unknown, unknown>>(
   request: Request,
-  resolver: Resolver<T>,
-): ReturnType<typeof validateFormData<T, unknown>> {
-  switch (request.headers.get("Content-Type")?.split(";")[0]) {
+  schema: T,
+) {
+  const contentType = request.headers.get("Content-Type")?.split(";")[0];
+  let formData: FormData;
+
+  switch (contentType) {
     case "application/x-www-form-urlencoded":
     case "multipart/form-data":
-      return getValidatedFormData(request, resolver);
-    case "application/json":
+      formData = await request.formData();
+      break;
+    case "application/json": {
       const json = await request.json();
-      return validateFormData(json, resolver);
+      formData = new FormData();
+      for (const [key, value] of Object.entries(json)) {
+        if (Array.isArray(value)) {
+          value.forEach((v) => formData.append(key, String(v)));
+        } else if (value !== null && value !== undefined) {
+          formData.append(key, String(value));
+        }
+      }
+      break;
+    }
     case undefined:
-      return validateFormData({}, resolver);
+      formData = new FormData();
+      break;
     default:
       return {
-        errors: { root: {} } as FieldErrors<T>,
-        data: undefined,
+        status: "error" as const,
+        error: { root: ["Unsupported content type"] },
       };
   }
+
+  return parseWithValibot(formData, { schema });
 }
 
-export async function getValidatedBodyOr400<T extends FieldValues>(
+export async function getValidatedBodyOr400<T extends BaseSchema<unknown, unknown>>(
   request: Request,
-  resolver: Resolver<T>,
-): Promise<T> {
-  const { errors, data } = await getValidatedBody(request, resolver);
-  if (errors)
-    throw Response.json({ code: "BAD_REQUEST", errors }, { status: 400 });
+  schema: T,
+): Promise<InferOutput<T>> {
+  const submission = await getValidatedBody(request, schema);
+  
+  if (submission.status !== "success") {
+    throw Response.json(
+      { code: "BAD_REQUEST", error: submission.error },
+      { status: 400 }
+    );
+  }
 
-  return data!;
+  return submission.value;
 }

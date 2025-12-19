@@ -1,59 +1,60 @@
+import { getFormProps, useForm } from "@conform-to/react";
+import { parseWithValibot } from "@conform-to/valibot";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import Tooltip from "@mui/material/Tooltip";
 import { createContext, use, useCallback, type PropsWithChildren } from "react";
-import type { DefaultValues, FieldValues, Resolver } from "react-hook-form";
+import type { BaseSchema } from "valibot";
 import {
   useFetcher,
   type useLoaderData,
   type SubmitOptions,
 } from "react-router";
-import {
-  RemixFormProvider,
-  useRemixForm,
-  useRemixFormContext,
-} from "remix-hook-form";
 import { useOnSubmitComplete } from "~/lib/fetcher";
 
 type SerializeFrom<AppData> = ReturnType<typeof useLoaderData<AppData>>;
 
-export interface RemixFormDialogProps<T extends FieldValues, U> {
+export interface RemixFormDialogProps<T, U> {
   open: boolean;
   onClose: () => void;
   title: string;
 
-  resolver: Resolver<T>;
-  defaultValues: DefaultValues<NoInfer<T>>;
+  schema: BaseSchema<unknown, T, any>;
+  defaultValue?: Partial<T>;
   submitConfig?: SubmitOptions;
 
   onSubmitComplete?: (data: SerializeFrom<U>) => void;
 }
 
-const HandleDeleteContext = createContext<() => void>(() => {});
+const HandleDeleteContext = createContext<(() => void) | null>(null);
+const FormFieldsContext = createContext<any>(null);
 
-export function RemixFormDialog<T extends FieldValues, U = unknown>({
+export function RemixFormDialog<T, U = unknown>({
   children,
   open,
   onClose,
   title,
-  resolver,
-  defaultValues,
+  schema,
+  defaultValue,
   submitConfig = {},
   onSubmitComplete,
 }: PropsWithChildren<RemixFormDialogProps<T, U>>) {
   const fetcher = useFetcher<U>();
-  const { reset, handleSubmit, ...methods } = useRemixForm<T>({
-    resolver,
-    defaultValues,
-    fetcher,
-    submitConfig,
+  const [form, fields] = useForm<T>({
+    defaultValue,
+    lastResult: fetcher.data?.status === "error" ? fetcher.data : undefined,
+    onValidate({ formData }) {
+      return parseWithValibot(formData, { schema });
+    },
+    shouldValidate: "onBlur",
+    shouldRevalidate: "onInput",
   });
 
   useOnSubmitComplete(fetcher, (data) => {
     onClose();
-    reset();
+    form.ref.current?.reset();
     onSubmitComplete?.(data);
   });
 
@@ -67,18 +68,26 @@ export function RemixFormDialog<T extends FieldValues, U = unknown>({
       open={open}
       onClose={() => {
         onClose();
-        reset();
+        form.ref.current?.reset();
       }}
-      PaperProps={{ component: fetcher.Form, onSubmit: handleSubmit }}
+      PaperProps={{ 
+        component: fetcher.Form,
+        ...getFormProps(form),
+        ...submitConfig,
+      }}
     >
-      <RemixFormProvider {...methods} handleSubmit={null} reset={null}>
+      <FormFieldsContext value={fields}>
         <DialogTitle>{title}</DialogTitle>
         <HandleDeleteContext value={handleDelete}>
           {children}
         </HandleDeleteContext>
-      </RemixFormProvider>
+      </FormFieldsContext>
     </Dialog>
   );
+}
+
+export function useFormFields() {
+  return use(FormFieldsContext);
 }
 
 export interface RemixFormDialogButtonsProps {
@@ -92,20 +101,19 @@ export function RemixFormDialogActions({
   submitButton,
   deleteButton,
 }: RemixFormDialogButtonsProps) {
-  const { formState } = useRemixFormContext();
   const handleDelete = use(HandleDeleteContext);
+  const fetcher = useFetcher();
 
   return (
     <DialogActions>
       <Button
         type="submit"
         color="primary"
-        disabled={!formState.isValid}
-        loading={formState.isLoading}
+        loading={fetcher.state !== "idle"}
       >
         {submitButton.label}
       </Button>
-      {deleteButton && (
+      {deleteButton && handleDelete && (
         <OptionalTooltip
           title={deleteButton.disabledMessage}
           enabled={deleteButton.disabled}
@@ -113,7 +121,7 @@ export function RemixFormDialogActions({
           <Button
             color="error"
             onClick={handleDelete}
-            loading={formState.isLoading}
+            loading={fetcher.state !== "idle"}
             disabled={deleteButton.disabled}
           >
             {deleteButton.label}

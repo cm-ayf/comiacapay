@@ -1,13 +1,11 @@
+import { getInputProps } from "@conform-to/react";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
-import { useRemixFormContext } from "remix-hook-form";
+import { useFormFields } from "~/components/RemixFormDialog";
 import type { CreateItemInput, UpdateItemInput } from "~/lib/schema";
 
 export default function ItemDialogContent() {
-  const {
-    register,
-    formState: { errors },
-  } = useRemixFormContext<CreateItemInput | UpdateItemInput>();
+  const fields = useFormFields();
 
   return (
     <DialogContent
@@ -19,32 +17,29 @@ export default function ItemDialogContent() {
       }}
     >
       <TextField
-        {...register("name", { required: true })}
-        {...(errors.name && {
-          error: true,
-          helperText: errors.name.message,
-        })}
+        {...getInputProps(fields.name, { type: "text" })}
+        key={fields.name.key}
+        error={!!fields.name.errors}
+        helperText={fields.name.errors?.[0]}
         label="商品名"
         variant="standard"
         fullWidth
       />
       <TextField
-        {...register("picture", { required: true })}
-        {...(errors.picture && {
-          error: true,
-          helperText: errors.picture.message,
-        })}
+        {...getInputProps(fields.picture, { type: "url" })}
+        key={fields.picture.key}
+        error={!!fields.picture.errors}
+        helperText={fields.picture.errors?.[0]}
         label="商品画像URL"
         type="url"
         variant="standard"
         fullWidth
       />
       <TextField
-        {...register("issuedAt", { required: true, valueAsDate: true })}
-        {...(errors.issuedAt && {
-          error: true,
-          helperText: errors.issuedAt.message,
-        })}
+        {...getInputProps(fields.issuedAt, { type: "date" })}
+        key={fields.issuedAt.key}
+        error={!!fields.issuedAt.errors}
+        helperText={fields.issuedAt.errors?.[0]}
         label="発行日"
         type="date"
         variant="standard"

@@ -1,4 +1,3 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useImperativeHandle, useState, type Ref } from "react";
 import { useNavigate, useParams } from "react-router";
 import type { action } from "./action";
@@ -14,8 +13,6 @@ import {
   type ClientEvent,
   type CreateEventInput,
 } from "~/lib/schema";
-
-const resolver = valibotResolver(CreateEvent);
 
 interface CreateEventDialogProps {
   ref: Ref<{ open: () => void }>;
@@ -39,8 +36,8 @@ export default function CreateEventDialog({
       open={open}
       onClose={() => setOpen(false)}
       title="イベントを追加"
-      resolver={resolver}
-      defaultValues={{ date: getISODateString(new Date()), clone: "" }}
+      schema={CreateEvent}
+      defaultValue={{ date: getISODateString(new Date()), clone: "" }}
       submitConfig={{ method: "POST" }}
       onSubmitComplete={(data) => {
         if (!data) return;

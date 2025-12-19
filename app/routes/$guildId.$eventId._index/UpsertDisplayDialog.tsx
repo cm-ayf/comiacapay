@@ -1,4 +1,3 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useImperativeHandle, useState } from "react";
 import { useLoaderData, useParams } from "react-router";
 import type { action } from "../$guildId.$eventId.displays.$itemId";
@@ -15,8 +14,6 @@ import {
   type ClientItem,
   type UpsertDisplayInput,
 } from "~/lib/schema";
-
-const resolver = valibotResolver(UpsertDisplay);
 
 export type UpsertDisplayDialogInput =
   | (ClientDisplay & { create?: never })
@@ -39,10 +36,10 @@ export default function UpsertDisplayDialog({ ref }: UpsertDisplayDialogProps) {
       open
       onClose={() => setDisplay(undefined)}
       title={`${display.item.name}のお品書きを${display.create ? "追加" : "編集"}`}
-      resolver={resolver}
-      defaultValues={
+      schema={UpsertDisplay}
+      defaultValue={
         display.create
-          ? {}
+          ? undefined
           : {
               price: display.price,
               internalPrice: display.internalPrice,

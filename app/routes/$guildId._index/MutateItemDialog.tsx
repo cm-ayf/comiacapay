@@ -1,4 +1,3 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useImperativeHandle, useMemo, useState, type Ref } from "react";
 import { useLoaderData, useParams } from "react-router";
 import type { action } from "../$guildId.items.$itemId";
@@ -16,8 +15,6 @@ import {
   type ClientItem,
   type UpdateItemInput,
 } from "~/lib/schema";
-
-const resolver = valibotResolver(UpdateItem);
 
 export interface MutateItemDialogProps {
   ref: Ref<{ open: (item: ClientItem) => void }>;
@@ -38,8 +35,8 @@ export default function MutateItemDialog({ ref }: MutateItemDialogProps) {
       open
       onClose={() => setItem(undefined)}
       title="商品を編集"
-      resolver={resolver}
-      defaultValues={{
+      schema={UpdateItem}
+      defaultValue={{
         name: item.name,
         picture: item.picture,
         issuedAt: getISODateString(item.issuedAt),
