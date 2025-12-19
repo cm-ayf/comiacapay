@@ -37,7 +37,7 @@ export default function CreateEventDialog({
       onClose={() => setOpen(false)}
       title="イベントを追加"
       schema={CreateEvent}
-      defaultValue={{ date: getISODateString(new Date()), clone: "" }}
+      defaultValue={{ name: "", date: getISODateString(new Date()), clone: "" }}
       submitConfig={{ method: "POST" }}
       onSubmitComplete={(data) => {
         if (!data) return;

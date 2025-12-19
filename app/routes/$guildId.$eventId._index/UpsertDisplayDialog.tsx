@@ -31,21 +31,21 @@ export default function UpsertDisplayDialog({ ref }: UpsertDisplayDialogProps) {
   const { success } = useAlert();
   if (!display) return null;
 
+  const defaultValue: UpsertDisplayInput | undefined = display.create
+    ? undefined
+    : {
+        price: display.price,
+        internalPrice: display.internalPrice,
+        dedication: display.dedication,
+      };
+
   return (
     <RemixFormDialog<UpsertDisplayInput, typeof action>
       open
       onClose={() => setDisplay(undefined)}
       title={`${display.item.name}のお品書きを${display.create ? "追加" : "編集"}`}
       schema={UpsertDisplay}
-      defaultValue={
-        display.create
-          ? undefined
-          : {
-              price: display.price,
-              internalPrice: display.internalPrice,
-              dedication: display.dedication,
-            }
-      }
+      defaultValue={defaultValue}
       onSubmitComplete={(data) => {
         if (!data) return;
         if ("delete" in data) {

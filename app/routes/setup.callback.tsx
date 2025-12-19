@@ -76,7 +76,6 @@ function RolesSelect({
   const fetcher = useFetcher<typeof action>();
   const [form, fields] = useForm({
     defaultValue: defaultValues,
-    lastResult: fetcher.data?.status === "error" ? fetcher.data : undefined,
     onValidate({ formData }) {
       return parseWithValibot(formData, { schema: UpdateGuild });
     },
@@ -91,30 +90,28 @@ function RolesSelect({
   return (
     <Box
       component={fetcher.Form}
+      method={submitConfig.method ?? "POST"}
+      action={submitConfig.action ?? ""}
       {...getFormProps(form)}
-      {...submitConfig}
       sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}
     >
       <RoleSelect
-        name="readRoleId"
         label="READ"
         helperText="イベントや商品の情報を閲覧できます"
         roles={roles}
-        field={fields.readRoleId}
+        field={fields["readRoleId"]}
       />
       <RoleSelect
-        name="registerRoleId"
         label="REGISTER"
         helperText="レジ入力を行えます"
         roles={roles}
-        field={fields.registerRoleId}
+        field={fields["registerRoleId"]}
       />
       <RoleSelect
-        name="writeRoleId"
         label="WRITE"
         helperText="イベントや商品の情報を編集できます"
         roles={roles}
-        field={fields.writeRoleId}
+        field={fields["writeRoleId"]}
       />
       <RoleSubmitButton state={fetcher.state} />
     </Box>
@@ -122,16 +119,15 @@ function RolesSelect({
 }
 
 function RoleSelect({
-  name,
   label,
   helperText,
   roles,
   field,
 }: {
-  name: string;
   label: string;
   helperText: string;
   roles: APIRole[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   field: any;
 }) {
   const id = useId();
@@ -147,9 +143,6 @@ function RoleSelect({
         key={inputProps.key}
         name={inputProps.name}
         defaultValue={inputProps.defaultValue ?? ""}
-        onChange={(e) => {
-          // MUI Select needs special handling
-        }}
       >
         {roles.map(({ id, name, color }) => {
           return (

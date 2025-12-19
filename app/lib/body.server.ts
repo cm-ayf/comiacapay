@@ -1,9 +1,11 @@
 import { parseWithValibot } from "@conform-to/valibot";
-import type { BaseSchema, InferOutput } from "valibot";
+import type { BaseSchema, InferOutput, BaseIssue } from "valibot";
 
-export async function getValidatedBody<T extends BaseSchema<unknown, unknown>>(
+export async function getValidatedBody<
+  TSchema extends BaseSchema<unknown, unknown, BaseIssue<unknown>>
+>(
   request: Request,
-  schema: T,
+  schema: TSchema,
 ) {
   const contentType = request.headers.get("Content-Type")?.split(";")[0];
   let formData: FormData;
@@ -38,10 +40,12 @@ export async function getValidatedBody<T extends BaseSchema<unknown, unknown>>(
   return parseWithValibot(formData, { schema });
 }
 
-export async function getValidatedBodyOr400<T extends BaseSchema<unknown, unknown>>(
+export async function getValidatedBodyOr400<
+  TSchema extends BaseSchema<unknown, unknown, BaseIssue<unknown>>
+>(
   request: Request,
-  schema: T,
-): Promise<InferOutput<T>> {
+  schema: TSchema,
+): Promise<InferOutput<TSchema>> {
   const submission = await getValidatedBody(request, schema);
   
   if (submission.status !== "success") {

@@ -5,7 +5,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import { useFormFields } from "~/components/RemixFormDialog";
-import type { UpsertDisplayInput } from "~/lib/schema";
 
 export default function DisplayDialogContent() {
   const fields = useFormFields();
@@ -20,10 +19,10 @@ export default function DisplayDialogContent() {
       }}
     >
       <TextField
-        {...getInputProps(fields.price, { type: "number" })}
-        key={fields.price.key}
-        error={!!fields.price.errors}
-        helperText={fields.price.errors?.[0]}
+        {...getInputProps(fields["price"]!, { type: "number" })}
+        key={fields["price"]?.key}
+        error={!!fields["price"]?.errors}
+        helperText={fields["price"]?.errors?.[0]}
         required
         label="価格"
         type="number"
@@ -36,10 +35,10 @@ export default function DisplayDialogContent() {
         fullWidth
       />
       <TextField
-        {...getInputProps(fields.internalPrice, { type: "number" })}
-        key={fields.internalPrice.key}
-        error={!!fields.internalPrice.errors}
-        helperText={fields.internalPrice.errors?.[0]}
+        {...getInputProps(fields["internalPrice"]!, { type: "number" })}
+        key={fields["internalPrice"]?.key}
+        error={!!fields["internalPrice"]?.errors}
+        helperText={fields["internalPrice"]?.errors?.[0]}
         label="部内頒布価格"
         type="number"
         slotProps={{
@@ -53,9 +52,9 @@ export default function DisplayDialogContent() {
       <FormControlLabel
         control={
           <Checkbox
-            {...getInputProps(fields.dedication, { type: "checkbox" })}
-            key={fields.dedication.key}
-            defaultChecked={fields.dedication.initialValue === "on"}
+            {...getInputProps(fields["dedication"]!, { type: "checkbox" })}
+            key={fields["dedication"]?.key}
+            defaultChecked={fields["dedication"]?.initialValue === "on"}
           />
         }
         label="献本あり"

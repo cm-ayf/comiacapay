@@ -27,7 +27,7 @@ export default function CreateItemDialog({ ref }: CreateItemDialogProps) {
       onClose={() => setOpen(false)}
       title="商品を追加"
       schema={CreateItem}
-      defaultValue={{ picture: null, issuedAt: getISODateString(new Date()) }}
+      defaultValue={{ name: "", picture: null, issuedAt: getISODateString(new Date()) }}
       submitConfig={{ method: "POST", action: `/${guildId}/items` }}
       onSubmitComplete={(data) => {
         if (!data) return;
