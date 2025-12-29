@@ -49,7 +49,9 @@ async function initSession(
     sidCookie,
   );
 
-  const session = await getSession(request.headers.get("Cookie"));
+  let session = await getSession(request.headers.get("Cookie"));
+  const isExisting = session.get("isExisting");
+  if (!isExisting) session = await getSession();
   const userId = session.get("userId");
   const tokenResult = session.get("tokenResult");
   if (!userId || !tokenResult) {
