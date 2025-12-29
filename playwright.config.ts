@@ -10,7 +10,7 @@ export default defineConfig({
   retries: CI ? 2 : 0,
   reporter: "html",
   use: {
-    baseURL: "http://localhost:5173",
+    baseURL: "http://localhost:4173",
     trace: "on-first-retry",
   },
 
@@ -36,7 +36,7 @@ export default defineConfig({
 
   webServer: {
     command: "npm run preview",
-    url: "http://localhost:5173",
+    url: "http://localhost:4173",
     reuseExistingServer: !CI,
     timeout: 120000,
   },

@@ -11,7 +11,7 @@
     "postinstall:react-router-typegen": "react-router typegen",
     "prepare": "node .husky/install.js",
     "build": "react-router build",
-    "preview": "vite preview --port=5173",
+    "preview": "vite preview",
     "dev": "react-router dev",
     "check:prettier": "prettier --cache --check .",
     "check:eslint": "eslint --cache --cache-location ./node_modules/.cache/eslint/ .",

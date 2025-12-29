@@ -52,7 +52,7 @@ jobs:
     env:
       DISCORD_CLIENT_ID: ""
       DISCORD_CLIENT_SECRET: ""
-      DISCORD_OAUTH2_ORIGIN: "http://localhost:5173"
+      DISCORD_OAUTH2_ORIGIN: ""
       POSTGRES_PRISMA_URL: postgres://postgres:postgres@postgres:5432/postgres
       POSTGRES_URL_NON_POOLING: postgres://postgres:postgres@postgres:5432/postgres
 
