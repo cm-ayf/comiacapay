@@ -19,6 +19,7 @@ export function CreateReceiptButton() {
       method: "POST",
       // this button is rendered outside of the route context
       action: `/${guildId}/${eventId}/register`,
+      encType: "application/json",
     });
   }, [fetcher, guildId, eventId]);
 

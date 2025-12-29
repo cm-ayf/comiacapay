@@ -1,6 +1,6 @@
 import { data } from "react-router";
 import type { Route } from "./+types/$guildId.$eventId.displays.$itemId";
-import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { memberContext, prismaContext } from "~/lib/context.server";
 import { UpsertDisplay } from "~/lib/schema";
 
@@ -12,7 +12,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
   const { guildId, eventId, itemId } = params;
   switch (request.method) {
     case "PUT": {
-      const body = await getValidatedBodyOr400(request, UpsertDisplay);
+      const body = await getValidatedFormDataOr400(request, UpsertDisplay);
 
       // check parent resource belonging guild
       await prisma.item.findUniqueOrThrow({

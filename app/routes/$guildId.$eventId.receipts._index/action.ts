@@ -2,7 +2,7 @@ import { data } from "react-router";
 import type { InferOutput } from "valibot";
 import type { Route } from "./+types/route";
 import type { Prisma } from "~/generated/prisma/client";
-import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { getValidatedJsonOr400 } from "~/lib/body.server";
 import { memberContext, prismaContext } from "~/lib/context.server";
 import { CreateReceipts } from "~/lib/schema";
 
@@ -20,7 +20,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 
   switch (request.method) {
     case "POST": {
-      const body = await getValidatedBodyOr400(request, CreateReceipts);
+      const body = await getValidatedJsonOr400(request, CreateReceipts);
 
       const [receipt] = await prisma.$transaction([
         prisma.receipt.createMany({

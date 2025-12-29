@@ -1,6 +1,6 @@
 import { data } from "react-router";
 import type { Route } from "./+types/$guildId.$eventId.discounts";
-import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { memberContext, prismaContext } from "~/lib/context.server";
 import { CreateDiscount } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
@@ -13,7 +13,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
   const { guildId, eventId } = params;
   switch (request.method) {
     case "POST": {
-      const body = await getValidatedBodyOr400(request, CreateDiscount);
+      const body = await getValidatedFormDataOr400(request, CreateDiscount);
 
       const discount = await prisma.$transaction(async (prisma) => {
         const { discounts } = await prisma.event.findUniqueOrThrow({

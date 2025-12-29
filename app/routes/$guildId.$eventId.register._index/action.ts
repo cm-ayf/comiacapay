@@ -1,7 +1,7 @@
 import { data } from "react-router";
 import type { Route } from "./+types/route";
 import type { Prisma } from "~/generated/prisma/client";
-import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { getValidatedJsonOr400 } from "~/lib/body.server";
 import { memberContext, prismaContext } from "~/lib/context.server";
 import { CreateReceipt } from "~/lib/schema";
 
@@ -13,7 +13,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
   const { guildId, eventId } = params;
   switch (request.method) {
     case "POST": {
-      const { id, total, records } = await getValidatedBodyOr400(
+      const { id, total, records } = await getValidatedJsonOr400(
         request,
         CreateReceipt,
       );

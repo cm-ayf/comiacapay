@@ -6,7 +6,7 @@ import {
 } from "react-router";
 import type { Route } from "./+types/$guildId";
 import createErrorBoundary from "~/components/createErrorBoundary";
-import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import {
   createThenable,
   memberContext,
@@ -51,7 +51,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   const { guildId, checkPermission } = await context.get(memberContext);
   checkPermission("admin");
 
-  const body = await getValidatedBodyOr400(request, UpdateGuild);
+  const body = await getValidatedFormDataOr400(request, UpdateGuild);
 
   const guild = await prisma.guild.update({
     where: { id: guildId },

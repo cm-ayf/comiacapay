@@ -1,6 +1,6 @@
 import { data } from "react-router";
 import type { Route } from "./+types/$guildId.items.$itemId";
-import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { memberContext, prismaContext } from "~/lib/context.server";
 import { UpdateItem } from "~/lib/schema";
 
@@ -12,7 +12,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
   const { guildId, itemId } = params;
   switch (request.method) {
     case "PATCH": {
-      const body = await getValidatedBodyOr400(request, UpdateItem);
+      const body = await getValidatedFormDataOr400(request, UpdateItem);
 
       return await prisma.item.update({
         where: { id: itemId, guildId },

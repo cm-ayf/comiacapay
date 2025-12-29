@@ -1,7 +1,12 @@
 import { parseWithValibot } from "@conform-to/valibot";
-import type { BaseSchema, InferOutput, BaseIssue } from "valibot";
+import {
+  type BaseSchema,
+  type InferOutput,
+  type BaseIssue,
+  safeParse,
+} from "valibot";
 
-export async function getValidatedBodyOr400<
+export async function getValidatedFormDataOr400<
   TSchema extends BaseSchema<unknown, unknown, BaseIssue<unknown>>,
 >(request: Request, schema: TSchema): Promise<InferOutput<TSchema>> {
   const formData = await request.formData();
@@ -15,4 +20,20 @@ export async function getValidatedBodyOr400<
   }
 
   return submission.value;
+}
+
+export async function getValidatedJsonOr400<
+  TSchema extends BaseSchema<unknown, unknown, BaseIssue<unknown>>,
+>(request: Request, schema: TSchema): Promise<InferOutput<TSchema>> {
+  const json = await request.json();
+  const result = safeParse(schema, json);
+
+  if (!result.success) {
+    throw Response.json(
+      { code: "BAD_REQUEST", issues: result.issues },
+      { status: 400 },
+    );
+  }
+
+  return result.output;
 }
