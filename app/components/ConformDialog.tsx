@@ -35,16 +35,16 @@ type Schema = ObjectSchema<
   ErrorMessage<ObjectIssue> | undefined
 >;
 
-export interface ConformDialogProps<T extends Schema, U> {
+export interface ConformDialogProps<TSchema extends Schema, Action> {
   open: boolean;
   onClose: () => void;
   title: string;
 
-  schema: T;
-  defaultValue?: DefaultValue<InferOutput<NoInfer<T>>>;
+  schema: TSchema;
+  defaultValue?: DefaultValue<InferOutput<NoInfer<TSchema>>>;
   submitConfig?: SubmitOptions;
 
-  onSubmitComplete?: (data: SerializeFrom<U>) => void;
+  onSubmitComplete?: (data: SerializeFrom<Action>) => void;
 }
 
 interface ConformDialogFetcherContext {
@@ -54,7 +54,7 @@ interface ConformDialogFetcherContext {
 const ConformDialogFetcherContext =
   createContext<ConformDialogFetcherContext | null>(null);
 
-export function ConformDialog<T extends Schema, U = unknown>({
+export function ConformDialog<TSchema extends Schema, Action>({
   children,
   open,
   onClose,
@@ -63,8 +63,8 @@ export function ConformDialog<T extends Schema, U = unknown>({
   defaultValue = {},
   submitConfig = {},
   onSubmitComplete,
-}: PropsWithChildren<ConformDialogProps<T, U>>) {
-  const fetcher = useFetcher<U>();
+}: PropsWithChildren<ConformDialogProps<TSchema, Action>>) {
+  const fetcher = useFetcher<Action>();
 
   const [form] = useForm({
     defaultValue,
@@ -104,10 +104,10 @@ export function ConformDialog<T extends Schema, U = unknown>({
   );
 }
 
-export function useFormFieldSet<T extends Schema>(): ReturnType<
-  FormMetadata<InferInput<T>, string[]>["getFieldset"]
+export function useFormFieldSet<TSchema extends Schema>(): ReturnType<
+  FormMetadata<InferInput<TSchema>, string[]>["getFieldset"]
 > {
-  const form = useFormMetadata() as FormMetadata<InferInput<T>, string[]>;
+  const form = useFormMetadata() as FormMetadata<InferInput<TSchema>, string[]>;
   return form.getFieldset();
 }
 
