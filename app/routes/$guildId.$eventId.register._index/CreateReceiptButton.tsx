@@ -1,6 +1,7 @@
 import Button from "@mui/material/Button";
 import { useCallback } from "react";
 import { useFetcher, useParams } from "react-router";
+import { useAlert } from "~/components/Alert";
 import { useOnSubmitComplete } from "~/lib/fetcher";
 import {
   clearRecords,
@@ -12,6 +13,7 @@ export function CreateReceiptButton() {
   const { guildId, eventId } = useParams();
   const fetcher = useFetcher();
   const hasSomeRecord = useHasSomeRecord();
+  const { success } = useAlert();
 
   const submit = useCallback(() => {
     const receipt = getCreateReceiptInput();
@@ -23,7 +25,10 @@ export function CreateReceiptButton() {
     });
   }, [fetcher, guildId, eventId]);
 
-  useOnSubmitComplete(fetcher, clearRecords);
+  useOnSubmitComplete(fetcher, () => {
+    clearRecords();
+    success("売上を登録しました");
+  });
 
   return (
     <Button
