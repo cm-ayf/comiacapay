@@ -3,7 +3,6 @@ import { pigment } from "@pigment-css/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
-import surpressNodeModulesWarning from "./plugins/surpress-node-modules-warning";
 import vercelCustomEntrypoint from "./plugins/vercel-custom-entrypoint";
 
 export default defineConfig({
@@ -49,7 +48,6 @@ export default defineConfig({
       },
       outDir: "build/client",
     }),
-    surpressNodeModulesWarning(),
     vercelCustomEntrypoint({ main: "./main.ts" }),
   ],
   resolve: {
