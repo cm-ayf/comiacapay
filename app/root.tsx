@@ -175,10 +175,10 @@ function AppLayout({
         <Container maxWidth={maxWidth ?? "lg"} component="main">
           {children}
         </Container>
+        {/* TODO: fix */}
+        {/* eslint-disable-next-line react-hooks/static-components */}
+        <ButtomComponent />
       </AlertProvider>
-      {/* TODO: fix */}
-      {/* eslint-disable-next-line react-hooks/static-components */}
-      <ButtomComponent />
     </>
   );
 }
