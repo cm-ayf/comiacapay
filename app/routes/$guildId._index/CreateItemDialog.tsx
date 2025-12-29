@@ -33,8 +33,7 @@ export default function CreateItemDialog({ ref }: CreateItemDialogProps) {
         issuedAt: getISODateString(new Date()),
       }}
       submitConfig={{ method: "POST", action: `/${guildId}/items` }}
-      onSubmitComplete={(data) => {
-        if (!data) return;
+      onSubmitComplete={() => {
         success("商品を追加しました");
       }}
     >

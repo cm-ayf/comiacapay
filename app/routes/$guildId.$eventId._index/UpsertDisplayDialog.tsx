@@ -1,7 +1,6 @@
 import { useImperativeHandle, useState } from "react";
 import { useLoaderData, useParams } from "react-router";
 import type { InferInput } from "valibot";
-import type { action } from "../$guildId.$eventId.displays.$itemId";
 import type { loader } from "./loader";
 import { useAlert } from "~/components/Alert";
 import {
@@ -40,19 +39,17 @@ export default function UpsertDisplayDialog({ ref }: UpsertDisplayDialogProps) {
       } satisfies InferInput<typeof UpsertDisplay>);
 
   return (
-    <ConformDialog<typeof UpsertDisplay, typeof action>
+    <ConformDialog
       open={Boolean(display)}
       onClose={() => setDisplay(undefined)}
       title={`${display.item.name}のお品書きを${display.create ? "追加" : "編集"}`}
       schema={UpsertDisplay}
       defaultValue={defaultValue}
-      onSubmitComplete={(data) => {
-        if (!data) return;
-        if ("delete" in data) {
-          success("お品書きを削除しました");
-        } else {
-          success("お品書きを更新しました");
-        }
+      onSubmitComplete={() => {
+        success("お品書きを更新しました");
+      }}
+      onDeleteComplete={() => {
+        success("お品書きを削除しました");
       }}
       submitConfig={{
         method: "PUT",

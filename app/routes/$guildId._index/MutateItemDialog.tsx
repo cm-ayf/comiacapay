@@ -1,6 +1,5 @@
 import { useImperativeHandle, useMemo, useState, type Ref } from "react";
 import { useLoaderData, useParams } from "react-router";
-import type { action } from "../$guildId.items.$itemId";
 import type { loader } from "./loader";
 import { useAlert } from "~/components/Alert";
 import {
@@ -26,7 +25,7 @@ export default function MutateItemDialog({ ref }: MutateItemDialogProps) {
   if (!item) return null;
 
   return (
-    <ConformDialog<typeof UpdateItem, typeof action>
+    <ConformDialog
       open
       onClose={() => setItem(undefined)}
       title="商品を編集"
@@ -37,13 +36,11 @@ export default function MutateItemDialog({ ref }: MutateItemDialogProps) {
         issuedAt: getISODateString(item.issuedAt),
       }}
       submitConfig={{ method: "PATCH", action: `/${guildId}/items/${item.id}` }}
-      onSubmitComplete={(data) => {
-        if (!data) return;
-        if ("delete" in data) {
-          success("商品を削除しました");
-        } else {
-          success("商品を更新しました");
-        }
+      onSubmitComplete={() => {
+        success("商品を更新しました");
+      }}
+      onDeleteComplete={() => {
+        success("商品を削除しました");
       }}
     >
       <ItemDialogContent />

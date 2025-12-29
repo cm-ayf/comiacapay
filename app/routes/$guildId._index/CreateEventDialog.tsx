@@ -36,7 +36,6 @@ export default function CreateEventDialog({
       defaultValue={{ name: "", date: getISODateString(new Date()), clone: "" }}
       submitConfig={{ method: "POST" }}
       onSubmitComplete={(data) => {
-        if (!data) return;
         success("イベントを追加しました");
         navigate(`/${guildId}/${data.id}`);
       }}

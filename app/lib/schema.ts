@@ -12,7 +12,6 @@ import {
   nullable,
   number,
   object,
-  partial,
   pipe,
   string,
   transform,
@@ -86,7 +85,11 @@ export const CreateItem = object({
   ),
   issuedAt: dateLike(),
 });
-export const UpdateItem = partial(CreateItem);
+export const UpdateItem = object({
+  name: exactOptional(CreateItem.entries.name),
+  picture: exactOptional(CreateItem.entries.picture),
+  issuedAt: exactOptional(CreateItem.entries.issuedAt),
+});
 
 export type ClientEvent = SerializeFrom<Event & { displays: Display[] }>;
 export const CreateEvent = object({
@@ -101,7 +104,10 @@ export const CreateEvent = object({
     snowflake(),
   ]),
 });
-export const UpdateEvent = partial(CreateEvent);
+export const UpdateEvent = object({
+  name: exactOptional(CreateEvent.entries.name),
+  date: exactOptional(CreateEvent.entries.date),
+});
 
 export const CreateSetDiscount = object({
   __typename: literal("SetDiscount"),
@@ -113,7 +119,7 @@ export const CreateDiscount = union([CreateSetDiscount]);
 export type ClientDisplay = SerializeFrom<Display & { item: Item }>;
 export const UpsertDisplay = object({
   price: uint(),
-  internalPrice: exactOptional(uint()),
+  internalPrice: exactOptional(nullable(uint())),
   dedication: exactOptional(boolean(), false),
 });
 

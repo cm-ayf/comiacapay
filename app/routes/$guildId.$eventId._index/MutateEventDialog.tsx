@@ -1,6 +1,5 @@
 import { useImperativeHandle, useState, type Ref } from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router";
-import type { action } from "../$guildId.$eventId";
 import type { loader } from "./loader";
 import { useAlert } from "~/components/Alert";
 import {
@@ -26,7 +25,7 @@ export default function MutateEventDialog({ ref }: MutateEventDialogProps) {
   if (!event) return null;
 
   return (
-    <ConformDialog<typeof UpdateEvent, typeof action>
+    <ConformDialog
       open
       onClose={() => setEvent(undefined)}
       title="イベントを編集"
@@ -36,14 +35,12 @@ export default function MutateEventDialog({ ref }: MutateEventDialogProps) {
         method: "PATCH",
         action: `/${guildId}/${event.id}`,
       }}
-      onSubmitComplete={(data) => {
-        if (!data) return;
-        if ("delete" in data) {
-          success("イベントを削除しました");
-          navigate(`/${guildId}`);
-        } else {
-          success("イベントを更新しました");
-        }
+      onSubmitComplete={() => {
+        success("イベントを更新しました");
+      }}
+      onDeleteComplete={() => {
+        success("イベントを削除しました");
+        navigate(`/${guildId}`);
       }}
     >
       <EventDialogContent />

@@ -45,6 +45,7 @@ export interface ConformDialogProps<TSchema extends Schema, Action> {
   submitConfig?: SubmitOptions;
 
   onSubmitComplete?: (data: SerializeFrom<Action>) => void;
+  onDeleteComplete?: () => void;
 }
 
 interface ConformDialogFetcherContext {
@@ -63,6 +64,7 @@ export function ConformDialog<TSchema extends Schema, Action>({
   defaultValue = {},
   submitConfig = {},
   onSubmitComplete,
+  onDeleteComplete,
 }: PropsWithChildren<ConformDialogProps<TSchema, Action>>) {
   const fetcher = useFetcher<Action>();
 
@@ -78,7 +80,11 @@ export function ConformDialog<TSchema extends Schema, Action>({
   useOnSubmitComplete(fetcher, (data) => {
     onClose();
     form.reset();
-    onSubmitComplete?.(data);
+    if (typeof data === "object" && data !== null && "deleted" in data) {
+      onDeleteComplete?.();
+    } else {
+      onSubmitComplete?.(data);
+    }
   });
 
   return (
