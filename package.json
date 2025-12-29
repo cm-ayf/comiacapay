@@ -56,9 +56,9 @@
     "@prisma/generator-helper": "6.19.0",
     "@react-router/dev": "7.11.0",
     "@remix-run/node-fetch-server": "0.9.0",
-    "@tsconfig/node22": "22.0.5",
+    "@tsconfig/node24": "24.0.3",
     "@tsconfig/strictest": "2.0.8",
-    "@types/node": "22.15.2",
+    "@types/node": "24.10.4",
     "@types/pg": "8.16.0",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
@@ -100,6 +100,6 @@
     "vite": "8.0.0-beta.5"
   },
   "engines": {
-    "node": "22"
+    "node": "24.x"
   }
 }
