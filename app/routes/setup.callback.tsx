@@ -17,6 +17,7 @@ import {
   useNavigate,
   type SubmitOptions,
 } from "react-router";
+import type { InferInput } from "valibot";
 import type { action } from "./$guildId";
 import type { Route } from "./+types/setup.callback";
 import { useAlert } from "~/components/Alert";
@@ -24,7 +25,7 @@ import createErrorBoundary from "~/components/createErrorBoundary";
 import { sessionContext } from "~/lib/context.server";
 import { useOnSubmitComplete } from "~/lib/fetcher";
 import { exchangeBotCode } from "~/lib/oauth2/setup.server";
-import { UpdateGuild, type UpdateGuildInput } from "~/lib/schema";
+import { UpdateGuild } from "~/lib/schema";
 import { upsertGuildAndMember } from "~/lib/sync/guild.server";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
@@ -70,7 +71,7 @@ function RolesSelect({
   submitConfig,
 }: {
   roles: APIRole[];
-  defaultValues: UpdateGuildInput;
+  defaultValues: InferInput<typeof UpdateGuild>;
   submitConfig: SubmitOptions;
 }) {
   const fetcher = useFetcher<typeof action>();
@@ -132,7 +133,7 @@ function RoleSelect({
 }) {
   const id = useId();
   const inputProps = getInputProps(field, { type: "text" });
-  
+
   return (
     <FormControl>
       <InputLabel id={id}>{label}</InputLabel>

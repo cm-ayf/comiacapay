@@ -2,15 +2,11 @@ import { useImperativeHandle, useState } from "react";
 import { useParams } from "react-router";
 import { useAlert } from "~/components/Alert";
 import {
-  RemixFormDialog,
-  RemixFormDialogActions,
-} from "~/components/RemixFormDialog";
+  ConformDialog,
+  ConformDialogActions,
+} from "~/components/ConformDialog";
 import SetDiscountDialogContent from "~/components/SetDiscountDialogContent";
-import {
-  CreateSetDiscount,
-  type ClientDisplay,
-  type CreateSetDiscountInput,
-} from "~/lib/schema";
+import { CreateSetDiscount, type ClientDisplay } from "~/lib/schema";
 
 interface CreateSetDiscountDialogProps {
   ref: React.Ref<{ open: () => void }>;
@@ -28,7 +24,7 @@ export default function CreateSetDiscountDialog({
   const { guildId, eventId } = useParams();
   const { success } = useAlert();
   return (
-    <RemixFormDialog<CreateSetDiscountInput, unknown>
+    <ConformDialog
       open={open}
       onClose={() => setOpen(false)}
       title="セット割引を追加"
@@ -42,7 +38,7 @@ export default function CreateSetDiscountDialog({
       }}
     >
       <SetDiscountDialogContent displays={displays} />
-      <RemixFormDialogActions submitButton={{ label: "保存" }} />
-    </RemixFormDialog>
+      <ConformDialogActions submitButton={{ label: "保存" }} />
+    </ConformDialog>
   );
 }

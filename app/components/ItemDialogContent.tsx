@@ -1,10 +1,11 @@
 import { getInputProps } from "@conform-to/react";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
-import { useFormFields } from "~/components/RemixFormDialog";
+import { useFormFieldSet } from "~/components/ConformDialog";
+import type { CreateItem, UpdateItem } from "~/lib/schema";
 
 export default function ItemDialogContent() {
-  const fields = useFormFields();
+  const fields = useFormFieldSet<typeof CreateItem | typeof UpdateItem>();
 
   return (
     <DialogContent

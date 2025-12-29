@@ -6,16 +6,15 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import FormLabel from "@mui/material/FormLabel";
 import TextField from "@mui/material/TextField";
-import { useFormFields } from "~/components/RemixFormDialog";
-import type { ClientDisplay } from "~/lib/schema";
+import { useFormFieldSet } from "~/components/ConformDialog";
+import type { ClientDisplay, CreateSetDiscount } from "~/lib/schema";
 
 export default function SetDiscountDialogContent({
   displays,
 }: {
   displays: ClientDisplay[];
 }) {
-  const fields = useFormFields();
-  const itemIdsField = fields["itemIds"];
+  const fields = useFormFieldSet<typeof CreateSetDiscount>();
 
   return (
     <DialogContent
@@ -26,22 +25,21 @@ export default function SetDiscountDialogContent({
         gap: 1,
       }}
     >
-      {itemIdsField && (
-        <FormControl
-          sx={{ mt: 2 }}
-          error={!!itemIdsField.errors}
-        >
+      {fields.itemIds && (
+        <FormControl sx={{ mt: 2 }} error={!!fields.itemIds.errors}>
           <FormLabel component="legend">商品の組み合わせ</FormLabel>
           <FormGroup>
             {displays.map(({ item }) => {
-              const initialValueArray = itemIdsField.initialValue as string[] | undefined;
+              const initialValueArray = fields.itemIds.initialValue as
+                | string[]
+                | undefined;
               const isChecked = initialValueArray?.includes(item.id) ?? false;
               return (
                 <FormControlLabel
                   key={item.id}
                   control={
                     <Checkbox
-                      name={itemIdsField.name}
+                      name={fields.itemIds.name}
                       value={item.id}
                       defaultChecked={isChecked}
                     />
@@ -51,18 +49,18 @@ export default function SetDiscountDialogContent({
               );
             })}
           </FormGroup>
-          {itemIdsField.errors && (
+          {fields.itemIds.errors && (
             <div style={{ color: "red", fontSize: "0.75rem" }}>
-              {itemIdsField.errors[0]}
+              {fields.itemIds.errors[0]}
             </div>
           )}
         </FormControl>
       )}
       <TextField
-        {...getInputProps(fields["amount"]!, { type: "number" })}
-        key={fields["amount"]?.key}
-        error={!!fields["amount"]?.errors}
-        helperText={fields["amount"]?.errors?.[0]}
+        {...getInputProps(fields.amount, { type: "number" })}
+        key={fields.amount.key}
+        error={!!fields.amount.errors}
+        helperText={fields.amount.errors?.[0]}
         label="割引額"
         type="number"
         variant="standard"

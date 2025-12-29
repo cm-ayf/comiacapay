@@ -2,17 +2,13 @@ import { useImperativeHandle, useState, type Ref } from "react";
 import { useNavigate, useParams } from "react-router";
 import type { action } from "./action";
 import { useAlert } from "~/components/Alert";
+import {
+  ConformDialog,
+  ConformDialogActions,
+} from "~/components/ConformDialog";
 import EventDialogContent from "~/components/EventDialogContent";
-import {
-  RemixFormDialog,
-  RemixFormDialogActions,
-} from "~/components/RemixFormDialog";
 import { getISODateString } from "~/lib/date";
-import {
-  CreateEvent,
-  type ClientEvent,
-  type CreateEventInput,
-} from "~/lib/schema";
+import { CreateEvent, type ClientEvent } from "~/lib/schema";
 
 interface CreateEventDialogProps {
   ref: Ref<{ open: () => void }>;
@@ -32,7 +28,7 @@ export default function CreateEventDialog({
   const { success } = useAlert();
 
   return (
-    <RemixFormDialog<CreateEventInput, typeof action>
+    <ConformDialog<typeof CreateEvent, typeof action>
       open={open}
       onClose={() => setOpen(false)}
       title="イベントを追加"
@@ -46,7 +42,7 @@ export default function CreateEventDialog({
       }}
     >
       <EventDialogContent events={events} />
-      <RemixFormDialogActions submitButton={{ label: "保存" }} />
-    </RemixFormDialog>
+      <ConformDialogActions submitButton={{ label: "保存" }} />
+    </ConformDialog>
   );
 }

@@ -1,54 +1,73 @@
-import { getFormProps, useForm, type FieldMetadata } from "@conform-to/react";
+import {
+  getFormProps,
+  useForm,
+  FormProvider,
+  useFormMetadata,
+  type DefaultValue,
+  type FormMetadata,
+} from "@conform-to/react";
 import { parseWithValibot } from "@conform-to/valibot";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import Tooltip from "@mui/material/Tooltip";
-import { createContext, use, useCallback, type PropsWithChildren } from "react";
+import { createContext, use, type PropsWithChildren } from "react";
 import {
   useFetcher,
   type useLoaderData,
   type SubmitOptions,
+  type FetcherWithComponents,
 } from "react-router";
-import type { BaseSchema } from "valibot";
+import type {
+  ErrorMessage,
+  InferInput,
+  InferOutput,
+  ObjectEntries,
+  ObjectIssue,
+  ObjectSchema,
+} from "valibot";
 import { useOnSubmitComplete } from "~/lib/fetcher";
 
 type SerializeFrom<AppData> = ReturnType<typeof useLoaderData<AppData>>;
+type Schema = ObjectSchema<
+  ObjectEntries,
+  ErrorMessage<ObjectIssue> | undefined
+>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface RemixFormDialogProps<T extends Record<string, any>, U> {
+export interface ConformDialogProps<T extends Schema, U> {
   open: boolean;
   onClose: () => void;
   title: string;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  schema: BaseSchema<unknown, T, any>;
-  defaultValue?: T | undefined;
+  schema: T;
+  defaultValue?: DefaultValue<InferOutput<NoInfer<T>>>;
   submitConfig?: SubmitOptions;
 
   onSubmitComplete?: (data: SerializeFrom<U>) => void;
 }
 
-const HandleDeleteContext = createContext<(() => void) | null>(null);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const FormFieldsContext = createContext<Record<string, FieldMetadata<any>> | null>(null);
+interface ConformDialogFetcherContext {
+  fetcher: FetcherWithComponents<unknown>;
+  submitConfig: SubmitOptions;
+}
+const ConformDialogFetcherContext =
+  createContext<ConformDialogFetcherContext | null>(null);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function RemixFormDialog<T extends Record<string, any>, U = unknown>({
+export function ConformDialog<T extends Schema, U = unknown>({
   children,
   open,
   onClose,
   title,
   schema,
-  defaultValue,
+  defaultValue = {},
   submitConfig = {},
   onSubmitComplete,
-}: PropsWithChildren<RemixFormDialogProps<T, U>>) {
+}: PropsWithChildren<ConformDialogProps<T, U>>) {
   const fetcher = useFetcher<U>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [form, fields] = useForm<T>({
-    defaultValue: defaultValue as any,
+
+  const [form] = useForm({
+    defaultValue,
     onValidate({ formData }) {
       return parseWithValibot(formData, { schema });
     },
@@ -62,11 +81,6 @@ export function RemixFormDialog<T extends Record<string, any>, U = unknown>({
     onSubmitComplete?.(data);
   });
 
-  const handleDelete = useCallback(
-    () => fetcher.submit(null, { ...submitConfig, method: "DELETE" }),
-    [fetcher, submitConfig],
-  );
-
   return (
     <Dialog
       open={open}
@@ -74,27 +88,27 @@ export function RemixFormDialog<T extends Record<string, any>, U = unknown>({
         onClose();
         form.reset();
       }}
-      PaperProps={{ 
+      PaperProps={{
         component: fetcher.Form,
         ...getFormProps(form),
         ...submitConfig,
       }}
     >
-      <FormFieldsContext value={fields}>
+      <FormProvider context={form.context}>
         <DialogTitle>{title}</DialogTitle>
-        <HandleDeleteContext value={handleDelete}>
+        <ConformDialogFetcherContext value={{ fetcher, submitConfig }}>
           {children}
-        </HandleDeleteContext>
-      </FormFieldsContext>
+        </ConformDialogFetcherContext>
+      </FormProvider>
     </Dialog>
   );
 }
 
-export function useFormFields() {
-  const fields = use(FormFieldsContext);
-  if (!fields) throw new Error("useFormFields must be used within RemixFormDialog");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return fields as Record<string, FieldMetadata<any, any, string[]>>;
+export function useFormFieldSet<T extends Schema>(): ReturnType<
+  FormMetadata<InferInput<T>, string[]>["getFieldset"]
+> {
+  const form = useFormMetadata() as FormMetadata<InferInput<T>, string[]>;
+  return form.getFieldset();
 }
 
 export interface RemixFormDialogButtonsProps {
@@ -104,30 +118,31 @@ export interface RemixFormDialogButtonsProps {
     | undefined;
 }
 
-export function RemixFormDialogActions({
+export function ConformDialogActions({
   submitButton,
   deleteButton,
 }: RemixFormDialogButtonsProps) {
-  const handleDelete = use(HandleDeleteContext);
-  const fetcher = useFetcher();
+  const context = use(ConformDialogFetcherContext);
+  if (!context) {
+    throw new Error("ConformDialogActions must be used within a ConformDialog");
+  }
+  const { fetcher, submitConfig } = context;
 
   return (
     <DialogActions>
-      <Button
-        type="submit"
-        color="primary"
-        loading={fetcher.state !== "idle"}
-      >
+      <Button type="submit" color="primary" loading={fetcher.state !== "idle"}>
         {submitButton.label}
       </Button>
-      {deleteButton && handleDelete && (
+      {deleteButton && (
         <OptionalTooltip
           title={deleteButton.disabledMessage}
           enabled={deleteButton.disabled}
         >
           <Button
             color="error"
-            onClick={handleDelete}
+            onClick={() =>
+              fetcher.submit(null, { ...submitConfig, method: "DELETE" })
+            }
             loading={fetcher.state !== "idle"}
             disabled={deleteButton.disabled}
           >

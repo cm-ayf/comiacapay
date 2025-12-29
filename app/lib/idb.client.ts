@@ -1,9 +1,10 @@
 import { type IDBPDatabase, type DBSchema, openDB } from "idb";
-import type { ClientReceipt, CreateReceiptOutput } from "./schema";
+import type { InferOutput } from "valibot";
+import type { ClientReceipt, CreateReceipt } from "./schema";
 import { Snowflake } from "./snowflake";
 
 // fetcher.submit(receipts) requires implicit index signature for string
-export type IDBReceipt = CreateReceiptOutput & {
+export type IDBReceipt = InferOutput<typeof CreateReceipt> & {
   eventId: string;
   pushed: boolean;
   deleted?: boolean;
@@ -65,7 +66,7 @@ export async function getReceipts(eventId: string): Promise<IDBReceipt[]> {
 
 export async function addReceipt(
   eventId: string,
-  receipt: CreateReceiptOutput,
+  receipt: InferOutput<typeof CreateReceipt>,
 ) {
   const db = await init();
   await db.add("Receipt", { ...receipt, eventId, pushed: false });
