@@ -22,9 +22,9 @@
     "fix": "run-s fix:*",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
-    "test:e2e": "PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test",
-    "test:e2e:ui": "PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test --ui",
-    "test:e2e:debug": "PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test --debug"
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",
