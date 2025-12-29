@@ -1,23 +1,14 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useImperativeHandle, useMemo, useState, type Ref } from "react";
 import { useLoaderData, useParams } from "react-router";
-import type { action } from "../$guildId.items.$itemId";
 import type { loader } from "./loader";
 import { useAlert } from "~/components/Alert";
+import {
+  ConformDialog,
+  ConformDialogActions,
+} from "~/components/ConformDialog";
 import ItemDialogContent from "~/components/ItemDialogContent";
-import {
-  RemixFormDialog,
-  RemixFormDialogActions,
-} from "~/components/RemixFormDialog";
 import { getISODateString } from "~/lib/date";
-import {
-  UpdateItem,
-  type ClientEvent,
-  type ClientItem,
-  type UpdateItemInput,
-} from "~/lib/schema";
-
-const resolver = valibotResolver(UpdateItem);
+import { UpdateItem, type ClientEvent, type ClientItem } from "~/lib/schema";
 
 export interface MutateItemDialogProps {
   ref: Ref<{ open: (item: ClientItem) => void }>;
@@ -34,28 +25,26 @@ export default function MutateItemDialog({ ref }: MutateItemDialogProps) {
   if (!item) return null;
 
   return (
-    <RemixFormDialog<UpdateItemInput, typeof action>
+    <ConformDialog
       open
       onClose={() => setItem(undefined)}
       title="商品を編集"
-      resolver={resolver}
-      defaultValues={{
+      schema={UpdateItem}
+      defaultValue={{
         name: item.name,
         picture: item.picture,
         issuedAt: getISODateString(item.issuedAt),
       }}
       submitConfig={{ method: "PATCH", action: `/${guildId}/items/${item.id}` }}
-      onSubmitComplete={(data) => {
-        if (!data) return;
-        if ("delete" in data) {
-          success("商品を削除しました");
-        } else {
-          success("商品を更新しました");
-        }
+      onSubmitComplete={() => {
+        success("商品を更新しました");
+      }}
+      onDeleteComplete={() => {
+        success("商品を削除しました");
       }}
     >
       <ItemDialogContent />
-      <RemixFormDialogActions
+      <ConformDialogActions
         submitButton={{ label: "保存" }}
         deleteButton={{
           label: "削除",
@@ -63,7 +52,7 @@ export default function MutateItemDialog({ ref }: MutateItemDialogProps) {
           disabledMessage: "お品書きがあるため削除できません",
         }}
       />
-    </RemixFormDialog>
+    </ConformDialog>
   );
 }
 

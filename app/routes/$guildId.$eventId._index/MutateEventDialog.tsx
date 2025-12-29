@@ -1,22 +1,14 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useImperativeHandle, useState, type Ref } from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router";
-import type { action } from "../$guildId.$eventId";
 import type { loader } from "./loader";
 import { useAlert } from "~/components/Alert";
+import {
+  ConformDialog,
+  ConformDialogActions,
+} from "~/components/ConformDialog";
 import EventDialogContent from "~/components/EventDialogContent";
-import {
-  RemixFormDialog,
-  RemixFormDialogActions,
-} from "~/components/RemixFormDialog";
 import { getISODateString } from "~/lib/date";
-import {
-  UpdateEvent,
-  type ClientEvent,
-  type UpdateEventInput,
-} from "~/lib/schema";
-
-const resolver = valibotResolver(UpdateEvent);
+import { UpdateEvent, type ClientEvent } from "~/lib/schema";
 
 interface MutateEventDialogProps {
   ref: Ref<{ open: (event: ClientEvent) => void }>;
@@ -33,28 +25,26 @@ export default function MutateEventDialog({ ref }: MutateEventDialogProps) {
   if (!event) return null;
 
   return (
-    <RemixFormDialog<UpdateEventInput, typeof action>
+    <ConformDialog
       open
       onClose={() => setEvent(undefined)}
       title="イベントを編集"
-      resolver={resolver}
-      defaultValues={{ name: event.name, date: getISODateString(event.date) }}
+      schema={UpdateEvent}
+      defaultValue={{ name: event.name, date: getISODateString(event.date) }}
       submitConfig={{
         method: "PATCH",
         action: `/${guildId}/${event.id}`,
       }}
-      onSubmitComplete={(data) => {
-        if (!data) return;
-        if ("delete" in data) {
-          success("イベントを削除しました");
-          navigate(`/${guildId}`);
-        } else {
-          success("イベントを更新しました");
-        }
+      onSubmitComplete={() => {
+        success("イベントを更新しました");
+      }}
+      onDeleteComplete={() => {
+        success("イベントを削除しました");
+        navigate(`/${guildId}`);
       }}
     >
       <EventDialogContent />
-      <RemixFormDialogActions
+      <ConformDialogActions
         submitButton={{ label: "保存" }}
         deleteButton={{
           label: "削除",
@@ -62,6 +52,6 @@ export default function MutateEventDialog({ ref }: MutateEventDialogProps) {
           disabledMessage: "購入履歴があるため削除できません",
         }}
       />
-    </RemixFormDialog>
+    </ConformDialog>
   );
 }

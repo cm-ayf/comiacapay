@@ -1,4 +1,10 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
+import {
+  getFormProps,
+  getInputProps,
+  useForm,
+  type FieldMetadata,
+} from "@conform-to/react";
+import { parseWithValibot } from "@conform-to/valibot";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
@@ -16,11 +22,7 @@ import {
   useNavigate,
   type SubmitOptions,
 } from "react-router";
-import {
-  RemixFormProvider,
-  useRemixForm,
-  useRemixFormContext,
-} from "remix-hook-form";
+import type { InferInput } from "valibot";
 import type { action } from "./$guildId";
 import type { Route } from "./+types/setup.callback";
 import { useAlert } from "~/components/Alert";
@@ -28,10 +30,8 @@ import createErrorBoundary from "~/components/createErrorBoundary";
 import { sessionContext } from "~/lib/context.server";
 import { useOnSubmitComplete } from "~/lib/fetcher";
 import { exchangeBotCode } from "~/lib/oauth2/setup.server";
-import { UpdateGuild, type UpdateGuildInput } from "~/lib/schema";
+import { UpdateGuild } from "~/lib/schema";
 import { upsertGuildAndMember } from "~/lib/sync/guild.server";
-
-const resolver = valibotResolver(UpdateGuild);
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   try {
@@ -76,15 +76,16 @@ function RolesSelect({
   submitConfig,
 }: {
   roles: APIRole[];
-  defaultValues: UpdateGuildInput;
+  defaultValues: InferInput<typeof UpdateGuild>;
   submitConfig: SubmitOptions;
 }) {
   const fetcher = useFetcher<typeof action>();
-  const {
-    handleSubmit,
-    reset: _,
-    ...methods
-  } = useRemixForm({ defaultValues, resolver, submitConfig, fetcher });
+  const [form, fields] = useForm({
+    defaultValue: defaultValues,
+    onValidate({ formData }) {
+      return parseWithValibot(formData, { schema: UpdateGuild });
+    },
+  });
   const { success } = useAlert();
   const navigate = useNavigate();
   useOnSubmitComplete(fetcher, (data) => {
@@ -95,49 +96,54 @@ function RolesSelect({
   return (
     <Box
       component={fetcher.Form}
-      onSubmit={handleSubmit}
+      method={submitConfig.method ?? "POST"}
+      action={submitConfig.action ?? ""}
+      {...getFormProps(form)}
       sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}
     >
-      <RemixFormProvider {...methods} handleSubmit={null} reset={null}>
-        <RoleSelect
-          name="read"
-          helperText="イベントや商品の情報を閲覧できます"
-          roles={roles}
-        />
-        <RoleSelect
-          name="register"
-          helperText="レジ入力を行えます"
-          roles={roles}
-        />
-        <RoleSelect
-          name="write"
-          helperText="イベントや商品の情報を編集できます"
-          roles={roles}
-        />
-        <RoleSubmitButton label="保存" />
-      </RemixFormProvider>
+      <RoleSelect
+        label="READ"
+        helperText="イベントや商品の情報を閲覧できます"
+        roles={roles}
+        field={fields.readRoleId}
+      />
+      <RoleSelect
+        label="REGISTER"
+        helperText="レジ入力を行えます"
+        roles={roles}
+        field={fields.registerRoleId}
+      />
+      <RoleSelect
+        label="WRITE"
+        helperText="イベントや商品の情報を編集できます"
+        roles={roles}
+        field={fields.writeRoleId}
+      />
+      <RoleSubmitButton fetcher={fetcher} />
     </Box>
   );
 }
 
 function RoleSelect({
-  name,
+  label,
   helperText,
   roles,
+  field,
 }: {
-  name: "read" | "register" | "write";
+  label: string;
   helperText: string;
   roles: APIRole[];
+  field: FieldMetadata<string | null, InferInput<typeof UpdateGuild>>;
 }) {
   const id = useId();
-  const { register } = useRemixFormContext<UpdateGuildInput>();
+
   return (
     <FormControl>
-      <InputLabel id={id}>{name.toUpperCase()}</InputLabel>
+      <InputLabel id={id}>{label}</InputLabel>
       <Select
-        label={name.toUpperCase()}
+        label={label}
         labelId={id}
-        {...register(`${name}RoleId`)}
+        {...getInputProps(field, { type: "text" })}
       >
         {roles.map(({ id, name, color }) => {
           return (
@@ -156,17 +162,20 @@ function RoleSelect({
   );
 }
 
-function RoleSubmitButton({ label }: { label: string }) {
-  const { formState } = useRemixFormContext();
+function RoleSubmitButton({
+  fetcher,
+}: {
+  fetcher: ReturnType<typeof useFetcher>;
+}) {
   return (
     <Button
       type="submit"
       size="large"
       variant="contained"
       color="primary"
-      loading={formState.isLoading}
+      loading={fetcher.state !== "idle"}
     >
-      {label}
+      保存
     </Button>
   );
 }

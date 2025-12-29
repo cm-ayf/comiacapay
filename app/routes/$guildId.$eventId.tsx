@@ -1,4 +1,3 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
 import {
@@ -10,7 +9,7 @@ import { data } from "react-router";
 import { useGuild } from "./$guildId";
 import type { Route } from "./+types/$guildId.$eventId";
 import createErrorBoundary from "~/components/createErrorBoundary";
-import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { memberContext, prismaContext } from "~/lib/context.server";
 import type { Handle } from "~/lib/handle";
 import { UpdateEvent, type ClientDisplay, type ClientItem } from "~/lib/schema";
@@ -27,8 +26,6 @@ export async function loader({ params, context }: Route.LoaderArgs) {
   });
 }
 
-const resolver = valibotResolver(UpdateEvent);
-
 export async function action({ request, params, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
   const { checkPermission } = await context.get(memberContext);
@@ -37,7 +34,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
   const { guildId, eventId } = params;
   switch (request.method) {
     case "PATCH": {
-      const body = await getValidatedBodyOr400(request, resolver);
+      const body = await getValidatedFormDataOr400(request, UpdateEvent);
       if ("clone" in body) throw data({ code: "BAD_REQUEST" }, 400);
 
       return await prisma.event.update({

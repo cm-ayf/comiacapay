@@ -1,19 +1,12 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useImperativeHandle, useState } from "react";
 import { useParams } from "react-router";
 import { useAlert } from "~/components/Alert";
 import {
-  RemixFormDialog,
-  RemixFormDialogActions,
-} from "~/components/RemixFormDialog";
+  ConformDialog,
+  ConformDialogActions,
+} from "~/components/ConformDialog";
 import SetDiscountDialogContent from "~/components/SetDiscountDialogContent";
-import {
-  CreateSetDiscount,
-  type ClientDisplay,
-  type CreateSetDiscountInput,
-} from "~/lib/schema";
-
-const resolver = valibotResolver(CreateSetDiscount);
+import { CreateSetDiscount, type ClientDisplay } from "~/lib/schema";
 
 interface CreateSetDiscountDialogProps {
   ref: React.Ref<{ open: () => void }>;
@@ -31,21 +24,20 @@ export default function CreateSetDiscountDialog({
   const { guildId, eventId } = useParams();
   const { success } = useAlert();
   return (
-    <RemixFormDialog<CreateSetDiscountInput>
+    <ConformDialog
       open={open}
       onClose={() => setOpen(false)}
       title="セット割引を追加"
-      resolver={resolver}
-      defaultValues={{ __typename: "SetDiscount", itemIds: [], amount: 0 }}
+      schema={CreateSetDiscount}
+      defaultValue={{ __typename: "SetDiscount", itemIds: [], amount: 0 }}
       onSubmitComplete={() => success("セット割引を追加しました")}
       submitConfig={{
         method: "POST",
         action: `/${guildId}/${eventId}/discounts`,
-        encType: "application/json",
       }}
     >
       <SetDiscountDialogContent displays={displays} />
-      <RemixFormDialogActions submitButton={{ label: "保存" }} />
-    </RemixFormDialog>
+      <ConformDialogActions submitButton={{ label: "保存" }} />
+    </ConformDialog>
   );
 }

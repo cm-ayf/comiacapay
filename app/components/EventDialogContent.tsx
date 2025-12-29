@@ -1,3 +1,4 @@
+import { getInputProps, getSelectProps } from "@conform-to/react";
 import DialogContent from "@mui/material/DialogContent";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -5,23 +6,17 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
 import { useId } from "react";
-import { useRemixFormContext } from "remix-hook-form";
-import type {
-  ClientEvent,
-  CreateEventInput,
-  UpdateEventInput,
-} from "~/lib/schema";
+import { useFormFieldSet } from "~/components/ConformDialog";
+import type { ClientEvent, CreateEvent, UpdateEvent } from "~/lib/schema";
 
 export default function EventDialogContent({
   events,
 }: {
   events?: Pick<ClientEvent, "id" | "name">[];
 }) {
-  const {
-    register,
-    formState: { errors },
-  } = useRemixFormContext<CreateEventInput | UpdateEventInput>();
+  const fields = useFormFieldSet<typeof CreateEvent | typeof UpdateEvent>();
   const selectLabelId = useId();
+
   return (
     <DialogContent
       sx={{
@@ -32,21 +27,17 @@ export default function EventDialogContent({
       }}
     >
       <TextField
-        {...register("name", { required: true })}
-        {...(errors.name && {
-          error: true,
-          helperText: errors.name.message,
-        })}
+        {...getInputProps(fields.name, { type: "text" })}
+        error={!!fields.name.errors}
+        helperText={fields.name.errors?.[0]}
         label="イベント名"
         variant="standard"
         fullWidth
       />
       <TextField
-        {...register("date", { required: true, valueAsDate: true })}
-        {...(errors.date && {
-          error: true,
-          helperText: errors.date.message,
-        })}
+        {...getInputProps(fields.date, { type: "date" })}
+        error={!!fields.date.errors}
+        helperText={fields.date.errors?.[0]}
         label="日付"
         type="date"
         variant="standard"
@@ -58,7 +49,8 @@ export default function EventDialogContent({
           <Select
             labelId={selectLabelId}
             label="お品書きをコピー"
-            {...register("clone", { setValueAs: (v) => v || null })}
+            {...getSelectProps(fields.clone)}
+            defaultValue={fields.clone.initialValue ?? ""}
           >
             {events.map((event) => (
               <MenuItem key={event.id} value={event.id}>

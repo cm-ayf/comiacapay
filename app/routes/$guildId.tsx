@@ -1,4 +1,3 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import Typography from "@mui/material/Typography";
 import {
   Outlet,
@@ -7,7 +6,7 @@ import {
 } from "react-router";
 import type { Route } from "./+types/$guildId";
 import createErrorBoundary from "~/components/createErrorBoundary";
-import { getValidatedBodyOr400 } from "~/lib/body.server";
+import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import {
   createThenable,
   memberContext,
@@ -47,14 +46,12 @@ export async function loader({ context }: Route.LoaderArgs) {
   return { ...guild, members: [member] as const };
 }
 
-const resolver = valibotResolver(UpdateGuild);
-
 export async function action({ request, context }: Route.ActionArgs) {
   const prisma = context.get(prismaContext);
   const { guildId, checkPermission } = await context.get(memberContext);
   checkPermission("admin");
 
-  const body = await getValidatedBodyOr400(request, resolver);
+  const body = await getValidatedFormDataOr400(request, UpdateGuild);
 
   const guild = await prisma.guild.update({
     where: { id: guildId },

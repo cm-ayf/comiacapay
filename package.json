@@ -27,7 +27,8 @@
     "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
-    "@hookform/resolvers": "5.2.2",
+    "@conform-to/react": "1.15.1",
+    "@conform-to/valibot": "1.15.1",
     "@mui/icons-material": "7.3.6",
     "@mui/lab": "7.0.1-beta.20",
     "@mui/material": "7.3.6",
@@ -45,9 +46,7 @@
     "patch-package": "8.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-hook-form": "7.68.0",
     "react-router": "7.10.1",
-    "remix-hook-form": "7.1.1",
     "valibot": "1.2.0"
   },
   "devDependencies": {

@@ -1,22 +1,18 @@
-import { valibotResolver } from "@hookform/resolvers/valibot";
 import { useImperativeHandle, useState } from "react";
 import { useLoaderData, useParams } from "react-router";
-import type { action } from "../$guildId.$eventId.displays.$itemId";
+import type { InferInput } from "valibot";
 import type { loader } from "./loader";
 import { useAlert } from "~/components/Alert";
-import DisplayDialogContent from "~/components/DisplayDialogContent";
 import {
-  RemixFormDialog,
-  RemixFormDialogActions,
-} from "~/components/RemixFormDialog";
+  ConformDialog,
+  ConformDialogActions,
+} from "~/components/ConformDialog";
+import DisplayDialogContent from "~/components/DisplayDialogContent";
 import {
   UpsertDisplay,
   type ClientDisplay,
   type ClientItem,
-  type UpsertDisplayInput,
 } from "~/lib/schema";
-
-const resolver = valibotResolver(UpsertDisplay);
 
 export type UpsertDisplayDialogInput =
   | (ClientDisplay & { create?: never })
@@ -34,28 +30,26 @@ export default function UpsertDisplayDialog({ ref }: UpsertDisplayDialogProps) {
   const { success } = useAlert();
   if (!display) return null;
 
+  const defaultValue = display.create
+    ? undefined
+    : ({
+        price: display.price,
+        internalPrice: display.internalPrice,
+        dedication: display.dedication,
+      } satisfies InferInput<typeof UpsertDisplay>);
+
   return (
-    <RemixFormDialog<UpsertDisplayInput, typeof action>
-      open
+    <ConformDialog
+      open={Boolean(display)}
       onClose={() => setDisplay(undefined)}
       title={`${display.item.name}のお品書きを${display.create ? "追加" : "編集"}`}
-      resolver={resolver}
-      defaultValues={
-        display.create
-          ? {}
-          : {
-              price: display.price,
-              internalPrice: display.internalPrice,
-              dedication: display.dedication,
-            }
-      }
-      onSubmitComplete={(data) => {
-        if (!data) return;
-        if ("delete" in data) {
-          success("お品書きを削除しました");
-        } else {
-          success("お品書きを更新しました");
-        }
+      schema={UpsertDisplay}
+      defaultValue={defaultValue}
+      onSubmitComplete={() => {
+        success("お品書きを更新しました");
+      }}
+      onDeleteComplete={() => {
+        success("お品書きを削除しました");
       }}
       submitConfig={{
         method: "PUT",
@@ -63,7 +57,7 @@ export default function UpsertDisplayDialog({ ref }: UpsertDisplayDialogProps) {
       }}
     >
       <DisplayDialogContent />
-      <RemixFormDialogActions
+      <ConformDialogActions
         submitButton={{ label: "保存" }}
         deleteButton={
           display.create
@@ -75,6 +69,6 @@ export default function UpsertDisplayDialog({ ref }: UpsertDisplayDialogProps) {
               }
         }
       />
-    </RemixFormDialog>
+    </ConformDialog>
   );
 }

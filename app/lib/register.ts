@@ -1,5 +1,6 @@
 import { useCallback, useSyncExternalStore } from "react";
-import type { ClientDisplay, ClientEvent, CreateRecordInput } from "./schema";
+import type { InferInput } from "valibot";
+import type { ClientDisplay, ClientEvent, CreateRecord } from "./schema";
 import { Snowflake } from "./snowflake";
 
 export interface RecordSnapshot {
@@ -49,6 +50,7 @@ function calculate(event: CalculateInput) {
   total = price - discount;
 }
 
+type CreateRecordInput = InferInput<typeof CreateRecord>;
 export function getCreateReceiptInput() {
   const id = Snowflake.generate().toString();
   const records = Array.from(
