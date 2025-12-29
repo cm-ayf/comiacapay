@@ -29,34 +29,37 @@ export default function vercelCustomEntrypoint({
         };
       },
     },
-    async configurePreviewServer({ config, middlewares }) {
-      const buildResultJson = await fs.readFile(
-        path.resolve(config.root, ".vercel/react-router-build-result.json"),
-        "utf-8",
-      );
-      const { buildManifest }: BuildResult = JSON.parse(buildResultJson);
-      if (!buildManifest.serverBundles) return;
-
-      const [serverBundle, ...rest] = Object.values(
-        buildManifest.serverBundles,
-      );
-      if (
-        !serverBundle ||
-        !serverBundle.id.startsWith("nodejs_") ||
-        rest.length > 0
-      ) {
-        throw new Error(
-          "vercel-custom-entrypoint only supports single nodejs server bundle",
+    configurePreviewServer: {
+      order: "pre",
+      async handler({ config, middlewares }) {
+        const buildResultJson = await fs.readFile(
+          path.resolve(config.root, ".vercel/react-router-build-result.json"),
+          "utf-8",
         );
-      }
+        const { buildManifest }: BuildResult = JSON.parse(buildResultJson);
+        if (!buildManifest.serverBundles) return;
 
-      const { default: handler } = await import(
-        path.resolve(config.root, serverBundle.file)
-      );
+        const [serverBundle, ...rest] = Object.values(
+          buildManifest.serverBundles,
+        );
+        if (
+          !serverBundle ||
+          !serverBundle.id.startsWith("nodejs_") ||
+          rest.length > 0
+        ) {
+          throw new Error(
+            "vercel-custom-entrypoint only supports single nodejs server bundle",
+          );
+        }
 
-      return () => {
-        middlewares.use(createRequestListener(handler));
-      };
+        const { default: handler } = await import(
+          path.resolve(config.root, serverBundle.file)
+        );
+
+        return () => {
+          middlewares.use(createRequestListener(handler));
+        };
+      },
     },
   };
 }
