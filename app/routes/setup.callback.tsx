@@ -1,4 +1,9 @@
-import { getFormProps, getInputProps, useForm } from "@conform-to/react";
+import {
+  getFormProps,
+  getInputProps,
+  useForm,
+  type FieldMetadata,
+} from "@conform-to/react";
 import { parseWithValibot } from "@conform-to/valibot";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
@@ -100,21 +105,21 @@ function RolesSelect({
         label="READ"
         helperText="イベントや商品の情報を閲覧できます"
         roles={roles}
-        field={fields["readRoleId"]}
+        field={fields.readRoleId}
       />
       <RoleSelect
         label="REGISTER"
         helperText="レジ入力を行えます"
         roles={roles}
-        field={fields["registerRoleId"]}
+        field={fields.registerRoleId}
       />
       <RoleSelect
         label="WRITE"
         helperText="イベントや商品の情報を編集できます"
         roles={roles}
-        field={fields["writeRoleId"]}
+        field={fields.writeRoleId}
       />
-      <RoleSubmitButton state={fetcher.state} />
+      <RoleSubmitButton fetcher={fetcher} />
     </Box>
   );
 }
@@ -128,11 +133,9 @@ function RoleSelect({
   label: string;
   helperText: string;
   roles: APIRole[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any;
+  field: FieldMetadata<string | null, InferInput<typeof UpdateGuild>>;
 }) {
   const id = useId();
-  const inputProps = getInputProps(field, { type: "text" });
 
   return (
     <FormControl>
@@ -140,10 +143,7 @@ function RoleSelect({
       <Select
         label={label}
         labelId={id}
-        {...inputProps}
-        key={inputProps.key}
-        name={inputProps.name}
-        defaultValue={inputProps.defaultValue ?? ""}
+        {...getInputProps(field, { type: "text" })}
       >
         {roles.map(({ id, name, color }) => {
           return (
@@ -162,14 +162,18 @@ function RoleSelect({
   );
 }
 
-function RoleSubmitButton({ state }: { state: string }) {
+function RoleSubmitButton({
+  fetcher,
+}: {
+  fetcher: ReturnType<typeof useFetcher>;
+}) {
   return (
     <Button
       type="submit"
       size="large"
       variant="contained"
       color="primary"
-      loading={state !== "idle"}
+      loading={fetcher.state !== "idle"}
     >
       保存
     </Button>
