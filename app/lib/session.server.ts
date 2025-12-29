@@ -8,7 +8,7 @@ export function createPrismaSessionStorage(
   prisma: PrismaClientWithExtensions,
   cookie: Cookie,
 ) {
-  return createSessionStorage<SessionContext, unknown>({
+  return createSessionStorage<SessionContext & { isExisting: true }, unknown>({
     cookie,
     async createData({ userId = null, tokenResult = Prisma.DbNull }, expires) {
       if (!expires) return "";
@@ -33,7 +33,9 @@ export function createPrismaSessionStorage(
         return null;
       }
 
-      const data: Partial<SessionContext> = {};
+      const data: Partial<SessionContext & { isExisting: true }> = {
+        isExisting: true,
+      };
       if (session.userId) data.userId = session.userId;
       if (session.tokenResult) data.tokenResult = session.tokenResult;
       return data;
