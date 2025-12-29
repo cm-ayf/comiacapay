@@ -18,18 +18,16 @@ export default function ItemDialogContent() {
     >
       <TextField
         {...getInputProps(fields["name"]!, { type: "text" })}
-        key={fields["name"]?.key}
-        error={!!fields["name"]?.errors}
-        helperText={fields["name"]?.errors?.[0]}
+        error={!!fields.name.errors}
+        helperText={fields.name.errors?.[0]}
         label="商品名"
         variant="standard"
         fullWidth
       />
       <TextField
         {...getInputProps(fields["picture"]!, { type: "url" })}
-        key={fields["picture"]?.key}
-        error={!!fields["picture"]?.errors}
-        helperText={fields["picture"]?.errors?.[0]}
+        error={!!fields.picture.errors}
+        helperText={fields.picture.errors?.[0]}
         label="商品画像URL"
         type="url"
         variant="standard"
@@ -37,9 +35,8 @@ export default function ItemDialogContent() {
       />
       <TextField
         {...getInputProps(fields["issuedAt"]!, { type: "date" })}
-        key={fields["issuedAt"]?.key}
-        error={!!fields["issuedAt"]?.errors}
-        helperText={fields["issuedAt"]?.errors?.[0]}
+        error={!!fields.issuedAt.errors}
+        helperText={fields.issuedAt.errors?.[0]}
         label="発行日"
         type="date"
         variant="standard"

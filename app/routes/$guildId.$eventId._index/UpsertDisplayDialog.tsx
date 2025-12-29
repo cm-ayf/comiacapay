@@ -41,7 +41,7 @@ export default function UpsertDisplayDialog({ ref }: UpsertDisplayDialogProps) {
 
   return (
     <ConformDialog<typeof UpsertDisplay, typeof action>
-      open
+      open={Boolean(display)}
       onClose={() => setDisplay(undefined)}
       title={`${display.item.name}のお品書きを${display.create ? "追加" : "編集"}`}
       schema={UpsertDisplay}

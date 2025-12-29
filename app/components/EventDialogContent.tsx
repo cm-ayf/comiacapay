@@ -28,7 +28,6 @@ export default function EventDialogContent({
     >
       <TextField
         {...getInputProps(fields.name, { type: "text" })}
-        key={fields.name.key}
         error={!!fields.name.errors}
         helperText={fields.name.errors?.[0]}
         label="イベント名"
@@ -37,7 +36,6 @@ export default function EventDialogContent({
       />
       <TextField
         {...getInputProps(fields.date, { type: "date" })}
-        key={fields.date.key}
         error={!!fields.date.errors}
         helperText={fields.date.errors?.[0]}
         label="日付"
@@ -52,7 +50,6 @@ export default function EventDialogContent({
             labelId={selectLabelId}
             label="お品書きをコピー"
             {...getSelectProps(fields.clone)}
-            key={fields.clone.key}
             defaultValue={fields.clone.initialValue ?? ""}
           >
             {events.map((event) => (

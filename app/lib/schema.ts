@@ -12,9 +12,11 @@ import {
   nullable,
   number,
   object,
+  partial,
   pipe,
   string,
   transform,
+  undefined_,
   union,
   url,
 } from "valibot";
@@ -84,25 +86,22 @@ export const CreateItem = object({
   ),
   issuedAt: dateLike(),
 });
-export const UpdateItem = object({
-  name: exactOptional(CreateItem.entries.name),
-  picture: exactOptional(CreateItem.entries.picture),
-  issuedAt: exactOptional(CreateItem.entries.issuedAt),
-});
+export const UpdateItem = partial(CreateItem);
 
 export type ClientEvent = SerializeFrom<Event & { displays: Display[] }>;
 export const CreateEvent = object({
   name: pipe(string(), nonEmpty("イベント名を入力してください")),
   date: dateLike(),
-  clone: pipe(
-    nullable(snowflake()),
-    transform((input) => input || null),
-  ),
+  clone: union([
+    undefined_(),
+    pipe(
+      literal(""),
+      transform(() => undefined),
+    ),
+    snowflake(),
+  ]),
 });
-export const UpdateEvent = object({
-  name: exactOptional(CreateEvent.entries.name),
-  date: exactOptional(CreateEvent.entries.date),
-});
+export const UpdateEvent = partial(CreateEvent);
 
 export const CreateSetDiscount = object({
   __typename: literal("SetDiscount"),
@@ -114,15 +113,15 @@ export const CreateDiscount = union([CreateSetDiscount]);
 export type ClientDisplay = SerializeFrom<Display & { item: Item }>;
 export const UpsertDisplay = object({
   price: uint(),
-  internalPrice: nullable(uint()),
-  dedication: boolean(),
+  internalPrice: exactOptional(uint()),
+  dedication: exactOptional(boolean(), false),
 });
 
 export const CreateRecord = object({
   itemId: snowflake(),
   count: uint(),
-  internal: boolean(),
-  dedication: boolean(),
+  internal: exactOptional(boolean(), false),
+  dedication: exactOptional(boolean(), false),
 });
 export const CreateReceipt = object({
   id: snowflake(),

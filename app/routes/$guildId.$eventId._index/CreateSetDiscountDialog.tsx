@@ -34,7 +34,6 @@ export default function CreateSetDiscountDialog({
       submitConfig={{
         method: "POST",
         action: `/${guildId}/${eventId}/discounts`,
-        encType: "application/json",
       }}
     >
       <SetDiscountDialogContent displays={displays} />

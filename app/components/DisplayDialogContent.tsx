@@ -21,7 +21,6 @@ export default function DisplayDialogContent() {
     >
       <TextField
         {...getInputProps(fields.price, { type: "number" })}
-        key={fields.price.key}
         error={!!fields.price.errors}
         helperText={fields.price.errors?.[0]}
         required
@@ -37,7 +36,6 @@ export default function DisplayDialogContent() {
       />
       <TextField
         {...getInputProps(fields.internalPrice, { type: "number" })}
-        key={fields.internalPrice.key}
         error={!!fields.internalPrice.errors}
         helperText={fields.internalPrice.errors?.[0]}
         label="部内頒布価格"
@@ -54,8 +52,6 @@ export default function DisplayDialogContent() {
         control={
           <Checkbox
             {...getInputProps(fields.dedication, { type: "checkbox" })}
-            key={fields.dedication.key}
-            defaultChecked={fields.dedication.initialValue === "on"}
           />
         }
         label="献本あり"
