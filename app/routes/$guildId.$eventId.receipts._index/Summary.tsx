@@ -2,10 +2,12 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLoaderData } from "react-router";
-import { useDisplays } from "../$guildId.$eventId";
+import { useDisplays, useEvent } from "../$guildId.$eventId";
 import type { clientLoader } from "./clientLoader";
+import { useAlert } from "~/components/Alert";
+import { Snowflake } from "~/lib/snowflake";
 
 export default function Summary() {
   const { displays } = useDisplays();
@@ -24,6 +26,8 @@ export default function Summary() {
     }
     return counts;
   }, [receipts]);
+
+  useFunding();
 
   return (
     <Table>
@@ -49,3 +53,53 @@ export default function Summary() {
     </Table>
   );
 }
+
+function useFunding() {
+  const { info } = useAlert();
+  const event = useEvent();
+  const { receipts } = useLoaderData<typeof clientLoader>();
+  const [now] = useState(() => Date.now());
+
+  const shouldShowFunding = useMemo(() => {
+    const total = receipts.reduce((total, receipt) => total + receipt.total, 0);
+    if (total < TOTAL_THRESHOLD) return false;
+
+    const eventAt = event.date.getTime();
+    const isRecentEvent =
+      eventAt <= now && now < eventAt + RECENT_EVENT_THRESHOLD;
+    if (!isRecentEvent) return false;
+
+    const lastReceipt = receipts.at(-1)!;
+    const snowflake = Snowflake.parse(lastReceipt.id);
+    if (!snowflake) return false;
+    const didEventEnd = snowflake.timestamp + AFTER_EVENT_DURATION < now;
+    if (!didEventEnd) return false;
+
+    return true;
+  }, [event, now, receipts]);
+
+  useEffect(() => {
+    const didShowFundingAt = localStorage.getItem("didShowFundingAt");
+    const didShowFundingAtTime = didShowFundingAt
+      ? parseInt(didShowFundingAt)
+      : 0;
+    if (shouldShowFunding && didShowFundingAtTime + SNOOZE_DURATION < now) {
+      localStorage.setItem("didShowFundingAt", now.toString());
+      info(
+        <>
+          もしよろしければ、
+          <a href="https://github.com/sponsors/cm-ayf?frequency=one-time">
+            GitHub Sponsor
+          </a>
+          にお布施をお願いします！
+        </>,
+        true,
+      );
+    }
+  }, [info, now, shouldShowFunding]);
+}
+
+const TOTAL_THRESHOLD = 25000; // 25,000 yen
+const RECENT_EVENT_THRESHOLD = 1000 * 60 * 60 * 24 * 3; // 3 days
+const AFTER_EVENT_DURATION = 1000 * 60 * 60 * 2; // 2 hours
+const SNOOZE_DURATION = 1000 * 60 * 60 * 24; // 24 hours
