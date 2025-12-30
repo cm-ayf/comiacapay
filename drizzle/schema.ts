@@ -1,13 +1,14 @@
+import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import {
   pgTable,
   text,
   timestamp,
   integer,
   boolean,
-  jsonb,
   uniqueIndex,
   foreignKey,
   primaryKey,
+  customType,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("User", {
@@ -16,6 +17,15 @@ export const user = pgTable("User", {
   username: text().notNull(),
   picture: text(),
   freshUntil: timestamp("fresh_until", { precision: 3 }).defaultNow().notNull(),
+});
+
+const tokenResult = customType<{ data: RESTPostOAuth2AccessTokenResult }>({
+  dataType() {
+    return "jsonb";
+  },
+  toDriver(value) {
+    return JSON.stringify(value);
+  },
 });
 
 export const session = pgTable(
@@ -27,7 +37,7 @@ export const session = pgTable(
       onDelete: "set null",
       onUpdate: "cascade",
     }),
-    tokenResult: jsonb("token_result"),
+    tokenResult: tokenResult("token_result"),
     expires: timestamp({ precision: 3 }).notNull(),
   },
   (table) => [
@@ -77,6 +87,26 @@ export const item = pgTable("Item", {
   issuedAt: timestamp("issued_at", { precision: 3 }).notNull(),
 });
 
+// union of one
+export type Discount = SetDiscount;
+
+export interface SetDiscount {
+  // was originated from GraphQL
+  __typename: "SetDiscount";
+  id: string;
+  itemIds: string[];
+  amount: number;
+}
+
+const discounts = customType<{ data: Discount[] }>({
+  dataType() {
+    return "jsonb";
+  },
+  toDriver(value) {
+    return JSON.stringify(value);
+  },
+});
+
 export const event = pgTable("Event", {
   id: text().primaryKey(),
   guildId: text("guild_id")
@@ -84,7 +114,7 @@ export const event = pgTable("Event", {
     .references(() => guild.id, { onDelete: "restrict", onUpdate: "cascade" }),
   name: text().notNull(),
   date: timestamp({ precision: 3 }).notNull(),
-  discounts: jsonb().default([]).notNull(),
+  discounts: discounts().default([]).notNull(),
 });
 
 export const display = pgTable(
