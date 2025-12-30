@@ -9,6 +9,7 @@
     "**/.client/**/*.tsx",
     ".react-router/types/**/*"
   ],
+  "exclude": ["scripts", "drizzle"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2023"],
     "types": ["vite/client", "vite-plugin-pwa/info", "vite-plugin-pwa/react"],
@@ -22,10 +23,12 @@
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
     "composite": true,
-    "noEmit": true,
+    "emitDeclarationOnly": true,
+    "outDir": "node_modules/.cache/typescript/",
     "tsBuildInfoFile": "node_modules/.cache/typescript/.tsbuildinfo",
     "paths": {
       "~/*": ["./app/*"]
     }
-  }
+  },
+  "references": [{ "path": "drizzle" }]
 }
