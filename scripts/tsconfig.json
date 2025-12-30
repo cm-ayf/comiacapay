@@ -1,0 +1,10 @@
+{
+  "extends": ["@tsconfig/strictest", "@tsconfig/node24"],
+  "include": ["*.ts"],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true
+  },
+  "references": [{ "path": "../drizzle" }]
+}
