@@ -1,0 +1,13 @@
+{
+  "extends": ["@tsconfig/strictest", "@tsconfig/node24"],
+  "include": ["*.ts"],
+  "exclude": [],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "outDir": "../node_modules/.cache/typescript/drizzle/",
+    "tsBuildInfoFile": "../node_modules/.cache/typescript/drizzle/.tsbuildinfo"
+  }
+}
