@@ -18,7 +18,7 @@
 
 「概要」タブでは，そのイベントでの売上額とそれぞれの商品ごとの売上数を見ることができます．
 
-「概要」タブを開くと，お布施をお願いする表示が出ることがあります．もしよろしければ，[GitHub Sponsor](https://github.com/sponsors/cm-ayf?frequency=one-time) にお布施をお願いします．
+「概要」タブを開くと，お布施をお願いする表示が出ることがあります．もしよろしければ，[GitHub Sponsor](https://github.com/sponsors/cm-ayf?frequency=one-time) にお布施をお願いします！
 
 ## 「表」タブ
 

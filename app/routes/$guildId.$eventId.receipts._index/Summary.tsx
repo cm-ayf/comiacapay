@@ -86,11 +86,11 @@ function useFunding() {
       localStorage.setItem("didShowFundingAt", now.toString());
       info(
         <>
-          もしよろしければ
+          もしよろしければ、
           <a href="https://github.com/sponsors/cm-ayf?frequency=one-time">
-            お布施
+            GitHub Sponsor
           </a>
-          をお願いします！
+          にお布施をお願いします！
         </>,
       );
     }
