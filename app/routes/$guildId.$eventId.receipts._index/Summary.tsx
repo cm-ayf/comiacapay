@@ -69,8 +69,7 @@ function useFunding() {
       eventAt <= now && now < eventAt + RECENT_EVENT_THRESHOLD;
     if (!isRecentEvent) return false;
 
-    const lastReceipt = receipts.at(-1)!;
-    const snowflake = Snowflake.parse(lastReceipt.id);
+    const snowflake = Snowflake.parse(receipts[0]?.id);
     if (!snowflake) return false;
     const didEventEnd = snowflake.timestamp + AFTER_EVENT_DURATION < now;
     if (!didEventEnd) return false;
