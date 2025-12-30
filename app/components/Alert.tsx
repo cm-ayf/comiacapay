@@ -13,6 +13,7 @@ import {
 export interface AlertData {
   severity: AlertColor;
   message: ReactNode;
+  persist: boolean;
 }
 
 interface AlertState extends AlertData {
@@ -42,7 +43,7 @@ export function AlertProvider({ children }: PropsWithChildren) {
           <Snackbar
             key={alert.id}
             open
-            autoHideDuration={6000}
+            autoHideDuration={alert.persist ? null : 6000}
             onClose={() => dispatch({ delete: alert.id })}
           >
             <Alert
@@ -58,23 +59,30 @@ export function AlertProvider({ children }: PropsWithChildren) {
   );
 }
 
-export function useAlert(): Record<AlertColor, (message: ReactNode) => void> {
+export function useAlert(): Record<
+  AlertColor,
+  (message: ReactNode, persist?: boolean) => void
+> {
   const { dispatch } = use(AlertContext);
   return {
     success: useCallback(
-      (message) => dispatch({ severity: "success", message }),
+      (message, persist = false) =>
+        dispatch({ severity: "success", message, persist }),
       [dispatch],
     ),
     info: useCallback(
-      (message) => dispatch({ severity: "info", message }),
+      (message, persist = false) =>
+        dispatch({ severity: "info", message, persist }),
       [dispatch],
     ),
     warning: useCallback(
-      (message) => dispatch({ severity: "warning", message }),
+      (message, persist = false) =>
+        dispatch({ severity: "warning", message, persist }),
       [dispatch],
     ),
     error: useCallback(
-      (message) => dispatch({ severity: "error", message }),
+      (message, persist = false) =>
+        dispatch({ severity: "error", message, persist }),
       [dispatch],
     ),
   };

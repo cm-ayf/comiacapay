@@ -92,6 +92,7 @@ function useFunding() {
           </a>
           にお布施をお願いします！
         </>,
+        true,
       );
     }
   }, [info, now, shouldShowFunding]);
