@@ -61,7 +61,8 @@ function useFunding() {
   const [now] = useState(() => Date.now());
 
   const shouldShowFunding = useMemo(() => {
-    if (receipts.length < 20) return false;
+    const total = receipts.reduce((total, receipt) => total + receipt.total, 0);
+    if (total < 25000) return false;
 
     const eventAt = event.date.getTime();
     const isRecentEvent =
