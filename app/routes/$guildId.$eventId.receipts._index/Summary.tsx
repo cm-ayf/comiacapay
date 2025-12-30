@@ -62,17 +62,17 @@ function useFunding() {
 
   const shouldShowFunding = useMemo(() => {
     const total = receipts.reduce((total, receipt) => total + receipt.total, 0);
-    if (total < 25000) return false;
+    if (total < TOTAL_THRESHOLD) return false;
 
     const eventAt = event.date.getTime();
     const isRecentEvent =
-      eventAt <= now && now < eventAt + 3 * 24 * 60 * 60 * 1000;
+      eventAt <= now && now < eventAt + RECENT_EVENT_THRESHOLD;
     if (!isRecentEvent) return false;
 
     const lastReceipt = receipts.at(-1)!;
     const snowflake = Snowflake.parse(lastReceipt.id);
     if (!snowflake) return false;
-    const didEventEnd = snowflake.timestamp + 2 * 60 * 60 * 1000 < now;
+    const didEventEnd = snowflake.timestamp + AFTER_EVENT_DURATION < now;
     if (!didEventEnd) return false;
 
     return true;
@@ -83,7 +83,7 @@ function useFunding() {
     const didShowFundingAtTime = didShowFundingAt
       ? parseInt(didShowFundingAt)
       : 0;
-    if (shouldShowFunding && didShowFundingAtTime + 24 * 60 * 60 * 1000 < now) {
+    if (shouldShowFunding && didShowFundingAtTime + SNOOZE_DURATION < now) {
       localStorage.setItem("didShowFundingAt", now.toString());
       info(
         <>
@@ -98,3 +98,8 @@ function useFunding() {
     }
   }, [info, now, shouldShowFunding]);
 }
+
+const TOTAL_THRESHOLD = 25000; // 25,000 yen
+const RECENT_EVENT_THRESHOLD = 1000 * 60 * 60 * 24 * 3; // 3 days
+const AFTER_EVENT_DURATION = 1000 * 60 * 60 * 2; // 2 hours
+const SNOOZE_DURATION = 1000 * 60 * 60 * 24; // 24 hours
