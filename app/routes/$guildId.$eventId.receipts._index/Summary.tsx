@@ -64,8 +64,9 @@ function useFunding() {
     if (receipts.length < 20) return false;
 
     const eventAt = event.date.getTime();
-    const isTodayEvent = eventAt <= now && now < eventAt + 24 * 60 * 60 * 1000;
-    if (!isTodayEvent) return false;
+    const isRecentEvent =
+      eventAt <= now && now < eventAt + 3 * 24 * 60 * 60 * 1000;
+    if (!isRecentEvent) return false;
 
     const lastReceipt = receipts.at(-1)!;
     const snowflake = Snowflake.parse(lastReceipt.id);
@@ -81,7 +82,7 @@ function useFunding() {
     const didShowFundingAtTime = didShowFundingAt
       ? parseInt(didShowFundingAt)
       : 0;
-    if (shouldShowFunding && didShowFundingAtTime + 60 * 60 * 1000 < now) {
+    if (shouldShowFunding && didShowFundingAtTime + 24 * 60 * 60 * 1000 < now) {
       localStorage.setItem("didShowFundingAt", now.toString());
       info(
         <>
