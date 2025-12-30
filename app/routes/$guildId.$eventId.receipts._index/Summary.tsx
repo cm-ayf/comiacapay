@@ -71,7 +71,7 @@ function useFunding() {
     const lastReceipt = receipts.at(-1)!;
     const snowflake = Snowflake.parse(lastReceipt.id);
     if (!snowflake) return false;
-    const didEventEnd = snowflake.timestamp + 0 * 60 * 60 * 1000 < now;
+    const didEventEnd = snowflake.timestamp + 2 * 60 * 60 * 1000 < now;
     if (!didEventEnd) return false;
 
     return true;
