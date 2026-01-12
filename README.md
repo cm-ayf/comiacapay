@@ -57,7 +57,7 @@
 
 #### マイグレーション
 
-マイグレーションは自動化されていません．適宜`npm run migrate:deploy`を実行してください．詳しくは[公式ドキュメント](https://www.prisma.io/docs/concepts/components/prisma-migrate)を参照してください．
+マイグレーションは自動化されていません．適宜`npm run migrate:deploy`を実行してください．詳しくは[公式ドキュメント](https://www.prisma.io/docs/orm/prisma-migrate/getting-started)を参照してください．
 
 ### 認証
 
