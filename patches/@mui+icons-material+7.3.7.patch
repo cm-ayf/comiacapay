@@ -1,0 +1,12 @@
+diff --git a/node_modules/@mui/icons-material/package.json b/node_modules/@mui/icons-material/package.json
+index 4c4c9e6d..f0fda0fb 100644
+--- a/node_modules/@mui/icons-material/package.json
++++ b/node_modules/@mui/icons-material/package.json
+@@ -47,6 +47,7 @@
+     "node": ">=14.0.0"
+   },
+   "exports": {
++    "./package.json": "./package.json",
+     ".": {
+       "require": {
+         "types": "./index.d.ts",

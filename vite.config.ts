@@ -45,6 +45,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       devOptions: {
         enabled: true,
+        suppressWarnings: true,
       },
       outDir: "build/client",
     }),
