@@ -57,7 +57,7 @@
     "@playwright/test": "1.58.1",
     "@prisma/generator-helper": "6.19.0",
     "@react-router/dev": "7.13.0",
-    "@remix-run/node-fetch-server": "0.9.0",
+    "@remix-run/node-fetch-server": "0.13.0",
     "@tsconfig/node24": "24.0.4",
     "@tsconfig/strictest": "2.0.8",
     "@types/node": "24.10.4",
