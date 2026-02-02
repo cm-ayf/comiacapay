@@ -37,6 +37,9 @@ updates:
         patterns:
           - "eslint"
           - "@eslint/*"
+      conform:
+        patterns:
+          - "@conform-to/*"
 
       patch:
         update-types: ["patch"]
