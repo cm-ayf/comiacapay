@@ -53,6 +53,7 @@ updates:
           - "@mui/*"
           - "@pigment-css/*"
           - "@prisma/*"
+          - "@conform-to/"
 
       dev-minor-patch:
         update-types: ["minor", "patch"]
