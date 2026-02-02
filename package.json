@@ -89,8 +89,8 @@
   },
   "overrides": {
     "@pigment-css/react": {
-      "@mui/system": "^7",
-      "@mui/utils": "^7",
+      "@mui/system": "$@mui/system",
+      "@mui/utils": "$@mui/utils",
       "@wyw-in-js/processor-utils": "^0.8.0",
       "@wyw-in-js/shared": "^0.8.0",
       "@wyw-in-js/transform": "^0.8.0"
