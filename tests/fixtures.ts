@@ -23,7 +23,8 @@ type Fixtures = {
 };
 
 export const test = base.extend<Fixtures>({
-  prisma: async (_, use) => {
+  // oxlint-disable-next-line no-empty-pattern
+  prisma: async ({}, use) => {
     const prisma = new PrismaClient({
       adapter: new PrismaPg({ connectionString: env.POSTGRES_PRISMA_URL }),
     });
