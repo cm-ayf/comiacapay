@@ -1,14 +1,19 @@
-import rules from "./rules/index.js";
-/** @import { Linter } from "eslint" */
+import { definePlugin } from "@oxlint/plugins";
+import { defineConfig } from "oxlint";
+import muiPigmentCss from "./rules/mui-pigment-css.js";
 
-/** @type {Linter.Config} */
-const muiPigmentCss = {
-  plugins: {
-    "mui-pigment-css": { rules },
+export default definePlugin({
+  meta: {
+    name: "eslint-plugin-mui-pigment-css",
   },
+  rules: {
+    "mui-pigment-css": muiPigmentCss,
+  },
+});
+
+export const recommended = defineConfig({
+  jsPlugins: ["eslint-plugin-mui-pigment-css"],
   rules: {
     "mui-pigment-css/mui-pigment-css": "error",
   },
-};
-
-export default muiPigmentCss;
+});

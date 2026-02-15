@@ -149,7 +149,7 @@ function DeleteButton() {
   const onClick = useCallback(() => {
     if (searchParams.size === 0) return;
 
-    fetcher.submit(null, {
+    return fetcher.submit(null, {
       method: "DELETE",
       action: `?${searchParams}`,
     });

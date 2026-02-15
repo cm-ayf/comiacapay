@@ -40,7 +40,7 @@ export default function MutateEventDialog({ ref }: MutateEventDialogProps) {
       }}
       onDeleteComplete={() => {
         success("イベントを削除しました");
-        navigate(`/${guildId}`);
+        return navigate(`/${guildId}`);
       }}
     >
       <EventDialogContent />

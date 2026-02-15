@@ -84,7 +84,11 @@ const userMiddleware: Route.MiddlewareFunction = async ({ context }, next) => {
   return next();
 };
 
-export const middleware = [prismaMiddleware, sessionMiddleware, userMiddleware];
+export const middleware: Route.MiddlewareFunction[] = [
+  prismaMiddleware,
+  sessionMiddleware,
+  userMiddleware,
+];
 
 export async function loader({ context }: Route.LoaderArgs) {
   return context.get(userContext);
@@ -177,8 +181,6 @@ function AppLayout({
         <Container maxWidth={maxWidth ?? "lg"} component="main">
           {children}
         </Container>
-        {/* TODO: fix */}
-        {/* eslint-disable-next-line react-hooks/static-components */}
         <ButtomComponent />
       </AlertProvider>
     </>

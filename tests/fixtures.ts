@@ -23,7 +23,7 @@ type Fixtures = {
 };
 
 export const test = base.extend<Fixtures>({
-  prisma: async ({}, use) => {
+  prisma: async (_, use) => {
     const prisma = new PrismaClient({
       adapter: new PrismaPg({ connectionString: env.POSTGRES_PRISMA_URL }),
     });

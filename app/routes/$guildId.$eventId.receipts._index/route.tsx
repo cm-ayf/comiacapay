@@ -79,7 +79,7 @@ function PushButton() {
   const fetcher = useFetcher<typeof action>();
   const onClick = useCallback(() => {
     if (!data) return;
-    fetcher.submit(data.receiptsToBePushed, {
+    return fetcher.submit(data.receiptsToBePushed, {
       method: "POST",
       encType: "application/json",
     });
