@@ -52,7 +52,7 @@
     "valibot": "1.2.0"
   },
   "devDependencies": {
-    "@oxlint/plugins": "1.43.0",
+    "@oxlint/plugins": "1.48.0",
     "@playwright/test": "1.58.2",
     "@prisma/generator-helper": "6.19.0",
     "@react-router/dev": "7.13.0",
@@ -63,7 +63,7 @@
     "@types/pg": "8.16.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "@types/serviceworker": "0.0.190",
+    "@types/serviceworker": "0.0.191",
     "@typescript/native-preview": "7.0.0-dev.20260210.1",
     "@vercel/react-router": "1.2.5",
     "dotenv": "^17.3.1",
@@ -71,8 +71,8 @@
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
     "npm-run-all2": "8.0.4",
-    "oxfmt": "0.32.0",
-    "oxlint": "1.47.0",
+    "oxfmt": "0.33.0",
+    "oxlint": "1.48.0",
     "oxlint-tsgolint": "0.13.0",
     "prisma": "6.19.0",
     "prisma-json-types-generator": "3.6.2",
