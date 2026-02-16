@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { BuildManifest } from "@react-router/dev/config";
-import { createRequestListener } from "@remix-run/node-fetch-server";
+import { createRequestListener } from "@react-router/node";
 import type { Plugin } from "vite";
 
 interface Options {
