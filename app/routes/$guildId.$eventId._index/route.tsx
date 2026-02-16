@@ -40,7 +40,7 @@ function About() {
 
   return (
     <>
-      <Grid container spacing={16}>
+      <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
           <EventCard
             event={event}
@@ -96,7 +96,7 @@ function Displays() {
       <Typography variant="h2" sx={{ fontSize: "2em" }}>
         お品書き
       </Typography>
-      <Grid container spacing={16}>
+      <Grid container spacing={2}>
         {displays.map((display) => (
           <Grid key={display.item.id} size={{ xs: 12, md: 6 }}>
             <DisplayCard display={display}>
@@ -167,7 +167,7 @@ function Discounts() {
       <Typography variant="h2" sx={{ fontSize: "2em" }}>
         割引等
       </Typography>
-      <Grid container spacing={16}>
+      <Grid container spacing={2}>
         {event.discounts.map((discount) => (
           <Grid key={discount.id} size={{ xs: 12, md: 6 }}>
             <DiscountCard discount={discount} />

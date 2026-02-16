@@ -102,7 +102,7 @@ function Events() {
           <Add />
         </IconButton>
       </Box>
-      <Grid container spacing={16}>
+      <Grid container spacing={2}>
         {events.map((event) => (
           <Grid key={event.id} size={{ xs: 12, sm: 6, md: 4 }}>
             <EventCard
@@ -143,7 +143,7 @@ function Items() {
           <Add />
         </IconButton>
       </Box>
-      <Grid container spacing={16}>
+      <Grid container spacing={2}>
         {guild.items.map((item) => (
           <Grid key={item.id}>
             <ItemCard

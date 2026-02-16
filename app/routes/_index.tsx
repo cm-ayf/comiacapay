@@ -50,7 +50,7 @@ export default function Page() {
           追加・設定変更
         </Button>
       </Box>
-      <Grid container spacing={16}>
+      <Grid container spacing={2}>
         {members.map(({ guild, ...member }) => (
           <Grid key={guild.id} size={{ xs: 12, sm: 6, md: 4 }}>
             <GuildCard
@@ -64,7 +64,7 @@ export default function Page() {
       <Typography variant="h2" sx={{ fontSize: "2em" }}>
         最近のイベント
       </Typography>
-      <Grid container spacing={16}>
+      <Grid container spacing={2}>
         {recentEvents.map((event) => {
           const member = indexMemberByGuildId.get(event.guildId);
           if (!member) return null;

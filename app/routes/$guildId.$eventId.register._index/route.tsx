@@ -14,7 +14,7 @@ export { clientAction } from "./clientAction";
 export default function Register() {
   const { displays } = useDisplays();
   return (
-    <Grid container spacing={16}>
+    <Grid container spacing={2}>
       {displays.map((display) => (
         <Grid size={{ xs: 12, md: 6, xl: 4 }} key={display.itemId}>
           <RegisterDisplayPanel display={display} />
