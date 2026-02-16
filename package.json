@@ -27,8 +27,8 @@
     "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
-    "@conform-to/react": "1.16.0",
-    "@conform-to/valibot": "1.16.0",
+    "@conform-to/react": "1.17.1",
+    "@conform-to/valibot": "1.17.1",
     "@mui/icons-material": "7.3.7",
     "@mui/lab": "7.0.1-beta.21",
     "@mui/material": "7.3.7",
