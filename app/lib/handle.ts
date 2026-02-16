@@ -1,4 +1,4 @@
-import type { Breakpoint } from "@mui/material-pigment-css";
+import type { Breakpoint } from "@mui/material/styles";
 import { useMemo, type FC } from "react";
 import {
   useLoaderData,

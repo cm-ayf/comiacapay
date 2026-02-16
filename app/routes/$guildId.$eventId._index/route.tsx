@@ -7,7 +7,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material-pigment-css/Grid";
+import Grid from "@mui/material/Grid";
 import { useCallback, useId, useMemo, useRef, type ReactNode } from "react";
 import { href, Link, useFetcher, useParams } from "react-router";
 import { useMember } from "../$guildId";

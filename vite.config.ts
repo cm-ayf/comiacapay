@@ -1,5 +1,3 @@
-import { createTheme } from "@mui/material/styles";
-import { pigment } from "@pigment-css/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
@@ -7,11 +5,6 @@ import vercelCustomEntrypoint from "./plugins/vercel-custom-entrypoint";
 
 export default defineConfig({
   plugins: [
-    pigment({
-      theme: createTheme(),
-      transformLibraries: ["@mui/material", "@mui/icons-material"],
-      displayName: process.env["NODE_ENV"] !== "production",
-    }),
     reactRouter(),
     VitePWA({
       workbox: {
@@ -52,13 +45,9 @@ export default defineConfig({
     vercelCustomEntrypoint({ main: "./main.ts" }),
   ],
   resolve: {
-    noExternal: [/^@mui\/(?!x-|lab)/, "@pigment-css/react"],
     tsconfigPaths: true,
   },
   define: {
     "process.env.NODE_ENV": JSON.stringify(process.env["NODE_ENV"]),
-  },
-  build: {
-    cssCodeSplit: false,
   },
 });

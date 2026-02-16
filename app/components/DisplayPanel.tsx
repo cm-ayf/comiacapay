@@ -2,7 +2,7 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material-pigment-css/Box";
+import Box from "@mui/material/Box";
 import type { PropsWithChildren } from "react";
 import CardItemPicture from "./CardItemPicture";
 import type { ClientDisplay } from "~/lib/schema";

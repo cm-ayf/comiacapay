@@ -1,7 +1,7 @@
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material-pigment-css/Box";
-import Grid from "@mui/material-pigment-css/Grid";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import { useDisplays } from "../$guildId.$eventId";
 import { CreateReceiptButton } from "./CreateReceiptButton";
 import { RegisterDisplayPanel } from "./RegisterDisplayPanel";

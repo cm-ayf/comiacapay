@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material-pigment-css/Box";
-import Grid from "@mui/material-pigment-css/Grid";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import { useMemo } from "react";
 import { href, Link, useLoaderData } from "react-router";
 import type { Route } from "./+types/_index";

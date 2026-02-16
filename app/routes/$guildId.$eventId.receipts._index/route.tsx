@@ -5,7 +5,7 @@ import MuiTabPanel from "@mui/lab/TabPanel";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Tab from "@mui/material/Tab";
-import Box from "@mui/material-pigment-css/Box";
+import Box from "@mui/material/Box";
 import { Suspense, useCallback, useState } from "react";
 import { useFetcher, useLoaderData, useRevalidator } from "react-router";
 import Summary from "./Summary";

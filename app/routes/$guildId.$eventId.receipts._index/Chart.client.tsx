@@ -5,7 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
-import Box from "@mui/material-pigment-css/Box";
+import Box from "@mui/material/Box";
 import { LineChart } from "@mui/x-charts/LineChart";
 import type { LineSeriesType } from "@mui/x-charts/models/seriesType";
 import { useId, useMemo, useState } from "react";

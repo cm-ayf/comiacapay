@@ -3,7 +3,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import Box from "@mui/material-pigment-css/Box";
+import Box from "@mui/material/Box";
 import { useEvent } from "../$guildId.$eventId";
 import DisplayPanel from "~/components/DisplayPanel";
 import { useRecordSnapshot } from "~/lib/register";
