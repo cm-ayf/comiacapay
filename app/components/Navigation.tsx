@@ -259,7 +259,7 @@ function useRefresh() {
     const action = guildId
       ? `/auth/refresh?guild_id=${guildId}`
       : "/auth/refresh";
-    fetcher.submit(null, { method: "POST", action });
+    return fetcher.submit(null, { method: "POST", action });
   }, [fetcher, guildId]);
 }
 

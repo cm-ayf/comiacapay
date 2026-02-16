@@ -111,9 +111,9 @@ export function ConformDialog<TSchema extends Schema, Action>({
 }
 
 export function useFormFieldSet<TSchema extends Schema>(): ReturnType<
-  FormMetadata<InferInput<TSchema>, string[]>["getFieldset"]
+  FormMetadata<InferInput<TSchema>>["getFieldset"]
 > {
-  const form = useFormMetadata() as FormMetadata<InferInput<TSchema>, string[]>;
+  const form = useFormMetadata() as FormMetadata<InferInput<TSchema>>;
   return form.getFieldset();
 }
 

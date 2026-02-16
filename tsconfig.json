@@ -20,10 +20,9 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
-    "baseUrl": ".",
     "composite": true,
     "noEmit": true,
-    "tsBuildInfoFile": "node_modules/.cache/typescript/.tsbuildinfo",
+    "tsBuildInfoFile": "node_modules/.cache/tsgo/.tsbuildinfo",
     "paths": {
       "~/*": ["./app/*"]
     }

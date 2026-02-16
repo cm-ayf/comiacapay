@@ -17,7 +17,7 @@ export function CreateReceiptButton() {
 
   const submit = useCallback(() => {
     const receipt = getCreateReceiptInput();
-    fetcher.submit(receipt, {
+    return fetcher.submit(receipt, {
       method: "POST",
       // this button is rendered outside of the route context
       action: `/${guildId}/${eventId}/register`,

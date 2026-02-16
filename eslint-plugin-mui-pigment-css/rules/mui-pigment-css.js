@@ -1,18 +1,12 @@
 // @ts-check
 
-import { createRule } from "./create-rule.js";
+import { defineRule } from "@oxlint/plugins";
+import assert from "node:assert";
 
-const COMPONENTS = [
-  "Box",
-  "Container",
-  "Grid",
-  "Hidden",
-  "RtlProvider",
-  "Stack",
-];
+const pattern =
+  /^@mui\/material\/(Box|Container|Grid|Hidden|RtlProvider|Stack)$/;
 
-export const muiPigmentCss = createRule({
-  name: "mui-pigment-css",
+export default defineRule({
   meta: {
     docs: {
       description:
@@ -26,25 +20,22 @@ export const muiPigmentCss = createRule({
     type: "problem",
     fixable: "code",
   },
-  defaultOptions: [],
-  create(context) {
+  createOnce(context) {
     return {
-      ImportDeclaration(node) {
-        const [, component] =
-          node.source.value.match(/^@mui\/material\/(\w+)$/) ?? [];
-        if (component && COMPONENTS.includes(component)) {
-          context.report({
-            node,
-            messageId: "default",
-            data: { component },
-            fix(fixer) {
-              return fixer.replaceText(
-                node.source,
-                `"@mui/material-pigment-css/${component}"`,
-              );
-            },
-          });
-        }
+      [`ImportDeclaration[source.value=${pattern}]`](node) {
+        assert(node.type === "ImportDeclaration");
+        const component = node.source.value.replace(pattern, "$1");
+        context.report({
+          node,
+          messageId: "default",
+          data: { component },
+          fix(fixer) {
+            return fixer.replaceText(
+              node.source,
+              `"@mui/material-pigment-css/${component}"`,
+            );
+          },
+        });
       },
     };
   },

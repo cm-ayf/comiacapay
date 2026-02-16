@@ -13,6 +13,7 @@ import { useLoaderData } from "react-router";
 import { useDisplays } from "../$guildId.$eventId";
 import type { clientLoader } from "./clientLoader";
 import { Snowflake } from "~/lib/snowflake";
+import type { XAxis, YAxis } from "@mui/x-charts";
 
 export default function Chart() {
   const { displays } = useDisplays();
@@ -141,33 +142,8 @@ export default function Chart() {
         <LineChart
           dataset={dataset}
           series={series}
-          xAxis={[
-            {
-              dataKey: "timestamp",
-              scaleType: "time",
-              label: "時刻",
-              valueFormatter: (value) =>
-                new Date(value).toLocaleDateString("ja-JP", {
-                  day: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                }),
-            },
-          ]}
-          yAxis={[
-            {
-              id: "revenue",
-              scaleType: "linear",
-              label: "総売上 (円)",
-            },
-            {
-              id: "count",
-              scaleType: "linear",
-              label: "販売数 (個)",
-              position: "right",
-            },
-          ]}
+          xAxis={xAxis}
+          yAxis={yAxis}
           slotProps={{
             legend: {
               direction: "horizontal",
@@ -181,3 +157,31 @@ export default function Chart() {
     </Box>
   );
 }
+
+const xAxis: XAxis[] = [
+  {
+    dataKey: "timestamp",
+    scaleType: "time",
+    label: "時刻",
+    valueFormatter: (value) =>
+      new Date(value).toLocaleDateString("ja-JP", {
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      }),
+  },
+];
+const yAxis: YAxis[] = [
+  {
+    id: "revenue",
+    scaleType: "linear",
+    label: "総売上 (円)",
+  },
+  {
+    id: "count",
+    scaleType: "linear",
+    label: "販売数 (個)",
+    position: "right",
+  },
+];

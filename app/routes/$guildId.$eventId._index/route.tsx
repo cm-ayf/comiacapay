@@ -257,7 +257,7 @@ function DeleteDiscountButton({ discountId }: { discountId: string }) {
   const me = useMember();
 
   const handleDelete = useCallback(() => {
-    fetcher.submit(null, {
+    return fetcher.submit(null, {
       method: "DELETE",
       action: `/${guildId}/${eventId}/discounts/${discountId}`,
     });

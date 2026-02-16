@@ -27,7 +27,7 @@ const memberMiddleware: Route.MiddlewareFunction = async (
   return next();
 };
 
-export const middleware = [memberMiddleware];
+export const middleware: Route.MiddlewareFunction[] = [memberMiddleware];
 
 export async function loader({ context }: Route.LoaderArgs) {
   const prisma = context.get(prismaContext);

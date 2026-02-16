@@ -90,7 +90,7 @@ function RolesSelect({
   const navigate = useNavigate();
   useOnSubmitComplete(fetcher, (data) => {
     success("設定を保存しました");
-    navigate(`/${data.id}`);
+    return navigate(`/${data.id}`);
   });
 
   return (

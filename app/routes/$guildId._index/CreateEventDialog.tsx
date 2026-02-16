@@ -37,7 +37,7 @@ export default function CreateEventDialog({
       submitConfig={{ method: "POST" }}
       onSubmitComplete={(data) => {
         success("イベントを追加しました");
-        navigate(`/${guildId}/${data.id}`);
+        return navigate(`/${guildId}/${data.id}`);
       }}
     >
       <EventDialogContent events={events} />

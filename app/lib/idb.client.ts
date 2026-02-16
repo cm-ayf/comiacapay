@@ -55,7 +55,7 @@ export async function getReceipts(eventId: string): Promise<IDBReceipt[]> {
   const receipts = await db.getAllFromIndex("Receipt", "eventId", eventId);
   return receipts
     .filter((receipt) => !receipt.deleted)
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       const aSnowflake = Snowflake.parse(a.id);
       const bSnowflake = Snowflake.parse(b.id);
       if (aSnowflake && bSnowflake)

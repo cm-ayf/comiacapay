@@ -17,7 +17,6 @@ export interface SetDiscount {
 }
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace PrismaJson {
     type TokenResult = RESTPostOAuth2AccessTokenResult;
     type Discounts = Discount[];

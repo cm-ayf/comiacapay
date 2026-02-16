@@ -3,11 +3,13 @@ import { useMemo, type FC } from "react";
 import {
   useLoaderData,
   useLocation,
-  useMatches,
+  useMatches as _useMatches,
   type UIMatch,
 } from "react-router";
 
 type SerializeFrom<AppData> = ReturnType<typeof useLoaderData<AppData>>;
+
+const useMatches = _useMatches as () => Match<unknown>[];
 
 export interface Handle<AppData> {
   containerMaxWidth?: Breakpoint | false;
@@ -25,7 +27,7 @@ export function useHandleValue<K extends keyof Handle<unknown>>(
   key: K,
   fallback: Handle<unknown>[K] & {},
 ): Handle<unknown>[K] & {} {
-  const matches = useMatches() as Match<unknown>[];
+  const matches = useMatches();
   const match = matches.at(-1)!;
   const value = match.handle?.[key];
   return useMemo(() => value ?? fallback, [value, fallback]);
@@ -37,7 +39,7 @@ export interface Breadcrumb {
 }
 
 export function useTitle(): string | undefined {
-  const matches = useMatches() as Match<unknown>[];
+  const matches = useMatches();
   const match = matches.findLast((match) => match.handle?.title);
   return match?.handle?.title?.replace(/\{(\d+)\}/g, (_, i) => {
     const match = matches[i];
@@ -47,10 +49,10 @@ export function useTitle(): string | undefined {
 
 export function useBreadcrumbs() {
   const { pathname } = useLocation();
-  const matches = useMatches() as Match<unknown>[];
+  const matches = useMatches();
   return matches
     .filter((match) => !match.pathname.startsWith(pathname))
-    .reverse()
+    .toReversed()
     .map<Breadcrumb>((match) => {
       const name = match.handle?.getName?.(match?.data) ?? "…";
       return { href: match.pathname, name };

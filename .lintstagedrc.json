@@ -1,4 +1,7 @@
 {
-  "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
-  "*.{md,css}": ["prettier --write"]
+  "*.{ts,tsx}": [
+    "oxlint --type-aware --fix",
+    "oxfmt --no-error-on-unmatched-pattern"
+  ],
+  "*": ["oxfmt --no-error-on-unmatched-pattern"]
 }
