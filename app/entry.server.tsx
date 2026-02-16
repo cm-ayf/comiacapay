@@ -1,11 +1,14 @@
 import { PassThrough } from "node:stream";
 
-import type { AppLoadContext, EntryContext } from "react-router";
+import type { EntryContext, RouterContextProvider } from "react-router";
 import { createReadableStreamFromReadable } from "@react-router/node";
 import { ServerRouter } from "react-router";
 import { isbot } from "isbot";
 import type { RenderToPipeableStreamOptions } from "react-dom/server";
 import { renderToPipeableStream } from "react-dom/server";
+import createEmotionServer from "@emotion/server/create-instance";
+import createCache from "@emotion/cache";
+import { CacheProvider } from "@emotion/react";
 
 export const streamTimeout = 5_000;
 
@@ -14,9 +17,7 @@ export default function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   routerContext: EntryContext,
-  loadContext: AppLoadContext,
-  // If you have middleware enabled:
-  // loadContext: RouterContextProvider
+  _loadContext: RouterContextProvider,
 ) {
   // https://httpwg.org/specs/rfc9110.html#HEAD
   if (request.method.toUpperCase() === "HEAD") {
@@ -44,8 +45,14 @@ export default function handleRequest(
       streamTimeout + 1000,
     );
 
+    const cache = createCache({ key: "css" });
+    // oxlint-disable-next-line typescript/unbound-method
+    const { renderStylesToNodeStream } = createEmotionServer(cache);
+
     const { pipe, abort } = renderToPipeableStream(
-      <ServerRouter context={routerContext} url={request.url} />,
+      <CacheProvider value={cache}>
+        <ServerRouter context={routerContext} url={request.url} />
+      </CacheProvider>,
       {
         [readyOption]() {
           shellRendered = true;
@@ -61,7 +68,7 @@ export default function handleRequest(
 
           responseHeaders.set("Content-Type", "text/html");
 
-          pipe(body);
+          pipe(new PassThrough()).pipe(renderStylesToNodeStream()).pipe(body);
 
           resolve(
             new Response(stream, {
