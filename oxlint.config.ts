@@ -1,5 +1,4 @@
 import { defineConfig } from "oxlint";
-import * as muiPigmentCss from "eslint-plugin-mui-pigment-css";
 
 export default defineConfig({
   plugins: [
@@ -11,7 +10,6 @@ export default defineConfig({
     "react",
     "react-perf",
   ],
-  extends: [muiPigmentCss.recommended],
   categories: {
     correctness: "error",
     perf: "warn",
@@ -27,8 +25,6 @@ export default defineConfig({
     "no-unassigned-import": "off",
     "no-named-export": "off",
     "no-unsafe-type-assertion": "off",
-
-    "mui-pigment-css/mui-pigment-css": "error",
   },
   settings: {
     "jsx-a11y": {

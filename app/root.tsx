@@ -1,7 +1,6 @@
 import "./global.css";
-import "@mui/material-pigment-css/styles.css";
 import Toolbar from "@mui/material/Toolbar";
-import Container from "@mui/material-pigment-css/Container";
+import Container from "@mui/material/Container";
 import { Fragment, useRef, type PropsWithChildren } from "react";
 import {
   data,

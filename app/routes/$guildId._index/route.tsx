@@ -6,8 +6,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material-pigment-css/Box";
-import Grid from "@mui/material-pigment-css/Grid";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import { useImperativeHandle, useRef, useState } from "react";
 import { href, Link, useLoaderData } from "react-router";
 import { useGuild, useMember } from "../$guildId";
@@ -102,7 +102,7 @@ function Events() {
           <Add />
         </IconButton>
       </Box>
-      <Grid container spacing={16}>
+      <Grid container spacing={2}>
         {events.map((event) => (
           <Grid key={event.id} size={{ xs: 12, sm: 6, md: 4 }}>
             <EventCard
@@ -143,7 +143,7 @@ function Items() {
           <Add />
         </IconButton>
       </Box>
-      <Grid container spacing={16}>
+      <Grid container spacing={2}>
         {guild.items.map((item) => (
           <Grid key={item.id}>
             <ItemCard

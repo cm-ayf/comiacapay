@@ -10,7 +10,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material-pigment-css/Box";
+import Box from "@mui/material/Box";
 import { useCallback, useState, useSyncExternalStore } from "react";
 import {
   Link,

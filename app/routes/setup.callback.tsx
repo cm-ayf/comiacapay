@@ -12,7 +12,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material-pigment-css/Box";
+import Box from "@mui/material/Box";
 import type { APIRole } from "discord-api-types/v10";
 import { useId } from "react";
 import {

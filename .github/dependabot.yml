@@ -16,13 +16,15 @@ updates:
           - "react-dom"
           - "@types/react"
           - "@types/react-dom"
+      emotion:
+        patterns:
+          - "@emotion/*"
       mui-x:
         patterns:
           - "@mui/x-*"
       mui:
         patterns:
           - "@mui/*"
-          - "@pigment-css/*"
         exclude-patterns:
           - "@mui/x-*"
       prisma:
@@ -50,8 +52,8 @@ updates:
           - "@remix-run/*"
           - "react"
           - "react-dom"
+          - "@emotion/*"
           - "@mui/*"
-          - "@pigment-css/*"
           - "@prisma/*"
           - "@conform-to/*"
 
@@ -62,7 +64,6 @@ updates:
           - "@react-router/*"
           - "@types/react"
           - "@types/react-dom"
-          - "@pigment-css/*"
           - "prisma"
           - "@prisma/*"
           - "typescript"

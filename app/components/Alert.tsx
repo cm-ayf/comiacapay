@@ -1,6 +1,6 @@
 import Alert, { type AlertColor } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-import Stack from "@mui/material-pigment-css/Stack";
+import Stack from "@mui/material/Stack";
 import {
   type PropsWithChildren,
   type ReactNode,

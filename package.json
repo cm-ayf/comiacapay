@@ -29,13 +29,15 @@
   "dependencies": {
     "@conform-to/react": "1.17.1",
     "@conform-to/valibot": "1.17.1",
+    "@emotion/cache": "11.14.0",
+    "@emotion/react": "11.14.0",
+    "@emotion/server": "11.11.0",
+    "@emotion/styled": "11.14.1",
     "@mui/icons-material": "7.3.7",
     "@mui/lab": "7.0.1-beta.21",
     "@mui/material": "7.3.7",
-    "@mui/material-pigment-css": "7.3.7",
     "@mui/x-charts": "8.27.0",
     "@mui/x-data-grid": "8.27.0",
-    "@pigment-css/react": "0.0.30",
     "@prisma/adapter-pg": "6.19.0",
     "@prisma/client": "6.19.0",
     "@react-router/fs-routes": "7.13.0",
@@ -51,7 +53,6 @@
   },
   "devDependencies": {
     "@oxlint/plugins": "1.43.0",
-    "@pigment-css/vite-plugin": "0.0.30",
     "@playwright/test": "1.58.2",
     "@prisma/generator-helper": "6.19.0",
     "@react-router/dev": "7.13.0",
@@ -67,7 +68,6 @@
     "@vercel/react-router": "1.2.5",
     "dotenv": "^17.3.1",
     "eslint-plugin-mui-path-imports": "0.0.15",
-    "eslint-plugin-mui-pigment-css": "./eslint-plugin-mui-pigment-css",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
     "npm-run-all2": "8.0.4",
@@ -80,17 +80,6 @@
     "vite-plugin-pwa": "1.2.0"
   },
   "overrides": {
-    "@pigment-css/react": {
-      "@mui/system": "$@mui/material",
-      "@mui/utils": "$@mui/material",
-      "@wyw-in-js/processor-utils": "^0.8.0",
-      "@wyw-in-js/shared": "^0.8.0",
-      "@wyw-in-js/transform": "^0.8.0"
-    },
-    "@pigment-css/vite-plugin": {
-      "@wyw-in-js/shared": "^0.8.0",
-      "@wyw-in-js/transform": "^0.8.0"
-    },
     "vite": "$vite"
   },
   "engines": {
