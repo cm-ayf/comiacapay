@@ -20,7 +20,6 @@ import {
   url,
 } from "valibot";
 import type { BaseIssue, BaseSchema } from "valibot";
-import { Snowflake } from "./snowflake";
 import type {
   Display,
   Event,
@@ -31,6 +30,7 @@ import type {
   Member,
   User,
 } from "./db.server";
+import { Snowflake } from "./snowflake";
 
 type SerializeFrom<AppData> = ReturnType<typeof useLoaderData<AppData>>;
 

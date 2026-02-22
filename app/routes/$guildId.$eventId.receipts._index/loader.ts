@@ -1,6 +1,6 @@
-import type { Route } from "./+types/route";
-import { memberContext, dbContext } from "~/lib/context.server";
 import { data } from "react-router";
+import { memberContext, dbContext } from "~/lib/context.server";
+import type { Route } from "./+types/route";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
   const db = context.get(dbContext);

@@ -1,9 +1,9 @@
 import { data } from "react-router";
-import type { Route } from "./+types/route";
 import { getValidatedJsonOr400 } from "~/lib/body.server";
 import { memberContext, dbContext } from "~/lib/context.server";
-import { CreateReceipt } from "~/lib/schema";
 import { schema } from "~/lib/db.server";
+import { CreateReceipt } from "~/lib/schema";
+import type { Route } from "./+types/route";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const db = context.get(dbContext);

@@ -1,5 +1,5 @@
-import { db } from "../../drizzle";
 import { PgAsyncRelationalQuery } from "drizzle-orm/pg-core";
+import { db } from "../../drizzle";
 
 declare module "drizzle-orm/pg-core" {
   export interface PgAsyncRelationalQuery<TResult> {

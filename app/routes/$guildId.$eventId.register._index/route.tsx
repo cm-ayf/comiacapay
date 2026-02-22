@@ -1,12 +1,12 @@
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import type { Handle } from "~/lib/handle";
+import { useTotal } from "~/lib/register";
 import { useDisplays } from "../$guildId.$eventId";
 import { CreateReceiptButton } from "./CreateReceiptButton";
 import { RegisterDisplayPanel } from "./RegisterDisplayPanel";
-import type { Handle } from "~/lib/handle";
-import { useTotal } from "~/lib/register";
 
 export { action } from "./action";
 export { clientAction } from "./clientAction";

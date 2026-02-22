@@ -5,6 +5,7 @@ import {
   type FieldMetadata,
 } from "@conform-to/react";
 import { parseWithValibot } from "@conform-to/valibot";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
@@ -12,7 +13,6 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import type { APIRole } from "discord-api-types/v10";
 import { useId } from "react";
 import {
@@ -23,8 +23,6 @@ import {
   type SubmitOptions,
 } from "react-router";
 import type { InferInput } from "valibot";
-import type { action } from "./$guildId";
-import type { Route } from "./+types/setup.callback";
 import { useAlert } from "~/components/Alert";
 import createErrorBoundary from "~/components/createErrorBoundary";
 import { sessionContext } from "~/lib/context.server";
@@ -32,6 +30,8 @@ import { useOnSubmitComplete } from "~/lib/fetcher";
 import { exchangeBotCode } from "~/lib/oauth2/setup.server";
 import { UpdateGuild } from "~/lib/schema";
 import { upsertGuildAndMember } from "~/lib/sync/guild.server";
+import type { action } from "./$guildId";
+import type { Route } from "./+types/setup.callback";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   try {

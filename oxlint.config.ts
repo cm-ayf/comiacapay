@@ -1,15 +1,7 @@
 import { defineConfig } from "oxlint";
 
 export default defineConfig({
-  plugins: [
-    "unicorn",
-    "typescript",
-    "oxc",
-    "import",
-    "jsx-a11y",
-    "react",
-    "react-perf",
-  ],
+  plugins: ["unicorn", "typescript", "oxc", "import", "jsx-a11y", "react"],
   categories: {
     correctness: "error",
     perf: "warn",
@@ -17,14 +9,12 @@ export default defineConfig({
   },
   rules: {
     "react-in-jsx-scope": "off",
-    "jsx-no-new-object-as-prop": "off",
-    "jsx-no-new-function-as-prop": "off",
-    "jsx-no-jsx-as-prop": "off",
     "no-await-in-loop": "off",
     "no-map-spread": "off",
     "no-unassigned-import": "off",
     "no-named-export": "off",
     "no-unsafe-type-assertion": "off",
+    "no-shadow": "off",
   },
   settings: {
     "jsx-a11y": {

@@ -1,7 +1,7 @@
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import ClickableCard, { type ClickableCardProps } from "./ClickableCard";
 import type { ClientGuild, ClientMember } from "~/lib/schema";
+import ClickableCard, { type ClickableCardProps } from "./ClickableCard";
 
 const PERMISSIONS = ["register", "write", "admin"] as const;
 

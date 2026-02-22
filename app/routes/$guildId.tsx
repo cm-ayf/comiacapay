@@ -1,19 +1,19 @@
 import Typography from "@mui/material/Typography";
+import { eq } from "drizzle-orm";
 import {
   Outlet,
   useRouteLoaderData,
   type ShouldRevalidateFunctionArgs,
   data,
 } from "react-router";
-import type { Route } from "./+types/$guildId";
 import createErrorBoundary from "~/components/createErrorBoundary";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { createThenable, memberContext, dbContext } from "~/lib/context.server";
+import { schema } from "~/lib/db.server";
 import type { Handle } from "~/lib/handle";
 import { UpdateGuild } from "~/lib/schema";
 import { freshMember } from "~/lib/sync/member.server";
-import { schema } from "~/lib/db.server";
-import { eq } from "drizzle-orm";
+import type { Route } from "./+types/$guildId";
 
 const memberMiddleware: Route.MiddlewareFunction = async (
   { context, params },

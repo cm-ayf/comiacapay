@@ -1,5 +1,5 @@
-import type { Route } from "./+types/route";
 import { memberContext, dbContext } from "~/lib/context.server";
+import type { Route } from "./+types/route";
 
 export async function loader({ context }: Route.LoaderArgs) {
   const db = context.get(dbContext);

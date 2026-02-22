@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
-import type { Route } from "./+types/route";
 import { dbContext, memberContext } from "~/lib/context.server";
 import { schema } from "~/lib/db.server";
+import type { Route } from "./+types/route";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
   const db = context.get(dbContext);

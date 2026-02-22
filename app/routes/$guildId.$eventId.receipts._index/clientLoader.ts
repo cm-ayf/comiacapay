@@ -1,10 +1,10 @@
-import type { Route } from "./+types/route";
 import {
   getReceipts,
   setReceiptsPushed,
   type IDBReceipt,
 } from "~/lib/idb.client";
 import type { ClientReceipt } from "~/lib/schema";
+import type { Route } from "./+types/route";
 
 export async function clientLoader({
   params,

@@ -5,11 +5,11 @@ import {
   RouteBases,
   type APIUser,
 } from "discord-api-types/v10";
-import { data, type RouterContextProvider } from "react-router";
-import { schema } from "../db.server";
-import { dbContext, sessionContext } from "../context.server";
-import { getCurrentUser, getCurrentUserGuilds } from "../oauth2/auth.server";
 import { eq } from "drizzle-orm";
+import { data, type RouterContextProvider } from "react-router";
+import { dbContext, sessionContext } from "../context.server";
+import { schema } from "../db.server";
+import { getCurrentUser, getCurrentUserGuilds } from "../oauth2/auth.server";
 
 const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 

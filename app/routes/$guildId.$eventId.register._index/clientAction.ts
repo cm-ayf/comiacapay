@@ -1,7 +1,7 @@
 import { safeParse } from "valibot";
-import type { Route } from "./+types/route";
 import { addReceipt } from "~/lib/idb.client";
 import { CreateReceipt } from "~/lib/schema";
+import type { Route } from "./+types/route";
 
 export async function clientAction({
   request,

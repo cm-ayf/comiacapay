@@ -1,8 +1,8 @@
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { createContext } from "react-router";
+import { db } from "../../drizzle";
 import type { Member, User } from "./db.server";
 import type { DrizzleDatabase } from "./db.server";
-import { db } from "../../drizzle";
 
 export interface Thenable<T> {
   then(

@@ -1,4 +1,5 @@
 import Typography from "@mui/material/Typography";
+import { eq, and } from "drizzle-orm";
 import { useMemo } from "react";
 import {
   Outlet,
@@ -6,15 +7,14 @@ import {
   type ShouldRevalidateFunctionArgs,
 } from "react-router";
 import { data } from "react-router";
-import { useGuild } from "./$guildId";
-import type { Route } from "./+types/$guildId.$eventId";
 import createErrorBoundary from "~/components/createErrorBoundary";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { dbContext, memberContext } from "~/lib/context.server";
+import { schema } from "~/lib/db.server";
 import type { Handle } from "~/lib/handle";
 import { UpdateEvent, type ClientDisplay, type ClientItem } from "~/lib/schema";
-import { schema } from "~/lib/db.server";
-import { eq, and } from "drizzle-orm";
+import { useGuild } from "./$guildId";
+import type { Route } from "./+types/$guildId.$eventId";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
   const db = context.get(dbContext);

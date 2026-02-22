@@ -31,13 +31,13 @@ function reducer(state: AlertState[], action: Action): AlertState[] {
   }
 }
 
-const AlertContext = createContext({ dispatch: (_: Action) => {} });
+const DispatchAlertContext = createContext((_: Action) => {});
 
 export function AlertProvider({ children }: PropsWithChildren) {
   const [state, dispatch] = useReducer(reducer, []);
   return (
     <>
-      <AlertContext value={{ dispatch }}>{children}</AlertContext>
+      <DispatchAlertContext value={dispatch}>{children}</DispatchAlertContext>
       <Stack>
         {state.map((alert) => (
           <Snackbar
@@ -63,7 +63,7 @@ export function useAlert(): Record<
   AlertColor,
   (message: ReactNode, persist?: boolean) => void
 > {
-  const { dispatch } = use(AlertContext);
+  const dispatch = use(DispatchAlertContext);
   return {
     success: useCallback(
       (message, persist = false) =>

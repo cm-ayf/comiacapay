@@ -1,7 +1,7 @@
-import type { Route } from "./+types/auth.refresh";
+import { eq, and } from "drizzle-orm";
 import { dbContext, sessionContext } from "~/lib/context.server";
 import { schema } from "~/lib/db.server";
-import { eq, and } from "drizzle-orm";
+import type { Route } from "./+types/auth.refresh";
 
 export async function action({ request, context }: Route.LoaderArgs) {
   const db = context.get(dbContext);

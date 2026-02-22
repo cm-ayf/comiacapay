@@ -1,12 +1,12 @@
 import { redirectDocument } from "react-router";
-import type { Route } from "./+types/auth.callback";
 import { dbContext } from "~/lib/context.server";
 import { sidCookie, stateCookie } from "~/lib/cookie.server";
+import { schema } from "~/lib/db.server";
 import { env } from "~/lib/env.server";
 import { exchangeCode, getCurrentUser } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";
 import { createDrizzleSessionStorage } from "~/lib/session.server";
-import { schema } from "~/lib/db.server";
+import type { Route } from "./+types/auth.callback";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const db = context.get(dbContext);
