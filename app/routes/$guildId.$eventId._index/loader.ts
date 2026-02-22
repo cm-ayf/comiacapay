@@ -13,8 +13,7 @@ export async function loader({ params, context }: Route.LoaderArgs) {
     .select({ id: receiptTable.id })
     .from(receiptTable)
     .innerJoin(eventTable, eq(eventTable.id, receiptTable.eventId))
-    .where(
-      and(eq(receiptTable.eventId, eventId), eq(eventTable.guildId, guildId)),
-    );
+    .where(and(eq(eventTable.id, eventId), eq(eventTable.guildId, guildId)))
+    .limit(1);
   return { hasReceipt: !!receipt };
 }
