@@ -1,7 +1,7 @@
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import { VitePWA, type VitePWAOptions } from "vite-plugin-pwa";
-import vercelCustomEntrypoint from "./plugins/vercel-custom-entrypoint";
+// import vercelCustomEntrypoint from "./plugins/vercel-custom-entrypoint";
 
 const vitePwaOptions: Partial<VitePWAOptions> = {
   workbox: {
@@ -44,7 +44,7 @@ export default defineConfig({
   plugins: [
     reactRouter(),
     VitePWA(vitePwaOptions),
-    vercelCustomEntrypoint({ main: "./main.ts" }),
+    // vercelCustomEntrypoint({ main: "./main.ts" }),
   ],
   resolve: {
     tsconfigPaths: true,
