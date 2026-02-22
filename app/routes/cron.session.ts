@@ -12,30 +12,26 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   const db = context.get(dbContext);
 
   const now = Date.now();
-  await db.transaction(async (db) => {
-    const sessions = await db
-      .select()
-      .from(schema.session)
-      .where(
-        and(
-          lte(schema.session.expires, new Date(now + 86400000)),
-          gte(schema.session.expires, new Date(now)),
-          isNotNull(schema.session.tokenResult),
-        ),
-      )
-      .for("update");
-
-    for (const session of sessions) {
-      try {
-        const tokenResult = await refreshTokens(session.tokenResult!);
-        const expires = new Date(now + tokenResult.expires_in * 1000);
-        await db
-          .update(schema.session)
-          .set({ tokenResult, expires })
-          .where(eq(schema.session.id, session.id));
-      } catch {}
-    }
-  });
+  const sessions = await db
+    .select()
+    .from(schema.session)
+    .where(
+      and(
+        lte(schema.session.expires, new Date(now + 86400000)),
+        gte(schema.session.expires, new Date(now)),
+        isNotNull(schema.session.tokenResult),
+      ),
+    );
+  for (const session of sessions) {
+    try {
+      const tokenResult = await refreshTokens(session.tokenResult!);
+      const expires = new Date(now + tokenResult.expires_in * 1000);
+      await db
+        .update(schema.session)
+        .set({ tokenResult, expires })
+        .where(eq(schema.session.id, session.id));
+    } catch {}
+  }
 
   await db
     .update(schema.session)
