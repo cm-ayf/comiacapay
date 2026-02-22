@@ -21,12 +21,5 @@ export async function loader({ params, context }: Route.LoaderArgs) {
     with: { records: true },
   });
 
-  // verify event belongs to guild
-  await db.query.event
-    .findFirst({
-      where: { id: eventId, guildId },
-    })
-    .orThrow({ code: "NOT_FOUND", model: "Event" });
-
   return { receipts, receiptsToBePushed: [] };
 }
