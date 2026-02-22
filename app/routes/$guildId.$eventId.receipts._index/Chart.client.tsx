@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import InputLabel from "@mui/material/InputLabel";
@@ -5,15 +6,14 @@ import MenuItem from "@mui/material/MenuItem";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
-import Box from "@mui/material/Box";
+import type { XAxis, YAxis } from "@mui/x-charts";
 import { LineChart } from "@mui/x-charts/LineChart";
 import type { LineSeriesType } from "@mui/x-charts/models/seriesType";
 import { useId, useMemo, useState } from "react";
 import { useLoaderData } from "react-router";
+import { Snowflake } from "~/lib/snowflake";
 import { useDisplays } from "../$guildId.$eventId";
 import type { clientLoader } from "./clientLoader";
-import { Snowflake } from "~/lib/snowflake";
-import type { XAxis, YAxis } from "@mui/x-charts";
 
 export default function Chart() {
   const { displays } = useDisplays();

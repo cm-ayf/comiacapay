@@ -1,10 +1,10 @@
+import { and, eq } from "drizzle-orm";
 import { data } from "react-router";
-import type { Route } from "./+types/$guildId.$eventId.displays.$itemId";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { memberContext, dbContext } from "~/lib/context.server";
-import { UpsertDisplay } from "~/lib/schema";
 import { schema } from "~/lib/db.server";
-import { and, eq } from "drizzle-orm";
+import { UpsertDisplay } from "~/lib/schema";
+import type { Route } from "./+types/$guildId.$eventId.displays.$itemId";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const db = context.get(dbContext);

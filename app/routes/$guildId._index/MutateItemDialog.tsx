@@ -1,6 +1,5 @@
 import { useImperativeHandle, useMemo, useState, type Ref } from "react";
 import { useLoaderData, useParams } from "react-router";
-import type { loader } from "./loader";
 import { useAlert } from "~/components/Alert";
 import {
   ConformDialog,
@@ -9,6 +8,7 @@ import {
 import ItemDialogContent from "~/components/ItemDialogContent";
 import { getISODateString } from "~/lib/date";
 import { UpdateItem, type ClientEvent, type ClientItem } from "~/lib/schema";
+import type { loader } from "./loader";
 
 export interface MutateItemDialogProps {
   ref: Ref<{ open: (item: ClientItem) => void }>;

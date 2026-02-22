@@ -1,7 +1,6 @@
 import { useImperativeHandle, useState } from "react";
 import { useLoaderData, useParams } from "react-router";
 import type { InferInput } from "valibot";
-import type { loader } from "./loader";
 import { useAlert } from "~/components/Alert";
 import {
   ConformDialog,
@@ -13,6 +12,7 @@ import {
   type ClientDisplay,
   type ClientItem,
 } from "~/lib/schema";
+import type { loader } from "./loader";
 
 export type UpsertDisplayDialogInput =
   | (ClientDisplay & { create?: never })

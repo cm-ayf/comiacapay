@@ -1,4 +1,5 @@
 import type { APIGuildMember } from "discord-api-types/v10";
+import { and, eq } from "drizzle-orm";
 import { data, type RouterContextProvider } from "react-router";
 import {
   dbContext,
@@ -6,9 +7,8 @@ import {
   type MemberContext,
 } from "../context.server";
 import { schema } from "../db.server";
-import { getCurrentUserGuildMember } from "../oauth2/auth.server";
 import type { Guild } from "../db.server";
-import { and, eq } from "drizzle-orm";
+import { getCurrentUserGuildMember } from "../oauth2/auth.server";
 
 const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 

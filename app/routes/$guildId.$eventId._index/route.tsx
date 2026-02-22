@@ -3,13 +3,16 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import FormControl from "@mui/material/FormControl";
+import Grid from "@mui/material/Grid";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
 import { useCallback, useId, useMemo, useRef, type ReactNode } from "react";
 import { href, Link, useFetcher, useParams } from "react-router";
+import DisplayCard from "~/components/DisplayPanel";
+import EventCard from "~/components/EventCard";
+import type { ClientEvent, ClientItem } from "~/lib/schema";
 import { useMember } from "../$guildId";
 import { useDisplays, useEvent } from "../$guildId.$eventId";
 import CreateSetDiscountDialog from "./CreateSetDiscountDialog";
@@ -17,9 +20,6 @@ import MutateEventDialog from "./MutateEventDialog";
 import UpsertDisplayDialog, {
   type UpsertDisplayDialogInput,
 } from "./UpsertDisplayDialog";
-import DisplayCard from "~/components/DisplayPanel";
-import EventCard from "~/components/EventCard";
-import type { ClientEvent, ClientItem } from "~/lib/schema";
 
 export { loader } from "./loader";
 

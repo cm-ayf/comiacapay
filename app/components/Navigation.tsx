@@ -3,6 +3,7 @@ import CloudOff from "@mui/icons-material/CloudOff";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
@@ -10,7 +11,6 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import { useCallback, useState, useSyncExternalStore } from "react";
 import {
   Link,
@@ -19,10 +19,10 @@ import {
   useParams,
   type LinkProps,
 } from "react-router";
-import { useAlert } from "./Alert";
 import { useBreadcrumbs, useTitle, type Breadcrumb } from "~/lib/handle";
 import { useLocationType, useUrlWithRedirectTo } from "~/lib/location";
 import type { ClientUser } from "~/lib/schema";
+import { useAlert } from "./Alert";
 
 export const REPOSITORY: string = "https://github.com/cm-ayf/comiacapay";
 export const DOCS = REPOSITORY + "/blob/main/docs";

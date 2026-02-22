@@ -1,13 +1,13 @@
+import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import Box from "@mui/material/Box";
-import { useEvent } from "../$guildId.$eventId";
 import DisplayPanel from "~/components/DisplayPanel";
 import { useRecordSnapshot } from "~/lib/register";
 import type { ClientDisplay } from "~/lib/schema";
+import { useEvent } from "../$guildId.$eventId";
 
 export function RegisterDisplayPanel({ display }: { display: ClientDisplay }) {
   return (

@@ -1,6 +1,6 @@
 import "./global.css";
-import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
+import Toolbar from "@mui/material/Toolbar";
 import { Fragment, useRef, type PropsWithChildren } from "react";
 import {
   data,
@@ -16,8 +16,8 @@ import { pwaInfo } from "virtual:pwa-info";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import type { Route } from "./+types/root";
 import { AlertProvider } from "./components/Alert";
-import Navigation from "./components/Navigation";
 import createErrorBoundary from "./components/createErrorBoundary";
+import Navigation from "./components/Navigation";
 import {
   createThenable,
   sessionContext,

@@ -1,13 +1,13 @@
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
 import { href, Link, useLoaderData } from "react-router";
-import type { Route } from "./+types/_index";
 import EventCard from "~/components/EventCard";
 import GuildCard from "~/components/GuildCard";
 import { dbContext, sessionContext } from "~/lib/context.server";
+import type { Route } from "./+types/_index";
 
 export async function loader({ context }: Route.LoaderArgs) {
   const db = context.get(dbContext);

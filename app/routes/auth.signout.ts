@@ -1,9 +1,9 @@
 import { redirectDocument } from "react-router";
-import type { Route } from "./+types/auth.signout";
 import { dbContext } from "~/lib/context.server";
 import { sidCookie } from "~/lib/cookie.server";
 import { revokeToken } from "~/lib/oauth2/auth.server";
 import { createDrizzleSessionStorage } from "~/lib/session.server";
+import type { Route } from "./+types/auth.signout";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const db = context.get(dbContext);

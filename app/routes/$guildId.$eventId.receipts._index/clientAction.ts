@@ -1,5 +1,5 @@
-import type { Route } from "./+types/route";
 import { setReceiptsDeleted } from "~/lib/idb.client";
+import type { Route } from "./+types/route";
 
 export async function clientAction({
   request,

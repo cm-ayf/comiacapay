@@ -1,8 +1,8 @@
+import { eq } from "drizzle-orm";
 import { data } from "react-router";
-import type { Route } from "./+types/$guildId.$eventId.discounts.$discountId";
 import { memberContext, dbContext } from "~/lib/context.server";
 import { schema } from "~/lib/db.server";
-import { eq } from "drizzle-orm";
+import type { Route } from "./+types/$guildId.$eventId.discounts.$discountId";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const db = context.get(dbContext);

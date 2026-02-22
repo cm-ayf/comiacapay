@@ -4,10 +4,10 @@ import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import { useEffect, useMemo, useState } from "react";
 import { useLoaderData } from "react-router";
-import { useDisplays, useEvent } from "../$guildId.$eventId";
-import type { clientLoader } from "./clientLoader";
 import { useAlert } from "~/components/Alert";
 import { Snowflake } from "~/lib/snowflake";
+import { useDisplays, useEvent } from "../$guildId.$eventId";
+import type { clientLoader } from "./clientLoader";
 
 export default function Summary() {
   const { displays } = useDisplays();

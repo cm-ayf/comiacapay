@@ -1,8 +1,8 @@
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import type { ClientItem } from "~/lib/schema";
 import CardItemPicture from "./CardItemPicture";
 import ClickableCard, { type ClickableCardProps } from "./ClickableCard";
-import type { ClientItem } from "~/lib/schema";
 
 export default function ItemCard({
   item,

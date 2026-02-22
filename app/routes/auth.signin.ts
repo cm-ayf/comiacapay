@@ -1,8 +1,8 @@
 import { redirectDocument } from "react-router";
-import type { Route } from "./+types/auth.signin";
 import { stateCookie } from "~/lib/cookie.server";
 import { authorizeUrl } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";
+import type { Route } from "./+types/auth.signin";
 
 export async function loader({ request }: Route.LoaderArgs) {
   try {

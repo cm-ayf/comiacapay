@@ -1,6 +1,5 @@
 import { useImperativeHandle, useState, type Ref } from "react";
 import { useNavigate, useParams } from "react-router";
-import type { action } from "./action";
 import { useAlert } from "~/components/Alert";
 import {
   ConformDialog,
@@ -9,6 +8,7 @@ import {
 import EventDialogContent from "~/components/EventDialogContent";
 import { getISODateString } from "~/lib/date";
 import { CreateEvent, type ClientEvent } from "~/lib/schema";
+import type { action } from "./action";
 
 interface CreateEventDialogProps {
   ref: Ref<{ open: () => void }>;

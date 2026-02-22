@@ -1,6 +1,6 @@
+import Box from "@mui/material/Box";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import type { ClientItem } from "~/lib/schema";
 
 export default function CardItemPicture({ item }: { item: ClientItem }) {

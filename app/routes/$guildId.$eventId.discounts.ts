@@ -1,11 +1,11 @@
+import { eq } from "drizzle-orm";
 import { data } from "react-router";
-import type { Route } from "./+types/$guildId.$eventId.discounts";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { memberContext, dbContext } from "~/lib/context.server";
+import { schema } from "~/lib/db.server";
 import { CreateDiscount } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
-import { schema } from "~/lib/db.server";
-import { eq } from "drizzle-orm";
+import type { Route } from "./+types/$guildId.$eventId.discounts";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const db = context.get(dbContext);
