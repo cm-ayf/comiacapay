@@ -1,5 +1,5 @@
 import { defineRelations } from "drizzle-orm";
-import * as schema from "./schema.ts";
+import * as schema from "./schema";
 
 export const relations = defineRelations(schema, (r) => ({
   event: {
@@ -10,6 +10,7 @@ export const relations = defineRelations(schema, (r) => ({
     guild: r.one.guild({
       from: r.event.guildId,
       to: r.guild.id,
+      optional: false,
     }),
     users: r.many.user({
       from: r.event.id.through(r.receipt.eventId),
@@ -21,20 +22,28 @@ export const relations = defineRelations(schema, (r) => ({
     guild: r.one.guild({
       from: r.item.guildId,
       to: r.guild.id,
+      optional: false,
     }),
   },
   guild: {
     events: r.many.event(),
     items: r.many.item(),
-    users: r.many.user({
-      from: r.guild.id.through(r.member.guildId),
-      to: r.user.id.through(r.member.userId),
-    }),
   },
   user: {
-    guilds: r.many.guild(),
     events: r.many.event(),
     sessions: r.many.session(),
+  },
+  member: {
+    user: r.one.user({
+      from: r.member.userId,
+      to: r.user.id,
+      optional: false,
+    }),
+    guild: r.one.guild({
+      from: r.member.guildId,
+      to: r.guild.id,
+      optional: false,
+    }),
   },
   display: {
     receipts: r.many.receipt({

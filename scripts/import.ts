@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { db } from "../drizzle/index.ts";
+import { db } from "../drizzle";
 import {
   user,
   guild,
@@ -9,7 +9,7 @@ import {
   display,
   receipt,
   record,
-} from "../drizzle/schema.ts";
+} from "../drizzle/schema";
 
 const json = await fs.readFile("tmp/db.json", "utf-8");
 const { users, guilds, members, items, events, displays, receipts, records } =
@@ -25,3 +25,5 @@ await db.transaction(async (tx) => {
   await tx.insert(receipt).values(receipts);
   await tx.insert(record).values(records);
 });
+
+await db.$client.end();

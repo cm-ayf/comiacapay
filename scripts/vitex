@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+import "dotenv/config";
+import { runnerImport } from "vite";
+await runnerImport(process.argv[2]);

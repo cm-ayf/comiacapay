@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { db } from "../drizzle/index.ts";
+import { db } from "../drizzle";
 
 const data = await db.transaction(async (tx) => {
   const users = await tx.query.user.findMany();
@@ -15,3 +15,5 @@ const data = await db.transaction(async (tx) => {
 
 const json = JSON.stringify(data, null, 2);
 await fs.writeFile("tmp/db.json", json);
+
+await db.$client.end();
