@@ -1,6 +1,5 @@
 -- Current sql file was generated after introspecting the database
 -- If you want to run this migration please uncomment this code before executing migrations
-/*
 CREATE TABLE "_prisma_migrations" (
 	"id" varchar(36) PRIMARY KEY,
 	"checksum" varchar(64) NOT NULL,
@@ -102,4 +101,3 @@ ALTER TABLE "Receipt" ADD CONSTRAINT "Receipt_user_id_fkey" FOREIGN KEY ("user_i
 ALTER TABLE "Record" ADD CONSTRAINT "Record_event_id_item_id_fkey" FOREIGN KEY ("event_id","item_id") REFERENCES "Display"("event_id","item_id") ON DELETE RESTRICT ON UPDATE CASCADE;--> statement-breakpoint
 ALTER TABLE "Record" ADD CONSTRAINT "Record_receipt_id_fkey" FOREIGN KEY ("receipt_id") REFERENCES "Receipt"("id") ON DELETE RESTRICT ON UPDATE CASCADE;--> statement-breakpoint
 ALTER TABLE "Session" ADD CONSTRAINT "Session_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-*/
