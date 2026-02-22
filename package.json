@@ -7,7 +7,6 @@
   "scripts": {
     "postinstall": "run-p postinstall:*",
     "postinstall:patch-package": "patch-package",
-    "postinstall:prisma-generate": "prisma generate",
     "postinstall:react-router-typegen": "react-router typegen",
     "prepare": "node .husky/install.js",
     "build": "react-router build",
@@ -20,8 +19,8 @@
     "fix:oxlint": "oxlint --fix",
     "fix:oxfmt": "oxfmt --write .",
     "fix": "run-s fix:*",
-    "migrate:dev": "prisma migrate dev",
-    "migrate:deploy": "prisma migrate deploy",
+    "migrate:dev": "drizzle-kit dev",
+    "migrate:deploy": "drizzle-kit migrate",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug"
