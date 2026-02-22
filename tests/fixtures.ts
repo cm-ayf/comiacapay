@@ -33,7 +33,6 @@ export const test = base.extend<Fixtures>({
   // oxlint-disable-next-line no-empty-pattern
   db: async ({}, use) => {
     await use(db);
-    await db.$client.end();
   },
 
   // Guild fixture
@@ -261,4 +260,8 @@ export const test = base.extend<Fixtures>({
     await use(receipts);
     // Cleanup by guild or user fixture
   },
+});
+
+test.afterAll(async () => {
+  await db.$client.end();
 });
