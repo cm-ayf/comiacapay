@@ -3,10 +3,7 @@ import type { Route } from "./+types/route";
 import { getValidatedJsonOr400 } from "~/lib/body.server";
 import { memberContext, dbContext } from "~/lib/context.server";
 import { CreateReceipt } from "~/lib/schema";
-import {
-  receipt as receiptTable,
-  record as recordTable,
-} from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
   const db = context.get(dbContext);
@@ -32,14 +29,14 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 
         // upsert receipt
         const [receipt] = await db
-          .insert(receiptTable)
+          .insert(schema.receipt)
           .values({ id, eventId, userId, total })
           .onConflictDoNothing()
           .returning();
 
         // insert records
         const recordsOut = await db
-          .insert(recordTable)
+          .insert(schema.record)
           .values(
             recordsIn.map((record) => ({ ...record, receiptId: id, eventId })),
           )

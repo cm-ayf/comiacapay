@@ -1,6 +1,6 @@
 import type { Route } from "./+types/auth.refresh";
 import { dbContext, sessionContext } from "~/lib/context.server";
-import { user as userTable, member as memberTable } from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 import { eq, and } from "drizzle-orm";
 
 export async function action({ request, context }: Route.LoaderArgs) {
@@ -9,18 +9,21 @@ export async function action({ request, context }: Route.LoaderArgs) {
   const now = new Date();
 
   await db
-    .update(userTable)
+    .update(schema.user)
     .set({ freshUntil: now })
-    .where(eq(userTable.id, userId));
+    .where(eq(schema.user.id, userId));
 
   const url = new URL(request.url);
   const guildId = url.searchParams.get("guild_id");
   if (guildId) {
     await db
-      .update(memberTable)
+      .update(schema.member)
       .set({ freshUntil: now })
       .where(
-        and(eq(memberTable.userId, userId), eq(memberTable.guildId, guildId)),
+        and(
+          eq(schema.member.userId, userId),
+          eq(schema.member.guildId, guildId),
+        ),
       );
   }
 }

@@ -1,21 +1,13 @@
 import { test as base } from "@playwright/test";
 import { db } from "../drizzle";
-import {
-  type Guild,
-  type Event,
-  type Item,
-  type Display,
-  type Receipt,
-  type User,
-  guild as guildTable,
-  event as eventTable,
-  item as itemTable,
-  display as displayTable,
-  receipt as receiptTable,
-  record as recordTable,
-  user as userTable,
-  session as sessionTable,
-  member as memberTable,
+import * as schema from "../drizzle/schema";
+import type {
+  Guild,
+  Event,
+  Item,
+  Display,
+  Receipt,
+  User,
 } from "../drizzle/schema";
 import { Snowflake } from "~/lib/snowflake";
 import { eq, inArray } from "drizzle-orm";
@@ -38,7 +30,7 @@ export const test = base.extend<Fixtures>({
   // Guild fixture
   guild: async ({ db }, use) => {
     const [guild] = await db
-      .insert(guildTable)
+      .insert(schema.guild)
       .values({
         id: Snowflake.generate().toString(),
         name: "e2e-test",
@@ -56,17 +48,17 @@ export const test = base.extend<Fixtures>({
       const eventIds = events.map((e) => e.id);
 
       await db
-        .delete(recordTable)
-        .where(inArray(recordTable.eventId, eventIds));
+        .delete(schema.record)
+        .where(inArray(schema.record.eventId, eventIds));
       await db
-        .delete(receiptTable)
-        .where(inArray(receiptTable.eventId, eventIds));
+        .delete(schema.receipt)
+        .where(inArray(schema.receipt.eventId, eventIds));
       await db
-        .delete(displayTable)
-        .where(inArray(displayTable.eventId, eventIds));
-      await db.delete(eventTable).where(eq(eventTable.guildId, guildId));
-      await db.delete(itemTable).where(eq(itemTable.guildId, guildId));
-      await db.delete(guildTable).where(eq(guildTable.id, guildId));
+        .delete(schema.display)
+        .where(inArray(schema.display.eventId, eventIds));
+      await db.delete(schema.event).where(eq(schema.event.guildId, guildId));
+      await db.delete(schema.item).where(eq(schema.item.guildId, guildId));
+      await db.delete(schema.guild).where(eq(schema.guild.id, guildId));
     });
   },
 
@@ -74,7 +66,7 @@ export const test = base.extend<Fixtures>({
   user: async ({ page, db, guild }, use) => {
     const oneHourFromNow = new Date(Date.now() + 1000 * 60 * 60);
     const [user] = await db
-      .insert(userTable)
+      .insert(schema.user)
       .values({
         id: Snowflake.generate().toString(),
         username: "e2e-test",
@@ -83,7 +75,7 @@ export const test = base.extend<Fixtures>({
       .returning();
 
     const userId = user!.id;
-    await db.insert(memberTable).values({
+    await db.insert(schema.member).values({
       userId,
       guildId: guild.id,
       read: true,
@@ -95,7 +87,7 @@ export const test = base.extend<Fixtures>({
 
     const signin = async () => {
       const [session] = await db
-        .insert(sessionTable)
+        .insert(schema.session)
         .values({
           id: Snowflake.generate().toString(),
           sid: crypto.getRandomValues(Buffer.alloc(32)).toString("base64url"),
@@ -133,12 +125,12 @@ export const test = base.extend<Fixtures>({
       const receiptIds = receipts.map((r) => r.id);
 
       await db
-        .delete(recordTable)
-        .where(inArray(recordTable.receiptId, receiptIds));
-      await db.delete(receiptTable).where(eq(receiptTable.userId, userId));
-      await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
-      await db.delete(memberTable).where(eq(memberTable.userId, userId));
-      await db.delete(userTable).where(eq(userTable.id, userId));
+        .delete(schema.record)
+        .where(inArray(schema.record.receiptId, receiptIds));
+      await db.delete(schema.receipt).where(eq(schema.receipt.userId, userId));
+      await db.delete(schema.session).where(eq(schema.session.userId, userId));
+      await db.delete(schema.member).where(eq(schema.member.userId, userId));
+      await db.delete(schema.user).where(eq(schema.user.id, userId));
     });
   },
 
@@ -160,7 +152,7 @@ export const test = base.extend<Fixtures>({
         issuedAt: new Date("2025-06-13"),
       },
     ];
-    await db.insert(itemTable).values(items);
+    await db.insert(schema.item).values(items);
     await use(items);
     // Cleanup by guild fixture
   },
@@ -168,7 +160,7 @@ export const test = base.extend<Fixtures>({
   // Event fixture
   event: async ({ db, guild }, use) => {
     const [event] = await db
-      .insert(eventTable)
+      .insert(schema.event)
       .values({
         id: Snowflake.generate().toString(),
         guildId: guild.id,
@@ -198,7 +190,7 @@ export const test = base.extend<Fixtures>({
         dedication: true,
       },
     ];
-    await db.insert(displayTable).values(displays);
+    await db.insert(schema.display).values(displays);
     await use(displays);
     // Cleanup by guild fixture
   },
@@ -228,8 +220,8 @@ export const test = base.extend<Fixtures>({
         total: 3 * display1.price,
       },
     ];
-    await db.insert(receiptTable).values(receipts);
-    await db.insert(recordTable).values([
+    await db.insert(schema.receipt).values(receipts);
+    await db.insert(schema.record).values([
       {
         eventId: event.id,
         itemId: display1.itemId,

@@ -6,7 +6,7 @@ import {
   type APIUser,
 } from "discord-api-types/v10";
 import { data, type RouterContextProvider } from "react-router";
-import { user as userTable, member as memberTable } from "../db.server";
+import { schema } from "../db.server";
 import { dbContext, sessionContext } from "../context.server";
 import { getCurrentUser, getCurrentUserGuilds } from "../oauth2/auth.server";
 import { eq } from "drizzle-orm";
@@ -27,14 +27,14 @@ export async function freshUser(context: Readonly<RouterContextProvider>) {
 
     const currentUser = await getCurrentUser(tokenResult);
     const [refreshedUser] = await db
-      .update(userTable)
+      .update(schema.user)
       .set({
         name: currentUser.global_name,
         username: currentUser.username,
         picture: userAvatar(currentUser),
         freshUntil: new Date(Date.now() + REFRESH_AFTER),
       })
-      .where(eq(userTable.id, currentUser.id))
+      .where(eq(schema.user.id, currentUser.id))
       .returning();
 
     if (!refreshedUser) throw data({ code: "NOT_FOUND", model: "User" }, 404);
@@ -54,7 +54,7 @@ export async function freshUser(context: Readonly<RouterContextProvider>) {
         BigInt(guild.permissions!) & PermissionFlagsBits.Administrator,
       );
       await db
-        .insert(memberTable)
+        .insert(schema.member)
         .values({
           userId,
           guildId: guild.id,
@@ -64,7 +64,7 @@ export async function freshUser(context: Readonly<RouterContextProvider>) {
           admin,
         })
         .onConflictDoUpdate({
-          target: [memberTable.userId, memberTable.guildId],
+          target: [schema.member.userId, schema.member.guildId],
           set: { admin },
         });
     }

@@ -4,7 +4,7 @@ import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { memberContext, dbContext } from "~/lib/context.server";
 import { CreateEvent } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
-import { event as eventTable, display as displayTable } from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 import { eq } from "drizzle-orm";
 
 export async function action({ request, context }: Route.ActionArgs) {
@@ -20,7 +20,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   return await db.transaction(async (db) => {
     const [event] = await db
-      .insert(eventTable)
+      .insert(schema.event)
       .values({ id, guildId, ...rest })
       .returning();
     if (!event) throw data({ code: "NOT_FOUND", model: "Event" }, 404);
@@ -33,7 +33,7 @@ export async function action({ request, context }: Route.ActionArgs) {
       });
 
       if (clonedEvent) {
-        await db.insert(displayTable).values(
+        await db.insert(schema.display).values(
           clonedEvent.displays.map((display) => ({
             ...display,
             eventId: event.id,
@@ -41,14 +41,14 @@ export async function action({ request, context }: Route.ActionArgs) {
         );
 
         await db
-          .update(eventTable)
+          .update(schema.event)
           .set({
             discounts: clonedEvent.discounts.map((discount) => ({
               ...discount,
               id: Snowflake.generate().toString(),
             })),
           })
-          .where(eq(eventTable.id, event.id));
+          .where(eq(schema.event.id, event.id));
       }
     }
 

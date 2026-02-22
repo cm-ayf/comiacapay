@@ -6,7 +6,7 @@ import { env } from "~/lib/env.server";
 import { exchangeCode, getCurrentUser } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";
 import { createDrizzleSessionStorage } from "~/lib/session.server";
-import { user as userTable } from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const db = context.get(dbContext);
@@ -42,7 +42,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
     session.set("userId", user.id);
 
     await db
-      .insert(userTable)
+      .insert(schema.user)
       .values({ id: user.id, username: user.username })
       .onConflictDoNothing();
 

@@ -1,7 +1,7 @@
 import { data } from "react-router";
 import type { Route } from "./+types/$guildId.$eventId.discounts.$discountId";
 import { memberContext, dbContext } from "~/lib/context.server";
-import { event as eventTable } from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 import { eq } from "drizzle-orm";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
@@ -25,11 +25,11 @@ export async function action({ request, params, context }: Route.ActionArgs) {
           throw data({ code: "NOT_FOUND", model: "Discount" }, 404);
 
         await db
-          .update(eventTable)
+          .update(schema.event)
           .set({
             discounts: discounts.filter((d) => d.id !== discountId),
           })
-          .where(eq(eventTable.id, eventId));
+          .where(eq(schema.event.id, eventId));
 
         return discount;
       });

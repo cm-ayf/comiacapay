@@ -4,10 +4,7 @@ import type { Route } from "./+types/route";
 import { getValidatedJsonOr400 } from "~/lib/body.server";
 import { memberContext, dbContext } from "~/lib/context.server";
 import { CreateReceipts } from "~/lib/schema";
-import {
-  receipt as receiptTable,
-  record as recordTable,
-} from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 import { and, eq, inArray } from "drizzle-orm";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
@@ -31,7 +28,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
       return await db.transaction(async (db) => {
         // insert receipts
         const [receipt] = await db
-          .insert(receiptTable)
+          .insert(schema.receipt)
           .values(
             body.map(({ id, total }) => ({
               id,
@@ -46,7 +43,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 
         // insert records
         await db
-          .insert(recordTable)
+          .insert(schema.record)
           .values(Array.from(flatRecords(eventId, body)))
           .onConflictDoNothing();
 
@@ -60,19 +57,19 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 
       return await db.transaction(async (db) => {
         await db
-          .delete(recordTable)
+          .delete(schema.record)
           .where(
             and(
-              inArray(recordTable.receiptId, targetIds),
-              eq(recordTable.eventId, eventId),
+              inArray(schema.record.receiptId, targetIds),
+              eq(schema.record.eventId, eventId),
             ),
           );
         await db
-          .delete(receiptTable)
+          .delete(schema.receipt)
           .where(
             and(
-              inArray(receiptTable.id, targetIds),
-              eq(receiptTable.eventId, eventId),
+              inArray(schema.receipt.id, targetIds),
+              eq(schema.receipt.eventId, eventId),
             ),
           );
         return { delete: true };
@@ -86,7 +83,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 function* flatRecords(
   eventId: string,
   data: InferOutput<typeof CreateReceipts>,
-): Generator<typeof recordTable.$inferInsert> {
+): Generator<typeof schema.record.$inferInsert> {
   for (const receipt of data) {
     for (const record of receipt.records) {
       yield { receiptId: receipt.id, eventId, ...record };

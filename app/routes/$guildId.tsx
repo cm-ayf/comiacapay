@@ -12,7 +12,7 @@ import { createThenable, memberContext, dbContext } from "~/lib/context.server";
 import type { Handle } from "~/lib/handle";
 import { UpdateGuild } from "~/lib/schema";
 import { freshMember } from "~/lib/sync/member.server";
-import { guild as guildTable, member as memberTable } from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 import { eq } from "drizzle-orm";
 
 const memberMiddleware: Route.MiddlewareFunction = async (
@@ -56,17 +56,17 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   return await db.transaction(async (db) => {
     const [guild] = await db
-      .update(guildTable)
+      .update(schema.guild)
       .set(body)
-      .where(eq(guildTable.id, guildId))
+      .where(eq(schema.guild.id, guildId))
       .returning();
     if (!guild) throw data({ code: "NOT_FOUND", model: "Guild" }, 404);
 
     // any guild member should refresh permissions after role update
     await db
-      .update(memberTable)
+      .update(schema.member)
       .set({ freshUntil: new Date() })
-      .where(eq(memberTable.guildId, guildId));
+      .where(eq(schema.member.guildId, guildId));
 
     return guild;
   });

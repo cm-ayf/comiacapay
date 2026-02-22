@@ -3,7 +3,7 @@ import type { Route } from "./+types/$guildId.items.$itemId";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { memberContext, dbContext } from "~/lib/context.server";
 import { UpdateItem } from "~/lib/schema";
-import { item as itemTable } from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 import { eq, and } from "drizzle-orm";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
@@ -17,17 +17,21 @@ export async function action({ request, params, context }: Route.ActionArgs) {
       const body = await getValidatedFormDataOr400(request, UpdateItem);
 
       const [item] = await db
-        .update(itemTable)
+        .update(schema.item)
         .set(body)
-        .where(and(eq(itemTable.id, itemId), eq(itemTable.guildId, guildId)))
+        .where(
+          and(eq(schema.item.id, itemId), eq(schema.item.guildId, guildId)),
+        )
         .returning();
       if (!item) throw data({ code: "NOT_FOUND", model: "Item" }, 404);
       return item;
     }
     case "DELETE": {
       const [item] = await db
-        .delete(itemTable)
-        .where(and(eq(itemTable.id, itemId), eq(itemTable.guildId, guildId)))
+        .delete(schema.item)
+        .where(
+          and(eq(schema.item.id, itemId), eq(schema.item.guildId, guildId)),
+        )
         .returning();
       if (!item) throw data({ code: "NOT_FOUND", model: "Item" }, 404);
       Object.assign(item, { delete: true });

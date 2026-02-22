@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import type { Route } from "./+types/route";
 import { dbContext, memberContext } from "~/lib/context.server";
-import { receipt as receiptTable, event as eventTable } from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
   const db = context.get(dbContext);
@@ -10,10 +10,10 @@ export async function loader({ params, context }: Route.LoaderArgs) {
 
   const { guildId, eventId } = params;
   const [receipt] = await db
-    .select({ id: receiptTable.id })
-    .from(receiptTable)
-    .innerJoin(eventTable, eq(eventTable.id, receiptTable.eventId))
-    .where(and(eq(eventTable.id, eventId), eq(eventTable.guildId, guildId)))
+    .select({ id: schema.receipt.id })
+    .from(schema.receipt)
+    .innerJoin(schema.event, eq(schema.event.id, schema.receipt.eventId))
+    .where(and(eq(schema.event.id, eventId), eq(schema.event.guildId, guildId)))
     .limit(1);
   return { hasReceipt: !!receipt };
 }

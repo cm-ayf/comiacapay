@@ -5,11 +5,7 @@ import type {
 } from "discord-api-types/v10";
 import { data, type RouterContextProvider } from "react-router";
 import { dbContext } from "../context.server";
-import {
-  guild as guildTable,
-  member as memberTable,
-  type Guild,
-} from "../db.server";
+import { schema, type Guild } from "../db.server";
 import { getCurrentUser } from "../oauth2/auth.server";
 
 export async function upsertGuildAndMember(
@@ -29,17 +25,17 @@ export async function upsertGuildAndMember(
   } satisfies Partial<Guild>;
 
   const [refreshedGuild] = await db
-    .insert(guildTable)
+    .insert(schema.guild)
     .values({ id: guild.id, ...attributes })
     .onConflictDoUpdate({
-      target: guildTable.id,
+      target: schema.guild.id,
       set: attributes,
     })
     .returning();
   if (!refreshedGuild) throw data({ code: "NOT_FOUND", model: "Guild" }, 404);
 
   await db
-    .insert(memberTable)
+    .insert(schema.member)
     .values({
       userId: currentUser.id,
       guildId: guild.id,
@@ -49,7 +45,7 @@ export async function upsertGuildAndMember(
       admin: true,
     })
     .onConflictDoUpdate({
-      target: [memberTable.userId, memberTable.guildId],
+      target: [schema.member.userId, schema.member.guildId],
       set: { admin: true },
     });
 

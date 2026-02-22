@@ -5,7 +5,7 @@ import {
   sessionContext,
   type MemberContext,
 } from "../context.server";
-import { member as memberTable } from "../db.server";
+import { schema } from "../db.server";
 import { getCurrentUserGuildMember } from "../oauth2/auth.server";
 import type { Guild } from "../db.server";
 import { and, eq } from "drizzle-orm";
@@ -33,7 +33,7 @@ export async function freshMember(
       guildId,
     );
     const [refreshedMember] = await db
-      .update(memberTable)
+      .update(schema.member)
       .set({
         read: hasPermission(currentUserGuildMember, guild, "read"),
         register: hasPermission(currentUserGuildMember, guild, "register"),
@@ -41,7 +41,10 @@ export async function freshMember(
         freshUntil: new Date(Date.now() + REFRESH_AFTER),
       })
       .where(
-        and(eq(memberTable.userId, userId), eq(memberTable.guildId, guildId)),
+        and(
+          eq(schema.member.userId, userId),
+          eq(schema.member.guildId, guildId),
+        ),
       )
       .returning();
     if (!refreshedMember)
