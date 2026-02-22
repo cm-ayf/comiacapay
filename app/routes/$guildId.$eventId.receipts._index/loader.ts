@@ -1,19 +1,32 @@
 import type { Route } from "./+types/route";
-import { memberContext, prismaContext } from "~/lib/context.server";
+import { memberContext, dbContext } from "~/lib/context.server";
+import { data } from "react-router";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { checkPermission } = await context.get(memberContext);
   checkPermission("read");
 
   const { guildId, eventId } = params;
-  const receipts = await prisma.receipt.findMany({
-    where: {
-      event: { id: eventId, guildId },
-    },
+  // check parent resource belonging guild
+  await db.query.event
+    .findFirst({
+      where: { id: eventId, guildId },
+    })
+    .orThrow(data({ code: "NOT_FOUND", model: "Event" }, 404));
+
+  const receipts = await db.query.receipt.findMany({
+    where: { eventId },
     orderBy: { id: "desc" },
-    include: { records: true },
+    with: { records: true },
   });
+
+  // verify event belongs to guild
+  await db.query.event
+    .findFirst({
+      where: { id: eventId, guildId },
+    })
+    .orThrow({ code: "NOT_FOUND", model: "Event" });
 
   return { receipts, receiptsToBePushed: [] };
 }

@@ -10,9 +10,11 @@ import { useGuild } from "./$guildId";
 import type { Route } from "./+types/$guildId.$eventId";
 import createErrorBoundary from "~/components/createErrorBoundary";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
-import { dbContext, memberContext, prismaContext } from "~/lib/context.server";
+import { dbContext, memberContext } from "~/lib/context.server";
 import type { Handle } from "~/lib/handle";
 import { UpdateEvent, type ClientDisplay, type ClientItem } from "~/lib/schema";
+import { event as eventTable, display as displayTable } from "~/lib/db.server";
+import { eq, and } from "drizzle-orm";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
   const db = context.get(dbContext);
@@ -29,7 +31,7 @@ export async function loader({ params, context }: Route.LoaderArgs) {
 }
 
 export async function action({ request, params, context }: Route.ActionArgs) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { checkPermission } = await context.get(memberContext);
   checkPermission("write");
 
@@ -39,23 +41,41 @@ export async function action({ request, params, context }: Route.ActionArgs) {
       const body = await getValidatedFormDataOr400(request, UpdateEvent);
       if ("clone" in body) throw data({ code: "BAD_REQUEST" }, 400);
 
-      return await prisma.event.update({
-        where: { id: eventId, guildId },
-        data: body,
-        include: { displays: true },
+      return await db.transaction(async (db) => {
+        const [updated] = await db
+          .update(eventTable)
+          .set(body)
+          .where(
+            and(eq(eventTable.id, eventId), eq(eventTable.guildId, guildId)),
+          )
+          .returning();
+        if (!updated) throw data({ code: "NOT_FOUND", model: "Event" }, 404);
+
+        const displays = await db.query.display.findMany({
+          where: { eventId },
+        });
+
+        return { ...updated, displays };
       });
     }
     case "DELETE": {
-      const [displays, event] = await prisma.$transaction([
-        prisma.display.deleteMany({
-          where: { eventId },
-        }),
-        prisma.event.delete({
-          where: { id: eventId, guildId },
-        }),
-      ]);
-      Object.assign(event, { delete: true, __neverRevalidate: true });
-      return { ...event, displays };
+      return await db.transaction(async (db) => {
+        const displays = await db
+          .delete(displayTable)
+          .where(eq(displayTable.eventId, eventId))
+          .returning();
+
+        const [event] = await db
+          .delete(eventTable)
+          .where(
+            and(eq(eventTable.id, eventId), eq(eventTable.guildId, guildId)),
+          )
+          .returning();
+        if (!event) throw data({ code: "NOT_FOUND", model: "Event" }, 404);
+
+        Object.assign(event, { delete: true, __neverRevalidate: true });
+        return { ...event, displays };
+      });
     }
     default:
       throw data(null, 405);

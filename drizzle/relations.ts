@@ -60,6 +60,10 @@ export const relations = defineRelations(schema, (r) => ({
   },
   receipt: {
     displays: r.many.display(),
+    records: r.many.record({
+      from: r.receipt.id,
+      to: r.record.receiptId,
+    }),
   },
   session: {
     user: r.one.user({

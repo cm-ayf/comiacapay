@@ -1,16 +1,20 @@
+import { and, eq } from "drizzle-orm";
 import type { Route } from "./+types/route";
-import { memberContext, prismaContext } from "~/lib/context.server";
+import { dbContext, memberContext } from "~/lib/context.server";
+import { receipt as receiptTable, event as eventTable } from "~/lib/db.server";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { checkPermission } = await context.get(memberContext);
   checkPermission("read");
 
   const { guildId, eventId } = params;
-  const receipt = await prisma.receipt.findFirst({
-    where: {
-      event: { id: eventId, guildId },
-    },
-  });
+  const [receipt] = await db
+    .select({ id: receiptTable.id })
+    .from(receiptTable)
+    .innerJoin(eventTable, eq(eventTable.id, receiptTable.eventId))
+    .where(
+      and(eq(receiptTable.eventId, eventId), eq(eventTable.guildId, guildId)),
+    );
   return { hasReceipt: !!receipt };
 }

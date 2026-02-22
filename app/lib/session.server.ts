@@ -1,35 +1,38 @@
 import { createSessionStorage, type Cookie } from "react-router";
 import type { SessionContext } from "./context.server";
-import type { PrismaClientWithExtensions } from "./prisma.server";
+import type { DrizzleDatabase } from "./db.server";
 import { Snowflake } from "./snowflake";
-import { Prisma } from "~/generated/prisma/client";
+import { session as sessionTable } from "./db.server";
+import { eq } from "drizzle-orm";
 
-export function createPrismaSessionStorage(
-  prisma: PrismaClientWithExtensions,
+export function createDrizzleSessionStorage(
+  db: DrizzleDatabase,
   cookie: Cookie,
 ) {
   return createSessionStorage<SessionContext & { isExisting: true }, unknown>({
     cookie,
-    async createData({ userId = null, tokenResult = Prisma.DbNull }, expires) {
+    async createData({ userId = null, tokenResult = null }, expires) {
       if (!expires) return "";
       const id = Snowflake.generate().toString();
       const sid = crypto
         .getRandomValues(Buffer.alloc(32))
         .toString("base64url");
-      await prisma.session.create({
-        data: { id, sid, expires, tokenResult, userId },
+      await db.insert(sessionTable).values({
+        id,
+        sid,
+        expires,
+        tokenResult,
+        userId,
       });
       return sid;
     },
     async readData(sid) {
-      const session = await prisma.session.findUnique({
+      const session = await db.query.session.findFirst({
         where: { sid },
       });
       if (!session) return null;
       if (session.expires.getTime() < Date.now()) {
-        await prisma.session.deleteMany({
-          where: { sid },
-        });
+        await db.delete(sessionTable).where(eq(sessionTable.sid, sid));
         return null;
       }
 
@@ -40,26 +43,18 @@ export function createPrismaSessionStorage(
       if (session.tokenResult) data.tokenResult = session.tokenResult;
       return data;
     },
-    async updateData(
-      sid,
-      { userId = null, tokenResult = Prisma.DbNull },
-      expires,
-    ) {
+    async updateData(sid, { userId = null, tokenResult = null }, expires) {
       if (!expires) {
-        await prisma.session.deleteMany({
-          where: { sid },
-        });
+        await db.delete(sessionTable).where(eq(sessionTable.sid, sid));
       } else {
-        await prisma.session.update({
-          where: { sid },
-          data: { userId, tokenResult, expires },
-        });
+        await db
+          .update(sessionTable)
+          .set({ userId, tokenResult, expires })
+          .where(eq(sessionTable.sid, sid));
       }
     },
     async deleteData(sid) {
-      await prisma.session.deleteMany({
-        where: { sid },
-      });
+      await db.delete(sessionTable).where(eq(sessionTable.sid, sid));
     },
   });
 }

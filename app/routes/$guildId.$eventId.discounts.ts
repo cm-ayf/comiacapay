@@ -1,12 +1,14 @@
 import { data } from "react-router";
 import type { Route } from "./+types/$guildId.$eventId.discounts";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
-import { memberContext, prismaContext } from "~/lib/context.server";
+import { memberContext, dbContext } from "~/lib/context.server";
 import { CreateDiscount } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
+import { event as eventTable } from "~/lib/db.server";
+import { eq } from "drizzle-orm";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { checkPermission } = await context.get(memberContext);
   checkPermission("write");
 
@@ -15,19 +17,21 @@ export async function action({ request, params, context }: Route.ActionArgs) {
     case "POST": {
       const body = await getValidatedFormDataOr400(request, CreateDiscount);
 
-      const discount = await prisma.$transaction(async (prisma) => {
-        const { discounts } = await prisma.event.findUniqueOrThrow({
-          where: { id: eventId, guildId },
-          select: { discounts: true },
-        });
+      const discount = await db.transaction(async (db) => {
+        const { discounts } = await db.query.event
+          .findFirst({
+            where: { id: eventId, guildId },
+            columns: { discounts: true },
+          })
+          .orThrow(data({ code: "NOT_FOUND", model: "Event" }, 404));
         const id = Snowflake.generate().toString();
         const discount = { id, ...body };
-        await prisma.event.update({
-          where: { id: eventId },
-          data: {
+        await db
+          .update(eventTable)
+          .set({
             discounts: [...discounts, discount],
-          },
-        });
+          })
+          .where(eq(eventTable.id, eventId));
         return discount;
       });
       return data(discount, 201);

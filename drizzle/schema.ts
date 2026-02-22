@@ -18,6 +18,7 @@ export const user = pgTable("User", {
   picture: text(),
   freshUntil: timestamp("fresh_until", { precision: 3 }).defaultNow().notNull(),
 });
+export type User = typeof user.$inferSelect;
 
 const tokenResult = customType<{ data: RESTPostOAuth2AccessTokenResult }>({
   dataType() {
@@ -44,6 +45,7 @@ export const session = pgTable(
     uniqueIndex("Session_sid_key").using("btree", table.sid.asc().nullsLast()),
   ],
 );
+export type Session = typeof session.$inferSelect;
 
 export const guild = pgTable("Guild", {
   id: text().primaryKey(),
@@ -53,6 +55,7 @@ export const guild = pgTable("Guild", {
   registerRoleId: text("register_role_id"),
   writeRoleId: text("write_role_id"),
 });
+export type Guild = typeof guild.$inferSelect;
 
 export const member = pgTable(
   "Member",
@@ -76,6 +79,7 @@ export const member = pgTable(
   },
   (table) => [primaryKey({ columns: [table.userId, table.guildId] })],
 );
+export type Member = typeof member.$inferSelect;
 
 export const item = pgTable("Item", {
   id: text().primaryKey(),
@@ -86,6 +90,7 @@ export const item = pgTable("Item", {
   picture: text(),
   issuedAt: timestamp("issued_at", { precision: 3 }).notNull(),
 });
+export type Item = typeof item.$inferSelect;
 
 // union of one
 export type Discount = SetDiscount;
@@ -116,6 +121,7 @@ export const event = pgTable("Event", {
   date: timestamp({ precision: 3 }).notNull(),
   discounts: discounts().default([]).notNull(),
 });
+export type Event = typeof event.$inferSelect;
 
 export const display = pgTable(
   "Display",
@@ -135,6 +141,7 @@ export const display = pgTable(
   },
   (table) => [primaryKey({ columns: [table.eventId, table.itemId] })],
 );
+export type Display = typeof display.$inferSelect;
 
 export const receipt = pgTable("Receipt", {
   id: text().primaryKey(),
@@ -146,6 +153,7 @@ export const receipt = pgTable("Receipt", {
     .references(() => user.id, { onDelete: "restrict", onUpdate: "cascade" }),
   total: integer().notNull(),
 });
+export type Receipt = typeof receipt.$inferSelect;
 
 export const record = pgTable(
   "Record",
@@ -172,3 +180,4 @@ export const record = pgTable(
       .onDelete("restrict"),
   ],
 );
+export type Record = typeof record.$inferSelect;

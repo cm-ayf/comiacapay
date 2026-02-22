@@ -5,9 +5,12 @@ import type {
 } from "discord-api-types/v10";
 import { data, type RouterContextProvider } from "react-router";
 import { dbContext } from "../context.server";
-import { guild as guildTable, member as memberTable } from "../db.server";
+import {
+  guild as guildTable,
+  member as memberTable,
+  type Guild,
+} from "../db.server";
 import { getCurrentUser } from "../oauth2/auth.server";
-import { Prisma } from "~/generated/prisma/client";
 
 export async function upsertGuildAndMember(
   context: Readonly<RouterContextProvider>,
@@ -20,10 +23,10 @@ export async function upsertGuildAndMember(
 
   const currentUser = await getCurrentUser(tokenResult);
 
-  const attributes: Pick<Prisma.GuildCreateInput, "name" | "picture"> = {
+  const attributes = {
     name: guild.name,
     picture: guildIcon(guild),
-  };
+  } satisfies Partial<Guild>;
 
   const [refreshedGuild] = await db
     .insert(guildTable)
