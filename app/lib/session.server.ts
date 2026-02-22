@@ -11,19 +11,15 @@ export function createDrizzleSessionStorage(
 ) {
   return createSessionStorage<SessionContext & { isExisting: true }, unknown>({
     cookie,
-    async createData({ userId = null, tokenResult = null }, expires) {
-      if (!expires) return "";
+    async createData({ userId = null, tokenResult = null }) {
       const id = Snowflake.generate().toString();
       const sid = crypto
         .getRandomValues(Buffer.alloc(32))
         .toString("base64url");
-      await db.insert(schema.session).values({
-        id,
-        sid,
-        expires,
-        tokenResult,
-        userId,
-      });
+      const expires = getExpires(tokenResult);
+      await db
+        .insert(schema.session)
+        .values({ id, sid, expires, tokenResult, userId });
       return sid;
     },
     async readData(sid) {
@@ -32,8 +28,10 @@ export function createDrizzleSessionStorage(
       });
       if (!session) return null;
       if (session.expires.getTime() < Date.now()) {
-        await db.delete(schema.session).where(eq(schema.session.sid, sid));
-        return null;
+        await db
+          .update(schema.session)
+          .set({ tokenResult: null })
+          .where(eq(schema.session.sid, sid));
       }
 
       const data: Partial<SessionContext & { isExisting: true }> = {
@@ -43,18 +41,20 @@ export function createDrizzleSessionStorage(
       if (session.tokenResult) data.tokenResult = session.tokenResult;
       return data;
     },
-    async updateData(sid, { userId = null, tokenResult = null }, expires) {
-      if (!expires) {
-        await db.delete(schema.session).where(eq(schema.session.sid, sid));
-      } else {
-        await db
-          .update(schema.session)
-          .set({ userId, tokenResult, expires })
-          .where(eq(schema.session.sid, sid));
-      }
+    async updateData(sid, { userId = null, tokenResult = null }) {
+      const expires = getExpires(tokenResult);
+      await db
+        .update(schema.session)
+        .set({ userId, tokenResult, expires })
+        .where(eq(schema.session.sid, sid));
     },
     async deleteData(sid) {
       await db.delete(schema.session).where(eq(schema.session.sid, sid));
     },
   });
+}
+
+function getExpires(tokenResult: SessionContext["tokenResult"] | null) {
+  const expiresInSecond = tokenResult?.expires_in ?? 5 * 60;
+  return new Date(Date.now() + expiresInSecond * 1000);
 }
