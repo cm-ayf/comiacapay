@@ -81,9 +81,14 @@ export default function Table() {
   const [rowSelectionModel, setRowSelectionModel] =
     useState<GridRowSelectionModel>({ type: "include", ids: new Set() });
 
+  const contextValue = useMemo(
+    () => ({ receipts, rowSelectionModel }),
+    [receipts, rowSelectionModel],
+  );
+
   return (
     <ThemeProvider theme={localizedTheme}>
-      <DeleteButtonContext value={{ receipts, rowSelectionModel }}>
+      <DeleteButtonContext value={contextValue}>
         <DataGrid
           loading={revalidator.state === "loading"}
           showToolbar
