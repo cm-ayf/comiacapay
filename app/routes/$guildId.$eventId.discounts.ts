@@ -4,7 +4,7 @@ import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { memberContext, dbContext } from "~/lib/context.server";
 import { CreateDiscount } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
-import { event as eventTable } from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 import { eq } from "drizzle-orm";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
@@ -27,11 +27,11 @@ export async function action({ request, params, context }: Route.ActionArgs) {
         const id = Snowflake.generate().toString();
         const discount = { id, ...body };
         await db
-          .update(eventTable)
+          .update(schema.event)
           .set({
             discounts: [...discounts, discount],
           })
-          .where(eq(eventTable.id, eventId));
+          .where(eq(schema.event.id, eventId));
         return discount;
       });
       return data(discount, 201);

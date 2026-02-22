@@ -13,7 +13,7 @@ import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { dbContext, memberContext } from "~/lib/context.server";
 import type { Handle } from "~/lib/handle";
 import { UpdateEvent, type ClientDisplay, type ClientItem } from "~/lib/schema";
-import { event as eventTable, display as displayTable } from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 import { eq, and } from "drizzle-orm";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
@@ -43,10 +43,13 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 
       return await db.transaction(async (db) => {
         const [updated] = await db
-          .update(eventTable)
+          .update(schema.event)
           .set(body)
           .where(
-            and(eq(eventTable.id, eventId), eq(eventTable.guildId, guildId)),
+            and(
+              eq(schema.event.id, eventId),
+              eq(schema.event.guildId, guildId),
+            ),
           )
           .returning();
         if (!updated) throw data({ code: "NOT_FOUND", model: "Event" }, 404);
@@ -61,14 +64,17 @@ export async function action({ request, params, context }: Route.ActionArgs) {
     case "DELETE": {
       return await db.transaction(async (db) => {
         const displays = await db
-          .delete(displayTable)
-          .where(eq(displayTable.eventId, eventId))
+          .delete(schema.display)
+          .where(eq(schema.display.eventId, eventId))
           .returning();
 
         const [event] = await db
-          .delete(eventTable)
+          .delete(schema.event)
           .where(
-            and(eq(eventTable.id, eventId), eq(eventTable.guildId, guildId)),
+            and(
+              eq(schema.event.id, eventId),
+              eq(schema.event.guildId, guildId),
+            ),
           )
           .returning();
         if (!event) throw data({ code: "NOT_FOUND", model: "Event" }, 404);

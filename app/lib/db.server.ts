@@ -16,4 +16,5 @@ PgAsyncRelationalQuery.prototype.orThrow = function (error) {
 
 export type DrizzleDatabase = typeof db;
 
-export * from "../../drizzle/schema";
+export type * from "../../drizzle/schema";
+export * as schema from "../../drizzle/schema";

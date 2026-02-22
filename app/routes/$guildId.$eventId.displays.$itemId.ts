@@ -3,7 +3,7 @@ import type { Route } from "./+types/$guildId.$eventId.displays.$itemId";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
 import { memberContext, dbContext } from "~/lib/context.server";
 import { UpsertDisplay } from "~/lib/schema";
-import { display as displayTable } from "~/lib/db.server";
+import { schema } from "~/lib/db.server";
 import { and, eq } from "drizzle-orm";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
@@ -28,10 +28,10 @@ export async function action({ request, params, context }: Route.ActionArgs) {
     case "PUT": {
       const body = await getValidatedFormDataOr400(request, UpsertDisplay);
       const [display] = await db
-        .insert(displayTable)
+        .insert(schema.display)
         .values({ eventId, itemId, ...body })
         .onConflictDoUpdate({
-          target: [displayTable.eventId, displayTable.itemId],
+          target: [schema.display.eventId, schema.display.itemId],
           set: body,
         })
         .returning();
@@ -41,11 +41,11 @@ export async function action({ request, params, context }: Route.ActionArgs) {
     }
     case "DELETE": {
       const [display] = await db
-        .delete(displayTable)
+        .delete(schema.display)
         .where(
           and(
-            eq(displayTable.eventId, eventId),
-            eq(displayTable.itemId, itemId),
+            eq(schema.display.eventId, eventId),
+            eq(schema.display.itemId, itemId),
           ),
         )
         .returning();
