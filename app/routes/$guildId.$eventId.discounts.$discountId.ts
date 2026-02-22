@@ -21,7 +21,8 @@ export async function action({ request, params, context }: Route.ActionArgs) {
           .orThrow(data({ code: "NOT_FOUND", model: "Event" }, 404));
 
         const discount = discounts.find((d) => d.id === discountId);
-        if (!discount) throw data({ code: "NOT_FOUND" }, 404);
+        if (!discount)
+          throw data({ code: "NOT_FOUND", model: "Discount" }, 404);
 
         await db
           .update(eventTable)
