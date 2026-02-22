@@ -53,7 +53,7 @@ jobs:
       DISCORD_CLIENT_ID: ""
       DISCORD_CLIENT_SECRET: ""
       DISCORD_OAUTH2_ORIGIN: "http://localhost:4173"
-      POSTGRES_PRISMA_URL: postgres://postgres:postgres@postgres:5432/postgres
+      POSTGRES_URL: postgres://postgres:postgres@postgres:5432/postgres
       POSTGRES_URL_NON_POOLING: postgres://postgres:postgres@postgres:5432/postgres
 
     steps:

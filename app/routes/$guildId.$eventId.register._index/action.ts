@@ -1,47 +1,53 @@
 import { data } from "react-router";
 import type { Route } from "./+types/route";
-import type { Prisma } from "~/generated/prisma/client";
 import { getValidatedJsonOr400 } from "~/lib/body.server";
-import { memberContext, prismaContext } from "~/lib/context.server";
+import { memberContext, dbContext } from "~/lib/context.server";
 import { CreateReceipt } from "~/lib/schema";
+import {
+  receipt as receiptTable,
+  record as recordTable,
+} from "~/lib/db.server";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { userId, checkPermission } = await context.get(memberContext);
   checkPermission("register");
 
   const { guildId, eventId } = params;
   switch (request.method) {
     case "POST": {
-      const { id, total, records } = await getValidatedJsonOr400(
-        request,
-        CreateReceipt,
-      );
+      const {
+        id,
+        total,
+        records: recordsIn,
+      } = await getValidatedJsonOr400(request, CreateReceipt);
 
-      // check parent resource belonging guild
-      await prisma.event.findUniqueOrThrow({
-        where: { id: eventId, guildId },
+      return await db.transaction(async (db) => {
+        // check parent resource belonging guild
+        await db.query.event
+          .findFirst({
+            where: { id: eventId, guildId },
+          })
+          .orThrow(data({ code: "NOT_FOUND", model: "Event" }, 404));
+
+        // upsert receipt
+        const [receipt] = await db
+          .insert(receiptTable)
+          .values({ id, eventId, userId, total })
+          .onConflictDoNothing()
+          .returning();
+
+        // insert records
+        const recordsOut = await db
+          .insert(recordTable)
+          .values(
+            recordsIn.map((record) => ({ ...record, receiptId: id, eventId })),
+          )
+          .onConflictDoNothing()
+          .returning();
+
+        return { ...receipt!, records: recordsOut };
       });
-
-      const receipt = await prisma.receipt.upsert({
-        where: { id },
-        create: {
-          id,
-          total,
-          eventId,
-          userId,
-          records: {
-            createMany: {
-              data: records.map<Prisma.RecordCreateManyReceiptInput>(
-                (record) => ({ ...record, eventId }),
-              ),
-            },
-          },
-        },
-        update: {},
-      });
-
-      return data({ ...receipt, records }, 201);
     }
     default:
       throw data(null, 405);

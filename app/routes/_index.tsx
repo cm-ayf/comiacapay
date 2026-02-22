@@ -7,17 +7,17 @@ import { href, Link, useLoaderData } from "react-router";
 import type { Route } from "./+types/_index";
 import EventCard from "~/components/EventCard";
 import GuildCard from "~/components/GuildCard";
-import { prismaContext, sessionContext } from "~/lib/context.server";
+import { dbContext, sessionContext } from "~/lib/context.server";
 
 export async function loader({ context }: Route.LoaderArgs) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { userId } = await context.get(sessionContext);
 
-  const members = await prisma.member.findMany({
+  const members = await db.query.member.findMany({
     where: { userId },
-    include: { guild: true },
+    with: { guild: true },
   });
-  const recentEvents = await prisma.event.findMany({
+  const recentEvents = await db.query.event.findMany({
     where: {
       guildId: {
         in: members.filter((member) => member.register).map((m) => m.guildId),

@@ -30,7 +30,7 @@ import type {
   Record,
   Member,
   User,
-} from "~/generated/prisma/client";
+} from "./db.server";
 
 type SerializeFrom<AppData> = ReturnType<typeof useLoaderData<AppData>>;
 

@@ -1,12 +1,13 @@
 import { data } from "react-router";
 import type { Route } from "./+types/$guildId.items";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
-import { memberContext, prismaContext } from "~/lib/context.server";
+import { memberContext, dbContext } from "~/lib/context.server";
 import { CreateItem } from "~/lib/schema";
 import { Snowflake } from "~/lib/snowflake";
+import { item as itemTable } from "~/lib/db.server";
 
 export async function action({ request, context }: Route.ActionArgs) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { guildId, checkPermission } = await context.get(memberContext);
   checkPermission("write");
 
@@ -15,9 +16,10 @@ export async function action({ request, context }: Route.ActionArgs) {
       const body = await getValidatedFormDataOr400(request, CreateItem);
 
       const id = Snowflake.generate().toString();
-      const item = await prisma.item.create({
-        data: { id, guildId, ...body },
-      });
+      const [item] = await db
+        .insert(itemTable)
+        .values({ id, guildId, ...body })
+        .returning();
       return data(item, 201);
     }
     default:

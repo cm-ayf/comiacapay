@@ -3,18 +3,17 @@ import {
   Outlet,
   useRouteLoaderData,
   type ShouldRevalidateFunctionArgs,
+  data,
 } from "react-router";
 import type { Route } from "./+types/$guildId";
 import createErrorBoundary from "~/components/createErrorBoundary";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
-import {
-  createThenable,
-  memberContext,
-  prismaContext,
-} from "~/lib/context.server";
+import { createThenable, memberContext, dbContext } from "~/lib/context.server";
 import type { Handle } from "~/lib/handle";
 import { UpdateGuild } from "~/lib/schema";
 import { freshMember } from "~/lib/sync/member.server";
+import { guild as guildTable, member as memberTable } from "~/lib/db.server";
+import { eq } from "drizzle-orm";
 
 const memberMiddleware: Route.MiddlewareFunction = async (
   { context, params },
@@ -30,41 +29,47 @@ const memberMiddleware: Route.MiddlewareFunction = async (
 export const middleware: Route.MiddlewareFunction[] = [memberMiddleware];
 
 export async function loader({ context }: Route.LoaderArgs) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { checkPermission, ...member } = await context.get(memberContext);
   checkPermission("read");
 
-  const guild = await prisma.guild.findUniqueOrThrow({
-    where: { id: member.guildId },
-    include: {
-      items: {
-        orderBy: { issuedAt: "desc" },
+  const guild = await db.query.guild
+    .findFirst({
+      where: { id: member.guildId },
+      with: {
+        items: {
+          orderBy: { issuedAt: "desc" },
+        },
       },
-    },
-  });
+    })
+    .orThrow(data({ code: "NOT_FOUND", model: "Guild" }, 404));
 
   return { ...guild, members: [member] as const };
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { guildId, checkPermission } = await context.get(memberContext);
   checkPermission("admin");
 
   const body = await getValidatedFormDataOr400(request, UpdateGuild);
 
-  const guild = await prisma.guild.update({
-    where: { id: guildId },
-    data: body,
-  });
+  return await db.transaction(async (db) => {
+    const [guild] = await db
+      .update(guildTable)
+      .set(body)
+      .where(eq(guildTable.id, guildId))
+      .returning();
+    if (!guild) throw data({ code: "NOT_FOUND", model: "Guild" }, 404);
 
-  // any guild member should refresh permissions after role update
-  await prisma.member.updateMany({
-    where: { guildId },
-    data: { freshUntil: new Date() },
-  });
+    // any guild member should refresh permissions after role update
+    await db
+      .update(memberTable)
+      .set({ freshUntil: new Date() })
+      .where(eq(memberTable.guildId, guildId));
 
-  return guild;
+    return guild;
+  });
 }
 
 export const handle: Handle<typeof loader> = {

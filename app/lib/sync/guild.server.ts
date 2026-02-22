@@ -3,10 +3,14 @@ import type {
   APIGuild,
   RESTPostOAuth2AccessTokenWithBotAndGuildsScopeResult,
 } from "discord-api-types/v10";
-import type { RouterContextProvider } from "react-router";
-import { prismaContext } from "../context.server";
+import { data, type RouterContextProvider } from "react-router";
+import { dbContext } from "../context.server";
+import {
+  guild as guildTable,
+  member as memberTable,
+  type Guild,
+} from "../db.server";
 import { getCurrentUser } from "../oauth2/auth.server";
-import { Prisma } from "~/generated/prisma/client";
 
 export async function upsertGuildAndMember(
   context: Readonly<RouterContextProvider>,
@@ -15,35 +19,39 @@ export async function upsertGuildAndMember(
     ...tokenResult
   }: RESTPostOAuth2AccessTokenWithBotAndGuildsScopeResult,
 ) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
 
   const currentUser = await getCurrentUser(tokenResult);
 
-  const attributes: Pick<Prisma.GuildCreateInput, "name" | "picture"> = {
+  const attributes = {
     name: guild.name,
     picture: guildIcon(guild),
-  };
-  const refreshedGuild = await prisma.guild.upsert({
-    where: { id: guild.id },
-    update: attributes,
-    create: { id: guild.id, ...attributes },
-  });
+  } satisfies Partial<Guild>;
 
-  await prisma.member.upsert({
-    where: {
-      userId_guildId: { userId: currentUser.id, guildId: guild.id },
-    },
-    update: { admin: true },
-    create: {
+  const [refreshedGuild] = await db
+    .insert(guildTable)
+    .values({ id: guild.id, ...attributes })
+    .onConflictDoUpdate({
+      target: guildTable.id,
+      set: attributes,
+    })
+    .returning();
+  if (!refreshedGuild) throw data({ code: "NOT_FOUND", model: "Guild" }, 404);
+
+  await db
+    .insert(memberTable)
+    .values({
       userId: currentUser.id,
       guildId: guild.id,
       read: false,
       register: false,
       write: false,
       admin: true,
-      // freshUntil: new Date(), // must be refreshed before any request
-    },
-  });
+    })
+    .onConflictDoUpdate({
+      target: [memberTable.userId, memberTable.guildId],
+      set: { admin: true },
+    });
 
   return refreshedGuild;
 }

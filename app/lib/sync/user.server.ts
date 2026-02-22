@@ -5,38 +5,46 @@ import {
   RouteBases,
   type APIUser,
 } from "discord-api-types/v10";
-import type { RouterContextProvider } from "react-router";
-import { prismaContext, sessionContext } from "../context.server";
+import { data, type RouterContextProvider } from "react-router";
+import { user as userTable, member as memberTable } from "../db.server";
+import { dbContext, sessionContext } from "../context.server";
 import { getCurrentUser, getCurrentUserGuilds } from "../oauth2/auth.server";
+import { eq } from "drizzle-orm";
 
 const REFRESH_AFTER = 24 * 60 * 60 * 1000;
 
 export async function freshUser(context: Readonly<RouterContextProvider>) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { userId, tokenResult } = await context.get(sessionContext);
-  return await prisma.$transaction(async (prisma) => {
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { id: userId },
-    });
+
+  return await db.transaction(async (db) => {
+    const user = await db.query.user
+      .findFirst({
+        where: { id: userId },
+      })
+      .orThrow(data({ code: "NOT_FOUND", model: "User" }, 404));
     if (Date.now() < user.freshUntil.getTime()) return user;
 
     const currentUser = await getCurrentUser(tokenResult);
-    const refreshedUser = await prisma.user.update({
-      where: { id: currentUser.id },
-      data: {
+    const [refreshedUser] = await db
+      .update(userTable)
+      .set({
         name: currentUser.global_name,
         username: currentUser.username,
         picture: userAvatar(currentUser),
         freshUntil: new Date(Date.now() + REFRESH_AFTER),
-      },
-    });
+      })
+      .where(eq(userTable.id, currentUser.id))
+      .returning();
+
+    if (!refreshedUser) throw data({ code: "NOT_FOUND", model: "User" }, 404);
 
     const currentUserGuilds = await getCurrentUserGuilds(tokenResult);
-    const guilds = await prisma.guild.findMany({
+    const guilds = await db.query.guild.findMany({
       where: {
         id: { in: currentUserGuilds.map((g) => g.id) },
       },
-      select: { id: true },
+      columns: { id: true },
     });
     const existingGuildIds = new Set(guilds.map((g) => g.id));
     for (const guild of currentUserGuilds) {
@@ -45,20 +53,20 @@ export async function freshUser(context: Readonly<RouterContextProvider>) {
       const admin = Boolean(
         BigInt(guild.permissions!) & PermissionFlagsBits.Administrator,
       );
-      await prisma.member.upsert({
-        where: {
-          userId_guildId: { userId, guildId: guild.id },
-        },
-        update: { admin },
-        create: {
+      await db
+        .insert(memberTable)
+        .values({
           userId,
           guildId: guild.id,
           read: false,
           register: false,
           write: false,
           admin,
-        },
-      });
+        })
+        .onConflictDoUpdate({
+          target: [memberTable.userId, memberTable.guildId],
+          set: { admin },
+        });
     }
 
     return refreshedUser;

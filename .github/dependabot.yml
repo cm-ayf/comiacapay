@@ -27,10 +27,10 @@ updates:
           - "@mui/*"
         exclude-patterns:
           - "@mui/x-*"
-      prisma:
+      drizzle:
         patterns:
-          - "prisma"
-          - "@prisma/*"
+          - "drizzle-orm"
+          - "drizzle-kit"
       typescript:
         patterns:
           - "typescript"
@@ -54,7 +54,7 @@ updates:
           - "react-dom"
           - "@emotion/*"
           - "@mui/*"
-          - "@prisma/*"
+          - "drizzle-orm"
           - "@conform-to/*"
 
       dev-minor-patch:
@@ -64,8 +64,7 @@ updates:
           - "@react-router/*"
           - "@types/react"
           - "@types/react-dom"
-          - "prisma"
-          - "@prisma/*"
+          - "drizzle-kit"
           - "typescript"
           - "typescript-eslint"
           - "eslint"

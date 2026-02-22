@@ -1,11 +1,13 @@
 import { data } from "react-router";
 import type { Route } from "./+types/$guildId.items.$itemId";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
-import { memberContext, prismaContext } from "~/lib/context.server";
+import { memberContext, dbContext } from "~/lib/context.server";
 import { UpdateItem } from "~/lib/schema";
+import { item as itemTable } from "~/lib/db.server";
+import { eq, and } from "drizzle-orm";
 
 export async function action({ request, params, context }: Route.ActionArgs) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { checkPermission } = await context.get(memberContext);
   checkPermission("write");
 
@@ -14,15 +16,20 @@ export async function action({ request, params, context }: Route.ActionArgs) {
     case "PATCH": {
       const body = await getValidatedFormDataOr400(request, UpdateItem);
 
-      return await prisma.item.update({
-        where: { id: itemId, guildId },
-        data: body,
-      });
+      const [item] = await db
+        .update(itemTable)
+        .set(body)
+        .where(and(eq(itemTable.id, itemId), eq(itemTable.guildId, guildId)))
+        .returning();
+      if (!item) throw data({ code: "NOT_FOUND", model: "Item" }, 404);
+      return item;
     }
     case "DELETE": {
-      const item = await prisma.item.delete({
-        where: { id: itemId, guildId },
-      });
+      const [item] = await db
+        .delete(itemTable)
+        .where(and(eq(itemTable.id, itemId), eq(itemTable.guildId, guildId)))
+        .returning();
+      if (!item) throw data({ code: "NOT_FOUND", model: "Item" }, 404);
       Object.assign(item, { delete: true });
       return item;
     }

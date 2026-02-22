@@ -20,31 +20,22 @@ import Navigation from "./components/Navigation";
 import createErrorBoundary from "./components/createErrorBoundary";
 import {
   createThenable,
-  prismaContext,
   sessionContext,
   userContext,
+  dbContext,
 } from "./lib/context.server";
 import { sidCookie } from "./lib/cookie.server";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
-import { getPrismaClient } from "./lib/prisma.server";
-import { createPrismaSessionStorage } from "./lib/session.server";
+import { createDrizzleSessionStorage } from "./lib/session.server";
 import { freshUser } from "./lib/sync/user.server";
-
-const prismaMiddleware: Route.MiddlewareFunction = async (
-  { context },
-  next,
-) => {
-  context.set(prismaContext, await getPrismaClient());
-  return await next();
-};
 
 async function initSession(
   request: Request,
   context: Readonly<RouterContextProvider>,
 ) {
-  const prisma = context.get(prismaContext);
-  const { getSession, commitSession } = createPrismaSessionStorage(
-    prisma,
+  const db = context.get(dbContext);
+  const { getSession, commitSession } = createDrizzleSessionStorage(
+    db,
     sidCookie,
   );
 
@@ -84,7 +75,6 @@ const userMiddleware: Route.MiddlewareFunction = async ({ context }, next) => {
 };
 
 export const middleware: Route.MiddlewareFunction[] = [
-  prismaMiddleware,
   sessionMiddleware,
   userMiddleware,
 ];

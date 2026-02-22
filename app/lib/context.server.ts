@@ -1,7 +1,8 @@
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { createContext } from "react-router";
-import type { PrismaClientWithExtensions } from "./prisma.server";
-import type { Member, User } from "~/generated/prisma/client";
+import type { Member, User } from "./db.server";
+import type { DrizzleDatabase } from "./db.server";
+import { db } from "../../drizzle";
 
 export interface Thenable<T> {
   then(
@@ -24,7 +25,7 @@ export function createThenable<Args extends unknown[], Ret>(
   };
 }
 
-export const prismaContext = createContext<PrismaClientWithExtensions>();
+export const dbContext = createContext<DrizzleDatabase>(db);
 
 export interface SessionContext {
   userId: string;

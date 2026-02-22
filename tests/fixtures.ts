@@ -1,5 +1,5 @@
 import { test as base } from "@playwright/test";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { db } from "../drizzle";
 import {
   type Guild,
   type Event,
@@ -7,13 +7,20 @@ import {
   type Display,
   type Receipt,
   type User,
-  PrismaClient,
-} from "~/generated/prisma/client";
-import { env } from "~/lib/env.server";
+  guild as guildTable,
+  event as eventTable,
+  item as itemTable,
+  display as displayTable,
+  receipt as receiptTable,
+  record as recordTable,
+  user as userTable,
+  session as sessionTable,
+  member as memberTable,
+} from "../drizzle/schema";
 import { Snowflake } from "~/lib/snowflake";
-
+import { eq, inArray } from "drizzle-orm";
 type Fixtures = {
-  prisma: PrismaClient;
+  db: typeof db;
   guild: Guild;
   user: User & { signin: () => Promise<void> };
   items: [Item, Item];
@@ -24,74 +31,75 @@ type Fixtures = {
 
 export const test = base.extend<Fixtures>({
   // oxlint-disable-next-line no-empty-pattern
-  prisma: async ({}, use) => {
-    const prisma = new PrismaClient({
-      adapter: new PrismaPg({ connectionString: env.POSTGRES_PRISMA_URL }),
-    });
-    await prisma.$connect();
-    await use(prisma);
-    await prisma.$disconnect();
+  db: async ({}, use) => {
+    await use(db);
   },
 
   // Guild fixture
-  guild: async ({ prisma }, use) => {
-    const guild = await prisma.guild.create({
-      data: {
+  guild: async ({ db }, use) => {
+    const [guild] = await db
+      .insert(guildTable)
+      .values({
         id: Snowflake.generate().toString(),
         name: "e2e-test",
-      },
-    });
+      })
+      .returning();
 
-    await use(guild);
+    await use(guild!);
 
-    await prisma.$transaction(async (prisma) => {
-      const events = await prisma.event.findMany({
-        where: { guildId: guild.id },
+    const guildId = guild!.id;
+    await db.transaction(async (db) => {
+      const events = await db.query.event.findMany({
+        where: { guildId },
+        columns: { id: true },
       });
-      const eventIdInEvents = { eventId: { in: events.map((e) => e.id) } };
-      await prisma.record.deleteMany({ where: eventIdInEvents });
-      await prisma.receipt.deleteMany({ where: eventIdInEvents });
-      await prisma.display.deleteMany({ where: eventIdInEvents });
-      await prisma.event.deleteMany({
-        where: { guildId: guild.id },
-      });
-      await prisma.item.deleteMany({
-        where: { guildId: guild.id },
-      });
-      await prisma.guild.delete({
-        where: { id: guild.id },
-      });
+      const eventIds = events.map((e) => e.id);
+
+      await db
+        .delete(recordTable)
+        .where(inArray(recordTable.eventId, eventIds));
+      await db
+        .delete(receiptTable)
+        .where(inArray(receiptTable.eventId, eventIds));
+      await db
+        .delete(displayTable)
+        .where(inArray(displayTable.eventId, eventIds));
+      await db.delete(eventTable).where(eq(eventTable.guildId, guildId));
+      await db.delete(itemTable).where(eq(itemTable.guildId, guildId));
+      await db.delete(guildTable).where(eq(guildTable.id, guildId));
     });
   },
 
   // Session fixture
-  user: async ({ page, prisma, guild }, use) => {
+  user: async ({ page, db, guild }, use) => {
     const oneHourFromNow = new Date(Date.now() + 1000 * 60 * 60);
-    const user = await prisma.user.create({
-      data: {
+    const [user] = await db
+      .insert(userTable)
+      .values({
         id: Snowflake.generate().toString(),
         username: "e2e-test",
         freshUntil: oneHourFromNow,
-      },
-    });
-    await prisma.member.create({
-      data: {
-        userId: user.id,
-        guildId: guild.id,
-        read: true,
-        register: true,
-        write: true,
-        admin: false,
-        freshUntil: oneHourFromNow,
-      },
+      })
+      .returning();
+
+    const userId = user!.id;
+    await db.insert(memberTable).values({
+      userId,
+      guildId: guild.id,
+      read: true,
+      register: true,
+      write: true,
+      admin: false,
+      freshUntil: oneHourFromNow,
     });
 
     const signin = async () => {
-      const session = await prisma.session.create({
-        data: {
+      const [session] = await db
+        .insert(sessionTable)
+        .values({
           id: Snowflake.generate().toString(),
           sid: crypto.getRandomValues(Buffer.alloc(32)).toString("base64url"),
-          userId: user.id,
+          userId,
           tokenResult: {
             access_token: "e2e-test-access-token",
             refresh_token: "e2e-test-refresh-token",
@@ -100,47 +108,42 @@ export const test = base.extend<Fixtures>({
             expires_in: 3600,
           },
           expires: oneHourFromNow,
-        },
-      });
+        })
+        .returning();
       await page.context().addCookies([
         {
           name: "session",
-          value: Buffer.from(JSON.stringify(session.sid)).toString("base64url"),
+          value: Buffer.from(JSON.stringify(session!.sid)).toString(
+            "base64url",
+          ),
           domain: "localhost",
           path: "/",
         },
       ]);
     };
 
-    await use({ ...user, signin });
+    await use({ ...user!, signin });
 
     // Cleanup
-    await prisma.$transaction(async (prisma) => {
-      const receipts = await prisma.receipt.findMany({
-        where: { userId: user.id },
+    await db.transaction(async (db) => {
+      const receipts = await db.query.receipt.findMany({
+        where: { userId },
+        columns: { id: true },
       });
-      await prisma.record.deleteMany({
-        where: {
-          receiptId: { in: receipts.map((r) => r.id) },
-        },
-      });
-      await prisma.receipt.deleteMany({
-        where: { userId: user.id },
-      });
-      await prisma.session.deleteMany({
-        where: { userId: user.id },
-      });
-      await prisma.member.deleteMany({
-        where: { userId: user.id },
-      });
-      await prisma.user.delete({
-        where: { id: user.id },
-      });
+      const receiptIds = receipts.map((r) => r.id);
+
+      await db
+        .delete(recordTable)
+        .where(inArray(recordTable.receiptId, receiptIds));
+      await db.delete(receiptTable).where(eq(receiptTable.userId, userId));
+      await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
+      await db.delete(memberTable).where(eq(memberTable.userId, userId));
+      await db.delete(userTable).where(eq(userTable.id, userId));
     });
   },
 
   // Items fixture
-  items: async ({ prisma, guild }, use) => {
+  items: async ({ db, guild }, use) => {
     const items: [Item, Item] = [
       {
         id: Snowflake.generate().toString(),
@@ -157,27 +160,28 @@ export const test = base.extend<Fixtures>({
         issuedAt: new Date("2025-06-13"),
       },
     ];
-    await prisma.item.createMany({ data: items });
+    await db.insert(itemTable).values(items);
     await use(items);
     // Cleanup by guild fixture
   },
 
   // Event fixture
-  event: async ({ prisma, guild }, use) => {
-    const event = await prisma.event.create({
-      data: {
+  event: async ({ db, guild }, use) => {
+    const [event] = await db
+      .insert(eventTable)
+      .values({
         id: Snowflake.generate().toString(),
         guildId: guild.id,
         name: "Event 1",
         date: new Date(),
-      },
-    });
-    await use(event);
+      })
+      .returning();
+    await use(event!);
     // Cleanup by guild fixture
   },
 
   // Displays fixture
-  displays: async ({ prisma, event, items: [item1, item2] }, use) => {
+  displays: async ({ db, event, items: [item1, item2] }, use) => {
     const displays: [Display, Display] = [
       {
         itemId: item1.id,
@@ -194,14 +198,14 @@ export const test = base.extend<Fixtures>({
         dedication: true,
       },
     ];
-    await prisma.display.createMany({ data: displays });
+    await db.insert(displayTable).values(displays);
     await use(displays);
     // Cleanup by guild fixture
   },
 
   // Receipts fixture
   receipts: async (
-    { prisma, user, event, displays: [display1, display2] },
+    { db, user, event, displays: [display1, display2] },
     use,
   ) => {
     const receipts: [Receipt, Receipt, Receipt] = [
@@ -224,38 +228,40 @@ export const test = base.extend<Fixtures>({
         total: 3 * display1.price,
       },
     ];
-    await prisma.receipt.createMany({ data: receipts });
-    await prisma.record.createMany({
-      data: [
-        {
-          eventId: event.id,
-          itemId: display1.itemId,
-          receiptId: receipts[0].id,
-          count: 2,
-        },
-        {
-          eventId: event.id,
-          itemId: display1.itemId,
-          receiptId: receipts[1].id,
-          internal: true,
-          count: 1,
-        },
-        {
-          eventId: event.id,
-          itemId: display1.itemId,
-          receiptId: receipts[2].id,
-          count: 3,
-        },
-        {
-          eventId: event.id,
-          itemId: display2.itemId,
-          receiptId: receipts[2].id,
-          count: 1,
-          dedication: true,
-        },
-      ],
-    });
+    await db.insert(receiptTable).values(receipts);
+    await db.insert(recordTable).values([
+      {
+        eventId: event.id,
+        itemId: display1.itemId,
+        receiptId: receipts[0].id,
+        count: 2,
+      },
+      {
+        eventId: event.id,
+        itemId: display1.itemId,
+        receiptId: receipts[1].id,
+        internal: true,
+        count: 1,
+      },
+      {
+        eventId: event.id,
+        itemId: display1.itemId,
+        receiptId: receipts[2].id,
+        count: 3,
+      },
+      {
+        eventId: event.id,
+        itemId: display2.itemId,
+        receiptId: receipts[2].id,
+        count: 1,
+        dedication: true,
+      },
+    ]);
     await use(receipts);
     // Cleanup by guild or user fixture
   },
+});
+
+test.afterAll(async () => {
+  await db.$client.end();
 });

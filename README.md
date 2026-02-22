@@ -17,7 +17,7 @@
 - [React Router](https://reactrouter.com/)：フロントエンドおよびバックエンド
 - [React](https://reactjs.org/)：フロントエンド
 - [MUI](https://mui.com/)：UI フレームワーク
-- [Prisma](https://www.prisma.io/)：ORM
+- [Drizzle ORM](https://orm.drizzle.team/)：ORM
 
 ## 開発
 
@@ -39,15 +39,13 @@
 ### データベース
 
 データベースには[Supabase](https://supabase.com/)を利用することを想定しています．なお，データベース以外の機能は利用しません．  
-デプロイするには，プロジェクトを作成し，[Prismaで利用するための公式のガイド](https://supabase.com/partners/integrations/prisma)を参照してください．
+デプロイするには，プロジェクトを作成し，[Drizzleで利用するための公式のガイド](https://supabase.com/docs/guides/database/drizzle)を参照してください．
 
 また，[VercelとのIntegration](https://vercel.com/integrations/supabase)が公式に提供されています．
 
-なお，[Prisma スキーマ](prisma/schema.prisma)などを変更することで，他のデータベースでも動作すると考えられます．スキーマは Supabase 向けに調整されていることに注意してください．
-
 以下の環境変数を設定してください：
 
-- `POSTGRES_PRISMA_URL`・`POSTGRES_URL_NON_POOLING`：データベースに接続する URL です．
+- `POSTGRES_URL`・`POSTGRES_URL_NON_POOLING`：データベースに接続する URL です．
   - Production 環境では Supabase の Integration が自動で設定します．
   - Development 環境ではどちらも `postgres://$(whoami)@localhost:5432/comiacapay` などとしてください．
 - `POSTGRES_CA_URL`：データベースとの暗号化通信において信頼するルート証明書の URL です．
@@ -57,7 +55,7 @@
 
 #### マイグレーション
 
-マイグレーションは自動化されていません．適宜`npm run migrate:deploy`を実行してください．詳しくは[公式ドキュメント](https://www.prisma.io/docs/orm/prisma-migrate/getting-started)を参照してください．
+マイグレーションは自動化されていません．適宜`npm run migrate:deploy`を実行してください．詳しくは[公式ドキュメント](https://orm.drizzle.team/docs/migrations)を参照してください．
 
 ### 認証
 

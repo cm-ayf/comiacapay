@@ -1,16 +1,17 @@
 import { redirectDocument } from "react-router";
 import type { Route } from "./+types/auth.callback";
-import { prismaContext } from "~/lib/context.server";
+import { dbContext } from "~/lib/context.server";
 import { sidCookie, stateCookie } from "~/lib/cookie.server";
 import { env } from "~/lib/env.server";
 import { exchangeCode, getCurrentUser } from "~/lib/oauth2/auth.server";
 import { OAuth2Error } from "~/lib/oauth2/error";
-import { createPrismaSessionStorage } from "~/lib/session.server";
+import { createDrizzleSessionStorage } from "~/lib/session.server";
+import { user as userTable } from "~/lib/db.server";
 
 export async function loader({ request, context }: Route.LoaderArgs) {
-  const prisma = context.get(prismaContext);
-  const { getSession, commitSession } = createPrismaSessionStorage(
-    prisma,
+  const db = context.get(dbContext);
+  const { getSession, commitSession } = createDrizzleSessionStorage(
+    db,
     sidCookie,
   );
 
@@ -40,11 +41,10 @@ export async function loader({ request, context }: Route.LoaderArgs) {
     });
     session.set("userId", user.id);
 
-    await prisma.user.upsert({
-      where: { id: user.id },
-      update: {},
-      create: { id: user.id, username: user.username },
-    });
+    await db
+      .insert(userTable)
+      .values({ id: user.id, username: user.username })
+      .onConflictDoNothing();
 
     return redirectDocument(state.searchParams.get("redirect_to") ?? "/", {
       headers: {
