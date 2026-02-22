@@ -15,5 +15,3 @@ const client = postgres(process.env["POSTGRES_URL"]!, {
   ssl: ca ? ({ ca } satisfies ConnectionOptions) : false,
 });
 export const db = drizzle({ schema, relations, client });
-
-export * from "./schema";
