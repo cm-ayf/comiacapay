@@ -5,7 +5,7 @@ const EnvSchema = object({
   DISCORD_CLIENT_SECRET: string(),
   DISCORD_OAUTH2_ORIGIN: string(),
   DISCORD_OAUTH2_TRAMPOLINE_KEY: exactOptional(string()),
-  POSTGRES_PRISMA_URL: string(),
+  POSTGRES_URL: string(),
   POSTGRES_CA_URL: exactOptional(string()),
 });
 
