@@ -37,8 +37,6 @@
     "@mui/material": "7.3.7",
     "@mui/x-charts": "8.27.0",
     "@mui/x-data-grid": "8.27.1",
-    "@prisma/adapter-pg": "6.19.0",
-    "@prisma/client": "6.19.0",
     "@react-router/fs-routes": "7.13.0",
     "@react-router/node": "7.13.0",
     "discord-api-types": "0.38.39",
@@ -55,7 +53,6 @@
   "devDependencies": {
     "@oxlint/plugins": "1.48.0",
     "@playwright/test": "1.58.2",
-    "@prisma/generator-helper": "6.19.0",
     "@react-router/dev": "7.13.0",
     "@remix-run/node-fetch-server": "0.13.0",
     "@tsconfig/node24": "24.0.4",
@@ -76,8 +73,6 @@
     "oxfmt": "0.33.0",
     "oxlint": "1.48.0",
     "oxlint-tsgolint": "0.13.0",
-    "prisma": "6.19.0",
-    "prisma-json-types-generator": "3.6.2",
     "vite": "8.0.0-beta.14",
     "vite-plugin-pwa": "1.2.0"
   },
