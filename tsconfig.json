@@ -21,8 +21,7 @@
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true,
     "composite": true,
-    "emitDeclarationOnly": true,
-    "outDir": "node_modules/.cache/tsgo/",
+    "noEmit": true,
     "tsBuildInfoFile": "node_modules/.cache/tsgo/.tsbuildinfo",
     "paths": {
       "~/*": ["./app/*"]
