@@ -16,8 +16,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
           select: { discounts: true },
         });
         const discount = discounts.find((d) => d.id === discountId);
-        if (!discount)
-          throw data({ code: "NOT_FOUND", model: "Discount" }, 404);
+        if (!discount) throw data({ code: "NOT_FOUND" }, 404);
 
         await prisma.event.update({
           where: { id: eventId },

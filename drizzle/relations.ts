@@ -16,6 +16,10 @@ export const relations = defineRelations(schema, (r) => ({
       from: r.event.id.through(r.receipt.eventId),
       to: r.user.id.through(r.receipt.userId),
     }),
+    displays: r.many.display({
+      from: r.event.id,
+      to: r.display.eventId,
+    }),
   },
   item: {
     events: r.many.event(),

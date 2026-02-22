@@ -10,20 +10,22 @@ import { useGuild } from "./$guildId";
 import type { Route } from "./+types/$guildId.$eventId";
 import createErrorBoundary from "~/components/createErrorBoundary";
 import { getValidatedFormDataOr400 } from "~/lib/body.server";
-import { memberContext, prismaContext } from "~/lib/context.server";
+import { dbContext, memberContext, prismaContext } from "~/lib/context.server";
 import type { Handle } from "~/lib/handle";
 import { UpdateEvent, type ClientDisplay, type ClientItem } from "~/lib/schema";
 
 export async function loader({ params, context }: Route.LoaderArgs) {
-  const prisma = context.get(prismaContext);
+  const db = context.get(dbContext);
   const { checkPermission } = await context.get(memberContext);
   checkPermission("read");
 
   const { guildId, eventId } = params;
-  return await prisma.event.findUniqueOrThrow({
-    where: { id: eventId, guildId },
-    include: { displays: true },
-  });
+  return await db.query.event
+    .findFirst({
+      where: { id: eventId, guildId },
+      with: { displays: true },
+    })
+    .orThrow(data({ code: "NOT_FOUND", model: "Event" }, 404));
 }
 
 export async function action({ request, params, context }: Route.ActionArgs) {
