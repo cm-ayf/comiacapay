@@ -8,7 +8,7 @@
     "postinstall:patch-package": "patch-package",
     "postinstall:react-router-typegen": "react-router typegen",
     "prepare": "node .husky/install.js",
-    "build": "react-router build",
+    "build": "react-router build --sourcemapServer",
     "preview": "vite preview",
     "dev": "react-router dev",
     "check:tsgo": "tsgo",
