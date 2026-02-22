@@ -10,6 +10,7 @@ import {
   Scripts,
   ScrollRestoration,
   RouterContextProvider,
+  useRouteLoaderData,
 } from "react-router";
 import { pwaInfo } from "virtual:pwa-info";
 import { useRegisterSW } from "virtual:pwa-register/react";
@@ -28,7 +29,6 @@ import { useHandleValue, useTitle, type Handle } from "./lib/handle";
 import { getPrismaClient } from "./lib/prisma.server";
 import { createPrismaSessionStorage } from "./lib/session.server";
 import { freshUser } from "./lib/sync/user.server";
-import type { User } from "~/generated/prisma/client";
 
 const prismaMiddleware: Route.MiddlewareFunction = async (
   { context },
@@ -128,6 +128,9 @@ class Prefetcher {
 
 export function Layout({ children }: PropsWithChildren) {
   const title = useTitle();
+  const user = useRouteLoaderData<typeof loader>("root");
+  const ButtomComponent = useHandleValue("ButtomComponent", Fragment);
+  const maxWidth = useHandleValue("containerMaxWidth", "lg");
   const prefetcherRef = useRef(new Prefetcher());
   useRegisterSW({
     onRegisteredSW(_, registration) {
@@ -157,7 +160,14 @@ export function Layout({ children }: PropsWithChildren) {
         <meta name="description" content="同人即売会用のレジアプリ" />
       </head>
       <body>
-        {children}
+        <Navigation user={user} />
+        <Toolbar variant="dense" />
+        <AlertProvider>
+          <Container maxWidth={maxWidth ?? "lg"} component="main">
+            {children}
+          </Container>
+          <ButtomComponent />
+        </AlertProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -165,43 +175,11 @@ export function Layout({ children }: PropsWithChildren) {
   );
 }
 
-function AppLayout({
-  children,
-  user,
-}: PropsWithChildren<{ user: User | undefined }>) {
-  const ButtomComponent = useHandleValue("ButtomComponent", Fragment);
-  const maxWidth = useHandleValue("containerMaxWidth", "lg");
-
-  return (
-    <>
-      <Navigation user={user} />
-      <Toolbar variant="dense" />
-      <AlertProvider>
-        <Container maxWidth={maxWidth ?? "lg"} component="main">
-          {children}
-        </Container>
-        <ButtomComponent />
-      </AlertProvider>
-    </>
-  );
+export default function App() {
+  return <Outlet />;
 }
 
-export default function App({ loaderData }: Route.ComponentProps) {
-  return (
-    <AppLayout user={loaderData}>
-      <Outlet />
-    </AppLayout>
-  );
-}
-
-const ErrorBoundaryInner = createErrorBoundary();
-export function ErrorBoundary({ error, loaderData }: Route.ErrorBoundaryProps) {
-  return (
-    <AppLayout user={loaderData}>
-      <ErrorBoundaryInner error={error} />
-    </AppLayout>
-  );
-}
+export const ErrorBoundary = createErrorBoundary();
 
 export function shouldRevalidate() {
   return false;
