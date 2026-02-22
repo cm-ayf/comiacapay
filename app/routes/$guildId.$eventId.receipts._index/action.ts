@@ -30,7 +30,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 
       return await db.transaction(async (db) => {
         // insert receipts
-        const insertResult = await db
+        const [receipt] = await db
           .insert(receiptTable)
           .values(
             body.map(({ id, total }) => ({
@@ -40,7 +40,9 @@ export async function action({ request, params, context }: Route.ActionArgs) {
               total,
             })),
           )
-          .onConflictDoNothing();
+          .onConflictDoNothing()
+          .returning();
+        if (!receipt) throw data({ code: "NOT_FOUND", model: "Receipt" }, 404);
 
         // insert records
         await db
@@ -48,7 +50,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
           .values(Array.from(flatRecords(eventId, body)))
           .onConflictDoNothing();
 
-        return insertResult;
+        return receipt;
       });
     }
     case "DELETE": {
