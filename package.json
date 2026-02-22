@@ -3,7 +3,6 @@
   "version": "0.3.0",
   "private": true,
   "type": "module",
-  "sideEffects": false,
   "scripts": {
     "postinstall": "run-p postinstall:*",
     "postinstall:patch-package": "patch-package",
