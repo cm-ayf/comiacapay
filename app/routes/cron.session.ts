@@ -14,20 +14,18 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   const now = Date.now();
   const sessions = await db.query.session.findMany();
 
-  await db.transaction(async (db) => {
-    for (const session of sessions) {
-      if (!session.tokenResult || session.expires.getTime() < now) {
-        await db.delete(sessionTable).where(eq(sessionTable.id, session.id));
-      } else if (session.expires.getTime() < now + 86400000) {
-        const tokenResult = await refreshTokens(session.tokenResult);
-        const expires = new Date(now + tokenResult.expires_in * 1000);
-        await db
-          .update(sessionTable)
-          .set({ tokenResult, expires })
-          .where(eq(sessionTable.id, session.id));
-      }
+  for (const session of sessions) {
+    if (!session.tokenResult || session.expires.getTime() < now) {
+      await db.delete(sessionTable).where(eq(sessionTable.id, session.id));
+    } else if (session.expires.getTime() < now + 86400000) {
+      const tokenResult = await refreshTokens(session.tokenResult);
+      const expires = new Date(now + tokenResult.expires_in * 1000);
+      await db
+        .update(sessionTable)
+        .set({ tokenResult, expires })
+        .where(eq(sessionTable.id, session.id));
     }
-  });
+  }
 
   return new Response();
 }
