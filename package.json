@@ -61,7 +61,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@types/serviceworker": "0.0.191",
-    "@typescript/native-preview": "7.0.0-dev.20260210.1",
+    "@typescript/native-preview": "7.0.0-dev.20260222.1",
     "@vercel/react-router": "1.2.5",
     "dotenv": "^17.3.1",
     "drizzle-kit": "1.0.0-beta.15-859cf75",
