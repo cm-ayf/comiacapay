@@ -18,7 +18,7 @@ export default defineConfig({
   },
   settings: {
     "jsx-a11y": {
-      polymorphicPropName: null,
+      polymorphicPropName: "component",
       components: {},
       attributes: {},
     },
@@ -28,7 +28,6 @@ export default defineConfig({
         { name: "Link", attribute: "to" },
         { name: "NavLink", attribute: "to" },
       ],
-      version: null,
     },
   },
   env: {
