@@ -1,8 +1,7 @@
 import type { RESTPostOAuth2AccessTokenResult } from "discord-api-types/v10";
 import { createContext } from "react-router";
-import { db } from "../../drizzle";
+import type { DB } from "../../drizzle";
 import type { Member, User } from "./db.server";
-import type { DrizzleDatabase } from "./db.server";
 
 export interface Thenable<T> {
   then(
@@ -24,8 +23,7 @@ export function createThenable<Args extends unknown[], Ret>(
     },
   };
 }
-
-export const dbContext = createContext<DrizzleDatabase>(db);
+export const dbContext = createContext<DB>();
 
 export interface SessionContext {
   userId: string;

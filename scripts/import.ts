@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { db } from "../drizzle";
+import { createDb } from "../drizzle";
 import {
   user,
   guild,
@@ -10,6 +10,8 @@ import {
   receipt,
   record,
 } from "../drizzle/schema";
+
+const db = await createDb();
 
 const json = await fs.readFile("tmp/db.json", "utf-8");
 const { users, guilds, members, items, events, displays, receipts, records } =
