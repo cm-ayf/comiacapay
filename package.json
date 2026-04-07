@@ -24,8 +24,8 @@
     "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
-    "@conform-to/react": "1.17.1",
-    "@conform-to/valibot": "1.17.1",
+    "@conform-to/react": "1.18.0",
+    "@conform-to/valibot": "1.18.0",
     "@emotion/cache": "11.14.0",
     "@emotion/react": "11.14.0",
     "@emotion/server": "11.11.0",
