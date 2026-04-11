@@ -11,8 +11,8 @@ import type {
   Receipt,
   User,
 } from "../drizzle/schema";
-type Fixtures = {
-  db: DB;
+
+type TestFixtures = {
   guild: Guild;
   user: User & { signin: () => Promise<void> };
   items: [Item, Item];
@@ -20,14 +20,20 @@ type Fixtures = {
   displays: [Display, Display];
   receipts: [Receipt, Receipt, Receipt];
 };
+type WorkerFixtures = {
+  db: DB;
+};
 
-export const test = base.extend<Fixtures>({
-  // oxlint-disable-next-line no-empty-pattern
-  db: async ({}, use) => {
-    const db = await createDb();
-    await use(db);
-    await db.$client.end();
-  },
+export const test = base.extend<TestFixtures, WorkerFixtures>({
+  db: [
+    // oxlint-disable-next-line no-empty-pattern
+    async ({}, use) => {
+      const db = createDb();
+      await use(db);
+      await db.$client.end();
+    },
+    { scope: "worker" },
+  ],
 
   // Guild fixture
   guild: async ({ db }, use) => {
