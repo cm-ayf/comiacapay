@@ -149,7 +149,7 @@ test.describe("docs/register.md", () => {
     await user.signin();
     await page.goto(`/`);
     await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(100); // TODO: fix app so that this is not needed
+    await page.waitForTimeout(1000); // TODO: fix app so that this is not needed
 
     await context.setOffline(true);
 
