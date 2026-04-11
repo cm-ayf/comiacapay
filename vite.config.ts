@@ -2,7 +2,6 @@ import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { clientOnlyPlugins } from "./plugins/client-only-plugins";
-import vercelCustomEntrypoint from "./plugins/vercel-custom-entrypoint";
 
 export default defineConfig({
   plugins: [
@@ -43,7 +42,6 @@ export default defineConfig({
       },
       outDir: "build/client",
     }),
-    vercelCustomEntrypoint({ main: "./main.ts" }),
     clientOnlyPlugins({ filter: ["vite-plugin-pwa:build"] }),
   ],
   resolve: {
