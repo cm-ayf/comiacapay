@@ -15,7 +15,7 @@ PgAsyncRelationalQuery.prototype.orThrow = function (error) {
 };
 
 declare global {
-  var db: DB;
+  var db: DB | undefined;
 }
 
 export function getDb() {
