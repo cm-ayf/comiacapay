@@ -149,6 +149,7 @@ test.describe("docs/register.md", () => {
     await user.signin();
     await page.goto(`/`);
     await page.waitForLoadState("networkidle");
+    await context.waitForEvent("serviceworker");
 
     await context.setOffline(true);
 
