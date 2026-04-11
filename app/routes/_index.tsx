@@ -2,8 +2,9 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { href, Link, useLoaderData } from "react-router";
+import { useRegisterSW } from "virtual:pwa-register/react";
 import EventCard from "~/components/EventCard";
 import GuildCard from "~/components/GuildCard";
 import { dbContext, sessionContext } from "~/lib/context.server";
@@ -39,6 +40,22 @@ export default function Page() {
     () => new Map(members.map((m) => [m.guildId, m])),
     [members],
   );
+  const [registeredSW, setRegisteredSW] = useState(false);
+  useRegisterSW({
+    onRegisteredSW() {
+      setRegisteredSW(true);
+      setTimeout(() => {
+        document.head
+          .querySelectorAll<HTMLLinkElement>(`link[rel=prefetch]`)
+          .forEach((link) => {
+            fetch(link.href, {
+              priority: "low",
+              cache: "force-cache",
+            }).catch(() => {});
+          });
+      }, 100);
+    },
+  });
 
   return (
     <>
@@ -80,7 +97,7 @@ export default function Page() {
                 guild={member.guild}
                 event={event}
                 to={target}
-                prefetch="render"
+                prefetch={registeredSW ? "render" : "none"}
               />
             </Grid>
           );

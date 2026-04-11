@@ -10,8 +10,10 @@ export default defineConfig({
       workbox: {
         runtimeCaching: [
           {
-            urlPattern: ({ url }) =>
-              /^\/\d+\/\d+\/register\.data$/.test(url.pathname),
+            urlPattern: ({ url }) => (
+              console.log(url.pathname),
+              /^\/\d+\/\d+\/register\.data$/.test(url.pathname)
+            ),
             handler: "NetworkFirst",
             options: { networkTimeoutSeconds: 5 },
           },

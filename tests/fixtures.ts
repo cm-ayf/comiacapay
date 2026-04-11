@@ -1,7 +1,7 @@
 import { test as base } from "@playwright/test";
 import { eq, inArray } from "drizzle-orm";
 import { Snowflake } from "~/lib/snowflake";
-import { db } from "../drizzle";
+import { createDb, type DB } from "../drizzle";
 import * as schema from "../drizzle/schema";
 import type {
   Guild,
@@ -11,8 +11,8 @@ import type {
   Receipt,
   User,
 } from "../drizzle/schema";
-type Fixtures = {
-  db: typeof db;
+
+type TestFixtures = {
   guild: Guild;
   user: User & { signin: () => Promise<void> };
   items: [Item, Item];
@@ -20,12 +20,20 @@ type Fixtures = {
   displays: [Display, Display];
   receipts: [Receipt, Receipt, Receipt];
 };
+type WorkerFixtures = {
+  db: DB;
+};
 
-export const test = base.extend<Fixtures>({
-  // oxlint-disable-next-line no-empty-pattern
-  db: async ({}, use) => {
-    await use(db);
-  },
+export const test = base.extend<TestFixtures, WorkerFixtures>({
+  db: [
+    // oxlint-disable-next-line no-empty-pattern
+    async ({}, use) => {
+      const db = createDb();
+      await use(db);
+      await db.$client.end();
+    },
+    { scope: "worker" },
+  ],
 
   // Guild fixture
   guild: async ({ db }, use) => {
@@ -252,8 +260,4 @@ export const test = base.extend<Fixtures>({
     await use(receipts);
     // Cleanup by guild or user fixture
   },
-});
-
-test.afterAll(async () => {
-  await db.$client.end();
 });
