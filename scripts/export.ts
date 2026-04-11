@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import { createDb } from "../drizzle";
 
-const db = await createDb();
+const db = createDb();
 
 const data = await db.transaction(async (tx) => {
   const users = await tx.query.user.findMany();

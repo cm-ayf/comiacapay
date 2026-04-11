@@ -11,7 +11,7 @@ import {
   record,
 } from "../drizzle/schema";
 
-const db = await createDb();
+const db = createDb();
 
 const json = await fs.readFile("tmp/db.json", "utf-8");
 const { users, guilds, members, items, events, displays, receipts, records } =
