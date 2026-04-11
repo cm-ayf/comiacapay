@@ -1,7 +1,7 @@
 import "./global.css";
 import Container from "@mui/material/Container";
 import Toolbar from "@mui/material/Toolbar";
-import { Fragment, useRef, type PropsWithChildren } from "react";
+import { Fragment, type PropsWithChildren } from "react";
 import {
   data,
   Links,
@@ -13,7 +13,6 @@ import {
   useRouteLoaderData,
 } from "react-router";
 import { pwaInfo } from "virtual:pwa-info";
-import { useRegisterSW } from "virtual:pwa-register/react";
 import type { Route } from "./+types/root";
 import { AlertProvider } from "./components/Alert";
 import createErrorBoundary from "./components/createErrorBoundary";
@@ -95,48 +94,14 @@ export const handle: Handle<typeof loader> = {
   getName: () => "TOP",
 };
 
-class Prefetcher {
-  #head?: HTMLHeadElement | null;
-  #registration?: ServiceWorkerRegistration | undefined;
-
-  headRef(head: HTMLHeadElement | null) {
-    this.#head = head;
-    this.prefetch();
-  }
-
-  onRegisteredSW(registration: ServiceWorkerRegistration | undefined) {
-    this.#registration = registration;
-    this.prefetch();
-  }
-
-  prefetch() {
-    if (!this.#head || !this.#registration) return;
-
-    this.#head
-      .querySelectorAll<HTMLLinkElement>(`link[rel=prefetch]`)
-      .forEach((link) => {
-        fetch(link.href, {
-          priority: "low",
-          cache: "force-cache",
-        }).catch(() => {});
-      });
-  }
-}
-
 export function Layout({ children }: PropsWithChildren) {
   const title = useTitle();
   const user = useRouteLoaderData<typeof loader>("root");
   const ButtomComponent = useHandleValue("ButtomComponent", Fragment);
   const maxWidth = useHandleValue("containerMaxWidth", "lg");
-  const prefetcherRef = useRef(new Prefetcher());
-  useRegisterSW({
-    onRegisteredSW(_, registration) {
-      prefetcherRef.current.onRegisteredSW(registration);
-    },
-  });
   return (
     <html lang="ja">
-      <head ref={(head) => prefetcherRef.current.headRef(head)}>
+      <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#1976d2" />
