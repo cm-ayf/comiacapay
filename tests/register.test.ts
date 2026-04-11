@@ -148,6 +148,13 @@ test.describe("docs/register.md", () => {
 
     await user.signin();
     await page.goto(`/`);
+    await context
+      .waitForEvent("serviceworker")
+      .then((sw) =>
+        sw.waitForEvent("console", (msg) =>
+          msg.text().includes(`/${guild.id}/${event.id}/register.data`),
+        ),
+      );
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000); // TODO: fix app so that this is not needed
 
