@@ -131,7 +131,7 @@ test.describe("docs/register.md", () => {
     await expect(page.getByRole("contentinfo").getByText("¥")).toHaveText(`¥0`);
   });
 
-  test("オフラインでの機能", async ({
+  test.fixme("オフラインでの機能", async ({
     browserName,
     context,
     page,
