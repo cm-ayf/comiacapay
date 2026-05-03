@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
+import type { PaperProps } from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { createContext, use, type PropsWithChildren } from "react";
 import {
@@ -42,7 +43,7 @@ export interface ConformDialogProps<TSchema extends Schema, Action> {
 
   schema: TSchema;
   defaultValue?: DefaultValue<InferOutput<NoInfer<TSchema>>>;
-  submitConfig?: SubmitOptions;
+  submitConfig?: Omit<SubmitOptions, "encType">;
 
   onSubmitComplete?: (data: SerializeFrom<Action>) => void;
   onDeleteComplete?: () => void;
@@ -50,7 +51,7 @@ export interface ConformDialogProps<TSchema extends Schema, Action> {
 
 interface ConformDialogFetcherContext {
   fetcher: FetcherWithComponents<unknown>;
-  submitConfig: SubmitOptions;
+  submitConfig: Omit<SubmitOptions, "encType">;
 }
 const ConformDialogFetcherContext =
   createContext<ConformDialogFetcherContext | null>(null);
@@ -94,10 +95,13 @@ export function ConformDialog<TSchema extends Schema, Action>({
         onClose();
         form.reset();
       }}
-      PaperProps={{
-        component: fetcher.Form,
-        ...getFormProps(form),
-        ...submitConfig,
+      slotProps={{
+        paper: {
+          component: fetcher.Form,
+          ...getFormProps(form),
+          ...submitConfig,
+          // slotProps cannot handle generic component
+        } satisfies PaperProps<typeof fetcher.Form> as unknown as PaperProps,
       }}
     >
       <FormProvider context={form.context}>
