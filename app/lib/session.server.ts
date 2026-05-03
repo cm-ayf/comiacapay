@@ -1,14 +1,11 @@
 import { eq } from "drizzle-orm";
 import { createSessionStorage, type Cookie } from "react-router";
+import type { DB } from "../../drizzle";
 import type { SessionContext } from "./context.server";
-import type { DrizzleDatabase } from "./db.server";
 import { schema } from "./db.server";
 import { Snowflake } from "./snowflake";
 
-export function createDrizzleSessionStorage(
-  db: DrizzleDatabase,
-  cookie: Cookie,
-) {
+export function createDrizzleSessionStorage(db: DB, cookie: Cookie) {
   return createSessionStorage<SessionContext & { isExisting: true }, unknown>({
     cookie,
     async createData({ userId = null, tokenResult = null }) {

@@ -25,6 +25,7 @@ import {
   dbContext,
 } from "./lib/context.server";
 import { sidCookie } from "./lib/cookie.server";
+import { getDb } from "./lib/db.server";
 import { useHandleValue, useTitle, type Handle } from "./lib/handle";
 import { createDrizzleSessionStorage } from "./lib/session.server";
 import { freshUser } from "./lib/sync/user.server";
@@ -61,6 +62,11 @@ async function initSession(
   return { userId, tokenResult };
 }
 
+const dbMiddleware: Route.MiddlewareFunction = async ({ context }, next) => {
+  context.set(dbContext, getDb());
+  return next();
+};
+
 const sessionMiddleware: Route.MiddlewareFunction = async (
   { request, context },
   next,
@@ -75,6 +81,7 @@ const userMiddleware: Route.MiddlewareFunction = async ({ context }, next) => {
 };
 
 export const middleware: Route.MiddlewareFunction[] = [
+  dbMiddleware,
   sessionMiddleware,
   userMiddleware,
 ];

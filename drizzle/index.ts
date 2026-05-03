@@ -10,8 +10,11 @@ const caRes = process.env["POSTGRES_CA_URL"]
 if (caRes && !caRes.ok) throw new Error("Failed to fetch POSTGRES_CA_URL");
 const ca = await caRes?.text();
 
-const client = postgres(process.env["POSTGRES_URL"]!, {
-  prepare: false,
-  ssl: ca ? ({ ca } satisfies ConnectionOptions) : false,
-});
-export const db = drizzle({ schema, relations, client });
+export function createDb() {
+  const client = postgres(process.env["POSTGRES_URL"]!, {
+    prepare: false,
+    ssl: ca ? ({ ca } satisfies ConnectionOptions) : false,
+  });
+  return drizzle({ schema, relations, client });
+}
+export type DB = Awaited<ReturnType<typeof createDb>>;

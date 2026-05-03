@@ -1,5 +1,5 @@
 import { PgAsyncRelationalQuery } from "drizzle-orm/pg-core";
-import { db } from "../../drizzle";
+import { createDb, type DB } from "../../drizzle";
 
 declare module "drizzle-orm/pg-core" {
   export interface PgAsyncRelationalQuery<TResult> {
@@ -14,7 +14,13 @@ PgAsyncRelationalQuery.prototype.orThrow = function (error) {
   });
 };
 
-export type DrizzleDatabase = typeof db;
+declare global {
+  var db: DB | undefined;
+}
+
+export function getDb() {
+  return (global.db ??= createDb());
+}
 
 export type * from "../../drizzle/schema";
 export * as schema from "../../drizzle/schema";
