@@ -2,7 +2,6 @@ import type { ConnectionOptions } from "node:tls";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { relations } from "./relations";
-import * as schema from "./schema";
 
 const caRes = process.env["POSTGRES_CA_URL"]
   ? await fetch(process.env["POSTGRES_CA_URL"])
@@ -15,6 +14,6 @@ export function createDb() {
     prepare: false,
     ssl: ca ? ({ ca } satisfies ConnectionOptions) : false,
   });
-  return drizzle({ schema, relations, client });
+  return drizzle({ relations, client });
 }
 export type DB = Awaited<ReturnType<typeof createDb>>;
