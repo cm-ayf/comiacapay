@@ -7,12 +7,11 @@ export default defineConfig({
   testDir: "./tests",
   fullyParallel: true,
   forbidOnly: !!CI,
-  retries: CI ? 4 : 0,
+  retries: CI ? 2 : 0,
   reporter: "html",
   use: {
     baseURL: "http://localhost:4173",
     trace: "on-first-retry",
-    actionTimeout: 10000,
   },
 
   projects: [
