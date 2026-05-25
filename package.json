@@ -45,7 +45,7 @@
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-router": "7.15.1",
-    "valibot": "1.4.0"
+    "valibot": "1.4.1"
   },
   "devDependencies": {
     "@oxlint/plugins": "1.62.0",
