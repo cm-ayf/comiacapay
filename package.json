@@ -56,7 +56,7 @@
     "@tsconfig/strictest": "2.0.8",
     "@types/node": "24.10.4",
     "@types/pg": "8.20.0",
-    "@types/react": "19.2.14",
+    "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3",
     "@types/serviceworker": "0.0.197",
     "@typescript/native-preview": "7.0.0-dev.20260511.1",
