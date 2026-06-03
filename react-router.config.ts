@@ -7,7 +7,10 @@ export default {
   routeDiscovery: { mode: "initial" },
   subResourceIntegrity: true,
   future: {
+    v8_passThroughRequests: true,
     v8_middleware: true,
+    v8_splitRouteModules: true,
+    v8_trailingSlashAwareDataRequests: true,
     v8_viteEnvironmentApi: true,
     unstable_optimizeDeps: true,
   },
