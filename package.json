@@ -66,7 +66,7 @@
     "eslint-plugin-mui-path-imports": "0.0.15",
     "husky": "9.1.7",
     "lint-staged": "17.0.7",
-    "npm-run-all2": "8.0.4",
+    "npm-run-all2": "9.0.1",
     "oxfmt": "0.53.0",
     "oxlint": "1.68.0",
     "oxlint-tsgolint": "0.23.0",
