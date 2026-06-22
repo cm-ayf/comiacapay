@@ -56,14 +56,19 @@ interface ConformDialogFetcherContext {
 const ConformDialogFetcherContext =
   createContext<ConformDialogFetcherContext | null>(null);
 
+const DEFAULT_DEFAUKT_VALUE = {};
+const DEFAULT_SUBMIT_CONFIG: Omit<SubmitOptions, "encType"> = {};
+
 export function ConformDialog<TSchema extends Schema, Action>({
   children,
   open,
   onClose,
   title,
   schema,
-  defaultValue = {},
-  submitConfig = {},
+  defaultValue = DEFAULT_DEFAUKT_VALUE as DefaultValue<
+    InferOutput<NoInfer<TSchema>>
+  >,
+  submitConfig = DEFAULT_SUBMIT_CONFIG,
   onSubmitComplete,
   onDeleteComplete,
 }: PropsWithChildren<ConformDialogProps<TSchema, Action>>) {

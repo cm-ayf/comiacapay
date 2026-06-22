@@ -15,6 +15,10 @@ export default defineConfig({
     "no-named-export": "off",
     "no-unsafe-type-assertion": "off",
     "no-shadow": "off",
+    "no-underscore-dangle": [
+      "warn",
+      { allow: ["__typename", "__neverRevalidate", "_Snowflake"] },
+    ],
   },
   settings: {
     "jsx-a11y": {

@@ -205,6 +205,7 @@ function CreateDiscountSelect({ open }: { open: (typename: string) => void }) {
 
 type Discount = ClientEvent["discounts"][number];
 
+// oxlint-disable-next-line typescript/consistent-return -- ensured to handle all enums by tsc
 function DiscountCard({ discount }: { discount: Discount }): ReactNode & {} {
   switch (discount.__typename) {
     case "SetDiscount":

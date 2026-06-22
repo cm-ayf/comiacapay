@@ -77,7 +77,7 @@ function Buttons() {
 function PushButton() {
   const data = useLoaderData<typeof loader | typeof clientLoader>();
   const fetcher = useFetcher<typeof action>();
-  const onClick = useCallback(() => {
+  const onClick = useCallback(async () => {
     if (!data) return;
     return fetcher.submit(data.receiptsToBePushed, {
       method: "POST",
