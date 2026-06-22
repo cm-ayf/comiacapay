@@ -151,7 +151,7 @@ function DeleteButton() {
     return searchParams;
   }, [rowSelectionModel, receipts]);
 
-  const onClick = useCallback(() => {
+  const onClick = useCallback(async () => {
     if (searchParams.size === 0) return;
 
     return fetcher.submit(null, {

@@ -34,6 +34,7 @@ function calculate(event: CalculateInput) {
     else return acc + display.price * record.count;
   }, 0);
 
+  // oxlint-disable-next-line typescript/consistent-return -- ensured to handle all enums by tsc
   const discount = event.discounts.reduce((acc, discount): number => {
     switch (discount.__typename) {
       case "SetDiscount": {
