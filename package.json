@@ -33,8 +33,8 @@
     "@mui/icons-material": "9.1.1",
     "@mui/lab": "9.0.0-beta.5",
     "@mui/material": "9.1.1",
-    "@mui/x-charts": "9.1.0",
-    "@mui/x-data-grid": "9.1.0",
+    "@mui/x-charts": "9.6.0",
+    "@mui/x-data-grid": "9.6.0",
     "@react-router/fs-routes": "7.17.0",
     "@react-router/node": "7.17.0",
     "discord-api-types": "0.38.48",
@@ -74,6 +74,9 @@
     "vite-plugin-pwa": "1.3.0"
   },
   "overrides": {
+    "@mui/lab": {
+      "@mui/utils": "$@mui/material"
+    },
     "vite": "$vite"
   },
   "engines": {
