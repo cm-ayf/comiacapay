@@ -43,7 +43,7 @@ export function useTitle(): string | undefined {
   const match = matches.findLast((match) => match.handle?.title);
   return match?.handle?.title?.replace(/\{(\d+)\}/g, (_, i) => {
     const match = matches[i];
-    return match?.handle?.getName?.(match?.data) ?? "…";
+    return match?.handle?.getName?.(match?.loaderData) ?? "…";
   });
 }
 
@@ -54,7 +54,7 @@ export function useBreadcrumbs() {
     .filter((match) => !match.pathname.startsWith(pathname))
     .toReversed()
     .map<Breadcrumb>((match) => {
-      const name = match.handle?.getName?.(match?.data) ?? "…";
+      const name = match.handle?.getName?.(match?.loaderData) ?? "…";
       return { href: match.pathname, name };
     });
 }
