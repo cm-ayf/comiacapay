@@ -40,7 +40,7 @@
     "discord-api-types": "0.38.49",
     "drizzle-orm": "1.0.0-rc.4",
     "idb": "^8.0.3",
-    "isbot": "5.1.44",
+    "isbot": "5.2.0",
     "postgres": "3.4.9",
     "react": "19.2.7",
     "react-dom": "19.2.7",
