@@ -42,7 +42,7 @@ export interface ConformDialogProps<TSchema extends Schema, Action> {
   title: string;
 
   schema: TSchema;
-  defaultValue?: DefaultValue<InferOutput<NoInfer<TSchema>>>;
+  defaultValue?: DefaultValue<InferOutput<TSchema>>;
   submitConfig?: Omit<SubmitOptions, "encType">;
 
   onSubmitComplete?: (data: SerializeFrom<Action>) => void;
@@ -56,7 +56,6 @@ interface ConformDialogFetcherContext {
 const ConformDialogFetcherContext =
   createContext<ConformDialogFetcherContext | null>(null);
 
-const DEFAULT_DEFAUKT_VALUE = {};
 const DEFAULT_SUBMIT_CONFIG: Omit<SubmitOptions, "encType"> = {};
 
 export function ConformDialog<TSchema extends Schema, Action>({
@@ -65,17 +64,15 @@ export function ConformDialog<TSchema extends Schema, Action>({
   onClose,
   title,
   schema,
-  defaultValue = DEFAULT_DEFAUKT_VALUE as DefaultValue<
-    InferOutput<NoInfer<TSchema>>
-  >,
+  defaultValue,
   submitConfig = DEFAULT_SUBMIT_CONFIG,
   onSubmitComplete,
   onDeleteComplete,
 }: PropsWithChildren<ConformDialogProps<TSchema, Action>>) {
   const fetcher = useFetcher<Action>();
 
-  const [form] = useForm({
-    defaultValue,
+  const [form] = useForm<InferOutput<TSchema>>({
+    ...(defaultValue !== undefined && { defaultValue }),
     onValidate({ formData }) {
       return parseWithValibot(formData, { schema });
     },
