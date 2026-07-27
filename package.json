@@ -42,8 +42,8 @@
     "idb": "^8.0.3",
     "isbot": "5.2.1",
     "postgres": "3.4.9",
-    "react": "19.2.7",
-    "react-dom": "19.2.7",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "react-router": "8.3.0",
     "valibot": "1.4.2"
   },
