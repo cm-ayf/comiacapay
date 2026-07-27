@@ -48,7 +48,7 @@
     "valibot": "1.4.2"
   },
   "devDependencies": {
-    "@oxlint/plugins": "1.74.0",
+    "@oxlint/plugins": "1.75.0",
     "@playwright/test": "1.57.0",
     "@react-router/dev": "8.3.0",
     "@remix-run/node-fetch-server": "0.13.0",
@@ -64,10 +64,10 @@
     "drizzle-kit": "1.0.0-rc.4",
     "eslint-plugin-mui-path-imports": "0.0.15",
     "husky": "9.1.7",
-    "lint-staged": "17.1.0",
+    "lint-staged": "17.2.0",
     "npm-run-all2": "9.0.2",
-    "oxfmt": "0.59.0",
-    "oxlint": "1.74.0",
+    "oxfmt": "0.60.0",
+    "oxlint": "1.75.0",
     "oxlint-tsgolint": "0.25.0",
     "typescript": "7.0.2",
     "vite": "8.1.5",
