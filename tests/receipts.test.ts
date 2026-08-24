@@ -27,6 +27,7 @@ test.describe("docs/receipts.md", () => {
     user,
     guild,
     event,
+    // oxlint-disable-next-line no-unused-vars -- depends on existence
     receipts: _, // depends on existence
   }, testInfo) => {
     await user.signin();
@@ -47,6 +48,7 @@ test.describe("docs/receipts.md", () => {
     user,
     guild,
     event,
+    // oxlint-disable-next-line no-unused-vars -- depends on existence
     receipts: _, // depends on existence
   }, testInfo) => {
     await user.signin();

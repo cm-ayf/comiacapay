@@ -47,6 +47,7 @@ test.describe("docs/items.md", () => {
     user,
     guild,
     items: [item1],
+    // oxlint-disable-next-line no-unused-vars -- depends on existence
     displays: _, // depends on existence
   }) => {
     await user.signin();
