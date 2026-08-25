@@ -142,6 +142,7 @@ test.describe("docs/event.md", () => {
     guild,
     event,
     items: [item1, item2],
+    // oxlint-disable-next-line no-unused-vars -- depends on existence
     displays: _, // depends on existence
   }) => {
     await user.signin();
@@ -190,6 +191,7 @@ test.describe("docs/event.md", () => {
     user,
     guild,
     event,
+    // oxlint-disable-next-line no-unused-vars -- depends on existence
     receipts: _, // depends on existence
   }) => {
     await user.signin();

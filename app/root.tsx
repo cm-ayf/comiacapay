@@ -163,6 +163,7 @@ export function Layout({ children }: PropsWithChildren) {
           <Container maxWidth={maxWidth ?? "lg"} component="main">
             {children}
           </Container>
+          {/* oxlint-disable-next-line react/static-components */}
           <ButtomComponent />
         </AlertProvider>
         <ScrollRestoration />

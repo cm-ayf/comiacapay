@@ -31,6 +31,7 @@ function reducer(state: AlertState[], action: Action): AlertState[] {
   }
 }
 
+// oxlint-disable-next-line no-unused-vars
 const DispatchAlertContext = createContext((_: Action) => {});
 
 export function AlertProvider({ children }: PropsWithChildren) {
