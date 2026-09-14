@@ -48,7 +48,7 @@
     "valibot": "1.4.2"
   },
   "devDependencies": {
-    "@oxlint/plugins": "1.81.0",
+    "@oxlint/plugins": "1.82.0",
     "@playwright/test": "1.57.0",
     "@react-router/dev": "8.3.1",
     "@remix-run/node-fetch-server": "0.14.1",
@@ -58,19 +58,19 @@
     "@types/pg": "8.23.1",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.7",
-    "@types/serviceworker": "0.0.200",
+    "@types/serviceworker": "0.0.201",
     "@vercel/react-router": "1.3.6",
     "dotenv": "^17.4.2",
     "drizzle-kit": "1.0.0-rc.5-ab785fc",
     "eslint-plugin-mui-path-imports": "0.0.15",
     "husky": "9.1.7",
-    "lint-staged": "17.4.1",
+    "lint-staged": "17.5.1",
     "npm-run-all2": "9.0.3",
-    "oxfmt": "0.66.0",
-    "oxlint": "1.81.0",
+    "oxfmt": "0.67.0",
+    "oxlint": "1.82.0",
     "oxlint-tsgolint": "7.0.2001",
     "typescript": "7.0.2",
-    "vite": "8.2.2",
+    "vite": "8.3.0",
     "vite-plugin-pwa": "1.3.0"
   },
   "overrides": {
