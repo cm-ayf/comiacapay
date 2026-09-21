@@ -81,10 +81,8 @@ jobs:
           name: blob-report-${{ matrix.shard }}
           path: blob-report
           retention-days: 1
-
-  # https://playwright.dev/docs/test-sharding#github-actions-example
-  merge-reports:
-    # Merge reports after playwright-tests, even if some shards have failed
+    
+  e2e-completed:
     if: ${{ !cancelled() }}
     needs: run
 
@@ -114,3 +112,9 @@ jobs:
           name: html-report--attempt-${{ github.run_attempt }}
           path: playwright-report
           retention-days: 14
+
+      - name: Report E2E Failed
+        if: ${{ !success() }}
+        run: |
+          echo "E2E tests not successful"
+          exit 1
