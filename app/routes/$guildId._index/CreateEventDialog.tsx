@@ -20,6 +20,11 @@ export default function CreateEventDialog({
   ...props
 }: CreateEventDialogProps) {
   const [open, setOpen] = useState(false);
+  const [defaultValue] = useState(() => ({
+    name: "",
+    date: getISODateString(new Date()),
+    clone: "",
+  }));
   useImperativeHandle(props.ref, () => ({
     open: () => setOpen(true),
   }));
@@ -33,7 +38,7 @@ export default function CreateEventDialog({
       onClose={() => setOpen(false)}
       title="イベントを追加"
       schema={CreateEvent}
-      defaultValue={{ name: "", date: getISODateString(new Date()), clone: "" }}
+      defaultValue={defaultValue}
       submitConfig={{ method: "POST" }}
       onSubmitComplete={(data) => {
         success("イベントを追加しました");

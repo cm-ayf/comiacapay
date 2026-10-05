@@ -15,6 +15,11 @@ interface CreateItemDialogProps {
 
 export default function CreateItemDialog({ ref }: CreateItemDialogProps) {
   const [open, setOpen] = useState(false);
+  const [defaultValue] = useState(() => ({
+    name: "",
+    picture: null,
+    issuedAt: getISODateString(new Date()),
+  }));
   useImperativeHandle(ref, () => ({
     open: () => setOpen(true),
   }));
@@ -27,11 +32,7 @@ export default function CreateItemDialog({ ref }: CreateItemDialogProps) {
       onClose={() => setOpen(false)}
       title="商品を追加"
       schema={CreateItem}
-      defaultValue={{
-        name: "",
-        picture: null,
-        issuedAt: getISODateString(new Date()),
-      }}
+      defaultValue={defaultValue}
       submitConfig={{ method: "POST", action: `/${guildId}/items` }}
       onSubmitComplete={() => {
         success("商品を追加しました");
