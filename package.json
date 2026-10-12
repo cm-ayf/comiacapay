@@ -39,7 +39,7 @@
     "@react-router/node": "8.4.0",
     "discord-api-types": "0.38.56",
     "drizzle-orm": "1.0.0-rc.5-5935859",
-    "idb": "^8.0.3",
+    "idb": "^8.0.4",
     "isbot": "5.2.2",
     "postgres": "3.4.9",
     "react": "19.3.0",
