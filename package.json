@@ -37,7 +37,7 @@
     "@mui/x-data-grid": "9.15.0",
     "@react-router/fs-routes": "8.4.0",
     "@react-router/node": "8.4.0",
-    "discord-api-types": "0.38.56",
+    "discord-api-types": "0.38.57",
     "drizzle-orm": "1.0.0-rc.5-5935859",
     "idb": "^8.0.4",
     "isbot": "5.2.2",
