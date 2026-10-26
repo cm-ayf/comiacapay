@@ -1,72 +1,543 @@
 {
+  "type": "base",
+  "version": "9",
   "dialect": "postgres",
   "id": "2f421861-fe5e-44fe-9bf0-d5ecad138bea",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
-  "version": "8",
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "_prisma_migrations"
+      ],
+      "writes": [
+        "s|tbl|public._prisma_migrations",
+        "n|tbl|public._prisma_migrations",
+        "e|tbl|public._prisma_migrations",
+        "n|rel|public._prisma_migrations",
+        "n|type|public._prisma_migrations",
+        "n|rel|public._prisma_migrations_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Display"
+      ],
+      "writes": [
+        "s|tbl|public.Display",
+        "n|tbl|public.Display",
+        "e|tbl|public.Display",
+        "n|rel|public.Display",
+        "n|type|public.Display",
+        "n|rel|public.Display_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Event"
+      ],
+      "writes": [
+        "s|tbl|public.Event",
+        "n|tbl|public.Event",
+        "e|tbl|public.Event",
+        "n|rel|public.Event",
+        "n|type|public.Event",
+        "n|rel|public.Event_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Guild"
+      ],
+      "writes": [
+        "s|tbl|public.Guild",
+        "n|tbl|public.Guild",
+        "e|tbl|public.Guild",
+        "n|rel|public.Guild",
+        "n|type|public.Guild",
+        "n|rel|public.Guild_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Item"
+      ],
+      "writes": [
+        "s|tbl|public.Item",
+        "n|tbl|public.Item",
+        "e|tbl|public.Item",
+        "n|rel|public.Item",
+        "n|type|public.Item",
+        "n|rel|public.Item_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Member"
+      ],
+      "writes": [
+        "s|tbl|public.Member",
+        "n|tbl|public.Member",
+        "e|tbl|public.Member",
+        "n|rel|public.Member",
+        "n|type|public.Member",
+        "n|rel|public.Member_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Receipt"
+      ],
+      "writes": [
+        "s|tbl|public.Receipt",
+        "n|tbl|public.Receipt",
+        "e|tbl|public.Receipt",
+        "n|rel|public.Receipt",
+        "n|type|public.Receipt",
+        "n|rel|public.Receipt_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Record"
+      ],
+      "writes": [
+        "s|tbl|public.Record",
+        "n|tbl|public.Record",
+        "e|tbl|public.Record",
+        "n|rel|public.Record",
+        "n|type|public.Record",
+        "n|rel|public.Record_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Session"
+      ],
+      "writes": [
+        "s|tbl|public.Session",
+        "n|tbl|public.Session",
+        "e|tbl|public.Session",
+        "n|rel|public.Session",
+        "n|type|public.Session",
+        "n|rel|public.Session_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "User"
+      ],
+      "writes": [
+        "s|tbl|public.User",
+        "n|tbl|public.User",
+        "e|tbl|public.User",
+        "n|rel|public.User",
+        "n|type|public.User",
+        "n|rel|public.User_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "Session",
+        "Session_sid_key"
+      ],
+      "writes": [
+        "s|idx|public.Session_sid_key",
+        "n|idx|public.Session_sid_key",
+        "e|idx|public.Session_sid_key",
+        "n|rel|public.Session_sid_key"
+      ],
+      "reads": [
+        "n|tbl|public.Session",
+        "n|sch|public",
+        "n|col|public.Session.sid"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Member"
+      ],
+      "writes": [
+        "s|fk|public.Member.Member_guild_id_fkey",
+        "n|fk|public.Member.Member_guild_id_fkey",
+        "e|fk|public.Member.Member_guild_id_fkey",
+        "n|con|public.Member.Member_guild_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.Member",
+        "n|sch|public",
+        "n|tbl|public.Guild",
+        "n|sch|public",
+        "n|col|public.Member.guild_id",
+        "n|col|public.Guild.id",
+        "e|uniqueness|public.Guild.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Member"
+      ],
+      "writes": [
+        "s|fk|public.Member.Member_user_id_fkey",
+        "n|fk|public.Member.Member_user_id_fkey",
+        "e|fk|public.Member.Member_user_id_fkey",
+        "n|con|public.Member.Member_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.Member",
+        "n|sch|public",
+        "n|tbl|public.User",
+        "n|sch|public",
+        "n|col|public.Member.user_id",
+        "n|col|public.User.id",
+        "e|uniqueness|public.User.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Item"
+      ],
+      "writes": [
+        "s|fk|public.Item.Item_guild_id_fkey",
+        "n|fk|public.Item.Item_guild_id_fkey",
+        "e|fk|public.Item.Item_guild_id_fkey",
+        "n|con|public.Item.Item_guild_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.Item",
+        "n|sch|public",
+        "n|tbl|public.Guild",
+        "n|sch|public",
+        "n|col|public.Item.guild_id",
+        "n|col|public.Guild.id",
+        "e|uniqueness|public.Guild.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Event"
+      ],
+      "writes": [
+        "s|fk|public.Event.Event_guild_id_fkey",
+        "n|fk|public.Event.Event_guild_id_fkey",
+        "e|fk|public.Event.Event_guild_id_fkey",
+        "n|con|public.Event.Event_guild_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.Event",
+        "n|sch|public",
+        "n|tbl|public.Guild",
+        "n|sch|public",
+        "n|col|public.Event.guild_id",
+        "n|col|public.Guild.id",
+        "e|uniqueness|public.Guild.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Display"
+      ],
+      "writes": [
+        "s|fk|public.Display.Display_event_id_fkey",
+        "n|fk|public.Display.Display_event_id_fkey",
+        "e|fk|public.Display.Display_event_id_fkey",
+        "n|con|public.Display.Display_event_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.Display",
+        "n|sch|public",
+        "n|tbl|public.Event",
+        "n|sch|public",
+        "n|col|public.Display.event_id",
+        "n|col|public.Event.id",
+        "e|uniqueness|public.Event.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Display"
+      ],
+      "writes": [
+        "s|fk|public.Display.Display_item_id_fkey",
+        "n|fk|public.Display.Display_item_id_fkey",
+        "e|fk|public.Display.Display_item_id_fkey",
+        "n|con|public.Display.Display_item_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.Display",
+        "n|sch|public",
+        "n|tbl|public.Item",
+        "n|sch|public",
+        "n|col|public.Display.item_id",
+        "n|col|public.Item.id",
+        "e|uniqueness|public.Item.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Receipt"
+      ],
+      "writes": [
+        "s|fk|public.Receipt.Receipt_event_id_fkey",
+        "n|fk|public.Receipt.Receipt_event_id_fkey",
+        "e|fk|public.Receipt.Receipt_event_id_fkey",
+        "n|con|public.Receipt.Receipt_event_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.Receipt",
+        "n|sch|public",
+        "n|tbl|public.Event",
+        "n|sch|public",
+        "n|col|public.Receipt.event_id",
+        "n|col|public.Event.id",
+        "e|uniqueness|public.Event.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Receipt"
+      ],
+      "writes": [
+        "s|fk|public.Receipt.Receipt_user_id_fkey",
+        "n|fk|public.Receipt.Receipt_user_id_fkey",
+        "e|fk|public.Receipt.Receipt_user_id_fkey",
+        "n|con|public.Receipt.Receipt_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.Receipt",
+        "n|sch|public",
+        "n|tbl|public.User",
+        "n|sch|public",
+        "n|col|public.Receipt.user_id",
+        "n|col|public.User.id",
+        "e|uniqueness|public.User.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Record"
+      ],
+      "writes": [
+        "s|fk|public.Record.Record_event_id_item_id_fkey",
+        "n|fk|public.Record.Record_event_id_item_id_fkey",
+        "e|fk|public.Record.Record_event_id_item_id_fkey",
+        "n|con|public.Record.Record_event_id_item_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.Record",
+        "n|sch|public",
+        "n|tbl|public.Display",
+        "n|sch|public",
+        "n|col|public.Record.event_id",
+        "n|col|public.Record.item_id",
+        "n|col|public.Display.event_id",
+        "n|col|public.Display.item_id",
+        "e|uniqueness|public.Display.event_id.item_id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Record"
+      ],
+      "writes": [
+        "s|fk|public.Record.Record_receipt_id_fkey",
+        "n|fk|public.Record.Record_receipt_id_fkey",
+        "e|fk|public.Record.Record_receipt_id_fkey",
+        "n|con|public.Record.Record_receipt_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.Record",
+        "n|sch|public",
+        "n|tbl|public.Receipt",
+        "n|sch|public",
+        "n|col|public.Record.receipt_id",
+        "n|col|public.Receipt.id",
+        "e|uniqueness|public.Receipt.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Session"
+      ],
+      "writes": [
+        "s|fk|public.Session.Session_user_id_fkey",
+        "n|fk|public.Session.Session_user_id_fkey",
+        "e|fk|public.Session.Session_user_id_fkey",
+        "n|con|public.Session.Session_user_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.Session",
+        "n|sch|public",
+        "n|tbl|public.User",
+        "n|sch|public",
+        "n|col|public.Session.user_id",
+        "n|col|public.User.id",
+        "e|uniqueness|public.User.id"
+      ]
+    }
+  ],
   "ddl": [
     {
-      "isRlsEnabled": false,
+      "schema": "public",
       "name": "_prisma_migrations",
-      "entityType": "tables",
-      "schema": "public"
+      "isRlsEnabled": false,
+      "entityType": "tables"
     },
     {
-      "isRlsEnabled": false,
+      "schema": "public",
       "name": "Display",
-      "entityType": "tables",
-      "schema": "public"
+      "isRlsEnabled": false,
+      "entityType": "tables"
     },
     {
-      "isRlsEnabled": false,
+      "schema": "public",
       "name": "Event",
-      "entityType": "tables",
-      "schema": "public"
+      "isRlsEnabled": false,
+      "entityType": "tables"
     },
     {
-      "isRlsEnabled": false,
+      "schema": "public",
       "name": "Guild",
-      "entityType": "tables",
-      "schema": "public"
+      "isRlsEnabled": false,
+      "entityType": "tables"
     },
     {
-      "isRlsEnabled": false,
+      "schema": "public",
       "name": "Item",
-      "entityType": "tables",
-      "schema": "public"
+      "isRlsEnabled": false,
+      "entityType": "tables"
     },
     {
-      "isRlsEnabled": false,
+      "schema": "public",
       "name": "Member",
-      "entityType": "tables",
-      "schema": "public"
+      "isRlsEnabled": false,
+      "entityType": "tables"
     },
     {
-      "isRlsEnabled": false,
+      "schema": "public",
       "name": "Receipt",
-      "entityType": "tables",
-      "schema": "public"
+      "isRlsEnabled": false,
+      "entityType": "tables"
     },
     {
-      "isRlsEnabled": false,
+      "schema": "public",
       "name": "Record",
-      "entityType": "tables",
-      "schema": "public"
+      "isRlsEnabled": false,
+      "entityType": "tables"
     },
     {
-      "isRlsEnabled": false,
+      "schema": "public",
       "name": "Session",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
       "isRlsEnabled": false,
-      "name": "User",
-      "entityType": "tables",
-      "schema": "public"
+      "entityType": "tables"
     },
     {
+      "schema": "public",
+      "name": "User",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "table": "_prisma_migrations",
+      "name": "id",
       "type": "varchar(36)",
       "typeSchema": null,
       "notNull": true,
@@ -74,12 +545,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "_prisma_migrations"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Event",
+      "name": "id",
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -87,25 +558,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Event"
+      "entityType": "columns"
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "Record",
       "name": "receipt_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Record"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -113,12 +571,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Receipt",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Receipt"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -126,12 +584,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Display",
       "name": "event_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Display"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -139,12 +597,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Member",
       "name": "user_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Member"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -152,12 +610,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Guild",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Guild"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -165,12 +623,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "User",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "User"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -178,12 +636,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Session",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Session"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -191,12 +649,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Item",
       "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Item"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -204,12 +662,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Session",
       "name": "sid",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Session"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -217,12 +675,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Item",
       "name": "guild_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Item"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -230,12 +688,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Member",
       "name": "guild_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Member"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -243,12 +701,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Record",
       "name": "event_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Record"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -256,12 +714,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Guild",
       "name": "name",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Guild"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -269,12 +727,12 @@
       "default": null,
       "generated": null,
       "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Display",
       "name": "item_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Display"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -282,12 +740,25 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "event_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Receipt"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Receipt",
+      "name": "event_id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "User",
+      "name": "name",
       "type": "text",
       "typeSchema": null,
       "notNull": false,
@@ -295,12 +766,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "name",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "User"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Event",
+      "name": "guild_id",
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -308,12 +779,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "guild_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Event"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "_prisma_migrations",
+      "name": "checksum",
       "type": "varchar(64)",
       "typeSchema": null,
       "notNull": true,
@@ -321,12 +792,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "checksum",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "_prisma_migrations"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Session",
+      "name": "user_id",
       "type": "text",
       "typeSchema": null,
       "notNull": false,
@@ -334,12 +805,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "user_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Session"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Receipt",
+      "name": "user_id",
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -347,25 +818,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "user_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Receipt"
+      "entityType": "columns"
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "User",
       "name": "username",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "User"
-    },
-    {
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -373,12 +831,25 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "name",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Event"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Event",
+      "name": "name",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "_prisma_migrations",
+      "name": "finished_at",
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": false,
@@ -386,12 +857,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "finished_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "_prisma_migrations"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Item",
+      "name": "name",
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -399,12 +870,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "name",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Item"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Display",
+      "name": "price",
       "type": "integer",
       "typeSchema": null,
       "notNull": true,
@@ -412,12 +883,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "price",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Display"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Member",
+      "name": "read",
       "type": "boolean",
       "typeSchema": null,
       "notNull": true,
@@ -425,12 +896,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "read",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Member"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Record",
+      "name": "item_id",
       "type": "text",
       "typeSchema": null,
       "notNull": true,
@@ -438,12 +909,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "item_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Record"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Guild",
+      "name": "picture",
       "type": "text",
       "typeSchema": null,
       "notNull": false,
@@ -451,12 +922,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "picture",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Guild"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Session",
+      "name": "token_result",
       "type": "jsonb",
       "typeSchema": null,
       "notNull": false,
@@ -464,12 +935,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "token_result",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Session"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "User",
+      "name": "picture",
       "type": "text",
       "typeSchema": null,
       "notNull": false,
@@ -477,12 +948,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "picture",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "User"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Member",
+      "name": "register",
       "type": "boolean",
       "typeSchema": null,
       "notNull": true,
@@ -490,12 +961,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "register",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Member"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Item",
+      "name": "picture",
       "type": "text",
       "typeSchema": null,
       "notNull": false,
@@ -503,12 +974,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "picture",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Item"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Event",
+      "name": "date",
       "type": "timestamp(3)",
       "typeSchema": null,
       "notNull": true,
@@ -516,12 +987,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "date",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Event"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Display",
+      "name": "internal_price",
       "type": "integer",
       "typeSchema": null,
       "notNull": false,
@@ -529,25 +1000,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "internal_price",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Display"
+      "entityType": "columns"
     },
     {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "Receipt",
       "name": "total",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Receipt"
-    },
-    {
       "type": "integer",
       "typeSchema": null,
       "notNull": true,
@@ -555,12 +1013,25 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "count",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Record"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Record",
+      "name": "count",
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Guild",
+      "name": "read_role_id",
       "type": "text",
       "typeSchema": null,
       "notNull": false,
@@ -568,12 +1039,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "read_role_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Guild"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "_prisma_migrations",
+      "name": "migration_name",
       "type": "varchar(255)",
       "typeSchema": null,
       "notNull": true,
@@ -581,12 +1052,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "migration_name",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "_prisma_migrations"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Guild",
+      "name": "register_role_id",
       "type": "text",
       "typeSchema": null,
       "notNull": false,
@@ -594,12 +1065,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "register_role_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Guild"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "User",
+      "name": "fresh_until",
       "type": "timestamp(3)",
       "typeSchema": null,
       "notNull": true,
@@ -607,25 +1078,12 @@
       "default": "CURRENT_TIMESTAMP",
       "generated": null,
       "identity": null,
-      "name": "fresh_until",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "User"
+      "entityType": "columns"
     },
     {
-      "type": "boolean",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "false",
-      "generated": null,
-      "identity": null,
+      "schema": "public",
+      "table": "Record",
       "name": "internal",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Record"
-    },
-    {
       "type": "boolean",
       "typeSchema": null,
       "notNull": true,
@@ -633,12 +1091,25 @@
       "default": "false",
       "generated": null,
       "identity": null,
-      "name": "dedication",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Display"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Display",
+      "name": "dedication",
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "false",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "Event",
+      "name": "discounts",
       "type": "jsonb",
       "typeSchema": null,
       "notNull": true,
@@ -646,12 +1117,12 @@
       "default": "'[]'",
       "generated": null,
       "identity": null,
-      "name": "discounts",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Event"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Item",
+      "name": "issued_at",
       "type": "timestamp(3)",
       "typeSchema": null,
       "notNull": true,
@@ -659,12 +1130,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "issued_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Item"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Member",
+      "name": "write",
       "type": "boolean",
       "typeSchema": null,
       "notNull": true,
@@ -672,12 +1143,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "write",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Member"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "_prisma_migrations",
+      "name": "logs",
       "type": "text",
       "typeSchema": null,
       "notNull": false,
@@ -685,12 +1156,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "logs",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "_prisma_migrations"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Session",
+      "name": "expires",
       "type": "timestamp(3)",
       "typeSchema": null,
       "notNull": true,
@@ -698,12 +1169,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "expires",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Session"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Member",
+      "name": "admin",
       "type": "boolean",
       "typeSchema": null,
       "notNull": true,
@@ -711,12 +1182,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "admin",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Member"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "_prisma_migrations",
+      "name": "rolled_back_at",
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": false,
@@ -724,12 +1195,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "rolled_back_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "_prisma_migrations"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Record",
+      "name": "dedication",
       "type": "boolean",
       "typeSchema": null,
       "notNull": true,
@@ -737,12 +1208,12 @@
       "default": "false",
       "generated": null,
       "identity": null,
-      "name": "dedication",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Record"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Guild",
+      "name": "write_role_id",
       "type": "text",
       "typeSchema": null,
       "notNull": false,
@@ -750,12 +1221,12 @@
       "default": null,
       "generated": null,
       "identity": null,
-      "name": "write_role_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Guild"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "_prisma_migrations",
+      "name": "started_at",
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": true,
@@ -763,12 +1234,12 @@
       "default": "now()",
       "generated": null,
       "identity": null,
-      "name": "started_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "_prisma_migrations"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Member",
+      "name": "fresh_until",
       "type": "timestamp(3)",
       "typeSchema": null,
       "notNull": true,
@@ -776,12 +1247,12 @@
       "default": "CURRENT_TIMESTAMP",
       "generated": null,
       "identity": null,
-      "name": "fresh_until",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "Member"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "_prisma_migrations",
+      "name": "applied_steps_count",
       "type": "integer",
       "typeSchema": null,
       "notNull": true,
@@ -789,12 +1260,12 @@
       "default": "0",
       "generated": null,
       "identity": null,
-      "name": "applied_steps_count",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "_prisma_migrations"
+      "entityType": "columns"
     },
     {
+      "schema": "public",
+      "table": "Session",
+      "name": "Session_sid_key",
       "nameExplicit": true,
       "columns": [
         {
@@ -810,12 +1281,12 @@
       "with": "",
       "method": "btree",
       "concurrently": false,
-      "name": "Session_sid_key",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "Session"
+      "entityType": "indexes"
     },
     {
+      "schema": "public",
+      "table": "Member",
+      "name": "Member_guild_id_fkey",
       "nameExplicit": true,
       "columns": [
         "guild_id"
@@ -827,12 +1298,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "RESTRICT",
-      "name": "Member_guild_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "Member"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "Member",
+      "name": "Member_user_id_fkey",
       "nameExplicit": true,
       "columns": [
         "user_id"
@@ -844,29 +1315,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "RESTRICT",
-      "name": "Member_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "Member"
+      "entityType": "fks"
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        "guild_id"
-      ],
-      "schemaTo": "public",
-      "tableTo": "Guild",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "CASCADE",
-      "onDelete": "RESTRICT",
+      "schema": "public",
+      "table": "Item",
       "name": "Item_guild_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "Item"
-    },
-    {
       "nameExplicit": true,
       "columns": [
         "guild_id"
@@ -878,12 +1332,29 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "RESTRICT",
-      "name": "Event_guild_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "Event"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "Event",
+      "name": "Event_guild_id_fkey",
+      "nameExplicit": true,
+      "columns": [
+        "guild_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "Guild",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "CASCADE",
+      "onDelete": "RESTRICT",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "Display",
+      "name": "Display_event_id_fkey",
       "nameExplicit": true,
       "columns": [
         "event_id"
@@ -895,12 +1366,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "RESTRICT",
-      "name": "Display_event_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "Display"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "Display",
+      "name": "Display_item_id_fkey",
       "nameExplicit": true,
       "columns": [
         "item_id"
@@ -912,12 +1383,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "RESTRICT",
-      "name": "Display_item_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "Display"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "Receipt",
+      "name": "Receipt_event_id_fkey",
       "nameExplicit": true,
       "columns": [
         "event_id"
@@ -929,12 +1400,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "RESTRICT",
-      "name": "Receipt_event_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "Receipt"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "Receipt",
+      "name": "Receipt_user_id_fkey",
       "nameExplicit": true,
       "columns": [
         "user_id"
@@ -946,12 +1417,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "RESTRICT",
-      "name": "Receipt_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "Receipt"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "Record",
+      "name": "Record_event_id_item_id_fkey",
       "nameExplicit": true,
       "columns": [
         "event_id",
@@ -965,12 +1436,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "RESTRICT",
-      "name": "Record_event_id_item_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "Record"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "Record",
+      "name": "Record_receipt_id_fkey",
       "nameExplicit": true,
       "columns": [
         "receipt_id"
@@ -982,12 +1453,12 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "RESTRICT",
-      "name": "Record_receipt_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "Record"
+      "entityType": "fks"
     },
     {
+      "schema": "public",
+      "table": "Session",
+      "name": "Session_user_id_fkey",
       "nameExplicit": true,
       "columns": [
         "user_id"
@@ -999,114 +1470,110 @@
       ],
       "onUpdate": "CASCADE",
       "onDelete": "SET NULL",
-      "name": "Session_user_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "Session"
+      "entityType": "fks"
     },
     {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": true,
+      "schema": "public",
+      "table": "User",
       "name": "User_pkey",
-      "entityType": "pks",
-      "schema": "public",
-      "table": "User"
-    },
-    {
       "columns": [
         "id"
       ],
       "nameExplicit": true,
-      "name": "Guild_pkey",
-      "entityType": "pks",
-      "schema": "public",
-      "table": "Guild"
+      "entityType": "pks"
     },
     {
+      "schema": "public",
+      "table": "Guild",
+      "name": "Guild_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": true,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "Member",
+      "name": "Member_pkey",
       "columns": [
         "user_id",
         "guild_id"
       ],
       "nameExplicit": true,
-      "name": "Member_pkey",
-      "entityType": "pks",
-      "schema": "public",
-      "table": "Member"
+      "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": true,
+      "schema": "public",
+      "table": "Item",
       "name": "Item_pkey",
-      "entityType": "pks",
-      "schema": "public",
-      "table": "Item"
-    },
-    {
       "columns": [
         "id"
       ],
       "nameExplicit": true,
-      "name": "Event_pkey",
-      "entityType": "pks",
-      "schema": "public",
-      "table": "Event"
+      "entityType": "pks"
     },
     {
+      "schema": "public",
+      "table": "Event",
+      "name": "Event_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": true,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "Display",
+      "name": "Display_pkey",
       "columns": [
         "event_id",
         "item_id"
       ],
       "nameExplicit": true,
-      "name": "Display_pkey",
-      "entityType": "pks",
-      "schema": "public",
-      "table": "Display"
+      "entityType": "pks"
     },
     {
+      "schema": "public",
+      "table": "Receipt",
+      "name": "Receipt_pkey",
       "columns": [
         "id"
       ],
       "nameExplicit": true,
-      "name": "Receipt_pkey",
-      "entityType": "pks",
-      "schema": "public",
-      "table": "Receipt"
+      "entityType": "pks"
     },
     {
+      "schema": "public",
+      "table": "Record",
+      "name": "Record_pkey",
       "columns": [
         "receipt_id",
         "item_id"
       ],
       "nameExplicit": true,
-      "name": "Record_pkey",
-      "entityType": "pks",
-      "schema": "public",
-      "table": "Record"
+      "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": true,
+      "schema": "public",
+      "table": "Session",
       "name": "Session_pkey",
-      "entityType": "pks",
-      "schema": "public",
-      "table": "Session"
-    },
-    {
       "columns": [
         "id"
       ],
       "nameExplicit": true,
-      "name": "_prisma_migrations_pkey",
-      "entityType": "pks",
+      "entityType": "pks"
+    },
+    {
       "schema": "public",
-      "table": "_prisma_migrations"
+      "table": "_prisma_migrations",
+      "name": "_prisma_migrations_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": true,
+      "entityType": "pks"
     }
-  ],
-  "renames": []
+  ]
 }

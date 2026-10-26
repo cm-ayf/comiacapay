@@ -162,6 +162,8 @@ test.describe("docs/event.md", () => {
 
     // Verify discount was added
     await expect(page.getByText("- ¥500")).toBeVisible();
+    await page.reload();
+    await expect(page.getByText("- ¥500")).toBeVisible();
 
     // Delete discount
     await page.getByRole("button", { name: "割引を削除" }).click();

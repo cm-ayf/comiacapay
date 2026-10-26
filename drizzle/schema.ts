@@ -8,7 +8,7 @@ import {
   uniqueIndex,
   foreignKey,
   primaryKey,
-  customType,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("User", {
@@ -20,15 +20,6 @@ export const user = pgTable("User", {
 });
 export type User = typeof user.$inferSelect;
 
-const tokenResult = customType<{ data: RESTPostOAuth2AccessTokenResult }>({
-  dataType() {
-    return "jsonb";
-  },
-  toDriver(value) {
-    return JSON.stringify(value);
-  },
-});
-
 export const session = pgTable(
   "Session",
   {
@@ -38,7 +29,7 @@ export const session = pgTable(
       onDelete: "set null",
       onUpdate: "cascade",
     }),
-    tokenResult: tokenResult("token_result"),
+    tokenResult: jsonb("token_result").$type<RESTPostOAuth2AccessTokenResult>(),
     expires: timestamp({ precision: 3 }).notNull(),
   },
   (table) => [
@@ -103,15 +94,6 @@ export interface SetDiscount {
   amount: number;
 }
 
-const discounts = customType<{ data: Discount[] }>({
-  dataType() {
-    return "jsonb";
-  },
-  toDriver(value) {
-    return JSON.stringify(value);
-  },
-});
-
 export const event = pgTable("Event", {
   id: text().primaryKey(),
   guildId: text("guild_id")
@@ -119,7 +101,7 @@ export const event = pgTable("Event", {
     .references(() => guild.id, { onDelete: "restrict", onUpdate: "cascade" }),
   name: text().notNull(),
   date: timestamp({ precision: 3 }).notNull(),
-  discounts: discounts().default([]).notNull(),
+  discounts: jsonb().$type<Discount[]>().default([]).notNull(),
 });
 export type Event = typeof event.$inferSelect;
 
