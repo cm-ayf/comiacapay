@@ -48,7 +48,7 @@
     "valibot": "1.5.0"
   },
   "devDependencies": {
-    "@oxlint/plugins": "1.89.0",
+    "@oxlint/plugins": "1.90.0",
     "@playwright/test": "1.57.0",
     "@react-router/dev": "8.5.0",
     "@remix-run/node-fetch-server": "0.14.1",
@@ -66,8 +66,8 @@
     "husky": "9.1.7",
     "lint-staged": "17.6.0",
     "npm-run-all2": "9.0.4",
-    "oxfmt": "0.74.0",
-    "oxlint": "1.89.0",
+    "oxfmt": "0.75.0",
+    "oxlint": "1.90.0",
     "oxlint-tsgolint": "7.0.2005",
     "typescript": "7.0.2",
     "vite": "8.3.5",
